@@ -5,7 +5,6 @@ import (
 	"baize/app/bzSystem/service"
 	"baize/app/bzSystem/service/serviceImpl"
 	"baize/app/utils/baizeContext"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,16 +36,15 @@ func NewUserController(
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/changeStatus [put]
 func (uc *UserController) ChangeStatus(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//
-	//sysUser := new(models.EditUserStatus)
-	//if err := c.ShouldBindJSON(sysUser); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//sysUser.SetUpdateBy(bzc.GetUserId())
-	//uc.us.UpdateUserStatus(sysUser)
-	//bzc.Success()
+
+	sysUser := new(models.EditUserStatus)
+	if err := c.ShouldBindJSON(sysUser); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	sysUser.SetUpdateBy(baizeContext.GetUserId(c))
+	uc.us.UpdateUserStatus(c, sysUser)
+	baizeContext.Success(c)
 }
 
 // ResetPwd 重置密码
@@ -59,16 +57,13 @@ func (uc *UserController) ChangeStatus(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/resetPwd [put]
 func (uc *UserController) ResetPwd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//
-	//resetPwd := new(models.ResetPwd)
-	//if err := c.ShouldBindJSON(resetPwd); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//uc.us.ResetPwd(resetPwd.UserId, resetPwd.Password)
-	//bzc.Success()
-
+	resetPwd := new(models.ResetPwd)
+	if err := c.ShouldBindJSON(resetPwd); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	uc.us.ResetPwd(c, resetPwd.UserId, resetPwd.Password)
+	baizeContext.Success(c)
 }
 
 // UserEdit 修改用户
@@ -81,25 +76,21 @@ func (uc *UserController) ResetPwd(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user  [put]
 func (uc *UserController) UserEdit(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//
-	//sysUser := new(models.SysUserEdit)
-	//if err := c.ShouldBindJSON(sysUser); err != nil {
-	//	fmt.Println(err)
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if uc.us.CheckPhoneUnique(sysUser.UserId, sysUser.Phonenumber) {
-	//	bzc.Waring("新增用户'" + sysUser.Phonenumber + "'失败，手机号码已存在")
-	//	return
-	//}
-	//if uc.us.CheckEmailUnique(sysUser.UserId, sysUser.Email) {
-	//	bzc.Waring("新增用户'" + sysUser.Email + "'失败，邮箱账号已存在")
-	//	return
-	//}
-	//sysUser.SetUpdateBy(bzc.GetUserId())
-	//uc.us.UpdateUser(sysUser)
-	//bzc.Success()
+
+	sysUser := new(models.SysUserDML)
+	_ = c.ShouldBindJSON(sysUser)
+
+	if uc.us.CheckPhoneUnique(c, sysUser.UserId, sysUser.Phonenumber) {
+		baizeContext.Waring(c, "新增用户'"+sysUser.Phonenumber+"'失败，手机号码已存在")
+		return
+	}
+	if uc.us.CheckEmailUnique(c, sysUser.UserId, sysUser.Email) {
+		baizeContext.Waring(c, "新增用户'"+sysUser.Email+"'失败，邮箱账号已存在")
+		return
+	}
+	sysUser.SetUpdateBy(baizeContext.GetUserId(c))
+	uc.us.UpdateUser(c, sysUser)
+	baizeContext.Success(c)
 }
 
 // UserAdd 添加用户

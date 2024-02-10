@@ -129,7 +129,7 @@ func (userService *UserService) UpdateUserStatus(c *gin.Context, sysUser *models
 	s := new(models.SysUserDML)
 	s.UserId = sysUser.UserId
 	s.Status = sysUser.Status
-	//s.BaseEntityEdit = sysUser.BaseEntityEdit
+	s.BaseEntity = sysUser.BaseEntity
 	userService.userDao.UpdateUser(c, userService.data, s)
 
 }
