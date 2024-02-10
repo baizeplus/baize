@@ -29,7 +29,7 @@ type SysUserDML struct {
 	Remark      string   `json:"remark" db:"remark"`                             //备注
 	PostIds     []string `json:"postIds"`                                        //岗位IDS
 	RoleIds     []string `json:"roleIds"`                                        //角色IDS
-
+	baize.BaseEntity
 }
 
 type SysUserVo struct {

@@ -6,22 +6,22 @@ import (
 )
 
 type BaseEntity struct {
-	CreateBy   string `json:"createBy" db:"create_by"`                           //创建人
-	CreateTime *Time  `json:"createTime" db:"create_time" swaggertype:"integer"` //创建时间
-	UpdateBy   string `json:"updateBy" db:"update_by"`                           //修改人
-	UpdateTime *Time  `json:"updateTime" db:"update_time" swaggertype:"integer"` //修改时间
+	CreateBy   int64 `json:"createBy" db:"create_by"`                           //创建人
+	CreateTime *Time `json:"createTime" db:"create_time" swaggertype:"integer"` //创建时间
+	UpdateBy   int64 `json:"updateBy" db:"update_by"`                           //修改人
+	UpdateTime *Time `json:"updateTime" db:"update_time" swaggertype:"integer"` //修改时间
 }
 
-func (b *BaseEntity) SetCreateBy(userName string) {
-	b.CreateBy = userName
+func (b *BaseEntity) SetCreateBy(userId int64) {
+	b.CreateBy = userId
 	kt := NewTime()
 	b.CreateTime = kt
-	b.UpdateBy = userName
+	b.UpdateBy = userId
 	b.UpdateTime = kt
 }
 
-func (b *BaseEntity) SetUpdateBy(userName string) {
-	b.UpdateBy = userName
+func (b *BaseEntity) SetUpdateBy(userId int64) {
+	b.UpdateBy = userId
 	b.UpdateTime = NewTime()
 }
 

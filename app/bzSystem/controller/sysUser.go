@@ -112,33 +112,28 @@ func (uc *UserController) UserEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user  [post]
 func (uc *UserController) UserAdd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//
-	//user := bzc.GetUser()
-	//sysUser := new(models.SysUserAdd)
-	//if err := c.ShouldBindJSON(sysUser); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if sysUser.DeptId == nil {
-	//	sysUser.DeptId = user.DeptId
-	//}
-	//if uc.us.CheckUserNameUnique(sysUser.UserName) {
-	//	bzc.Waring("新增用户'" + sysUser.UserName + "'失败，登录账号已存在")
-	//	return
-	//}
-	//if uc.us.CheckPhoneUnique(sysUser.UserId, sysUser.Phonenumber) {
-	//	bzc.Waring("新增用户'" + sysUser.Phonenumber + "'失败，手机号码已存在")
-	//	return
-	//}
-	//
-	//if uc.us.CheckEmailUnique(sysUser.UserId, sysUser.Email) {
-	//	bzc.Waring("新增用户'" + sysUser.Email + "'失败，邮箱账号已存在")
-	//	return
-	//}
-	//sysUser.SetCreateBy(user.UserId)
-	//uc.us.InsertUser(sysUser)
-	//bzc.Success()
+
+	sysUser := new(models.SysUserDML)
+	_ = c.ShouldBindJSON(sysUser)
+	if sysUser.DeptId == 0 {
+		sysUser.DeptId = baizeContext.GetDeptId(c)
+	}
+	if uc.us.CheckUserNameUnique(c, sysUser.UserName) {
+		baizeContext.Waring(c, "新增用户'"+sysUser.UserName+"'失败，登录账号已存在")
+		return
+	}
+	if uc.us.CheckPhoneUnique(c, sysUser.UserId, sysUser.Phonenumber) {
+		baizeContext.Waring(c, "新增用户'"+sysUser.Phonenumber+"'失败，手机号码已存在")
+		return
+	}
+
+	if uc.us.CheckEmailUnique(c, sysUser.UserId, sysUser.Email) {
+		baizeContext.Waring(c, "新增用户'"+sysUser.Email+"'失败，邮箱账号已存在")
+		return
+	}
+	sysUser.SetCreateBy(baizeContext.GetUserId(c))
+	uc.us.InsertUser(c, sysUser)
+	baizeContext.Success(c)
 }
 
 // UserList 查询用户列表
@@ -179,7 +174,7 @@ func (uc *UserController) UserGetInfo(c *gin.Context) {
 // @Param id path string true "userId"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=models.Auth}  "成功"
+// // @Success 200 {object}  response.ResponseData{data=models.Auth}  "成功"
 // @Router /system/user/authRole/{userId}  [get]
 func (uc *UserController) UserAuthRole(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
@@ -210,10 +205,10 @@ func (uc *UserController) UserAuthRole(c *gin.Context) {
 // @Summary 根据用户ID获取用户信息
 // @Description 根据用户ID获取用户信息
 // @Tags 用户相关
-// @Param id path string true "userId"
+// @Param id path int64 true "userId"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=models.Auth}  "成功"
+// @Success 200 {object}  response.ResponseData{data=models.UserAndAccredit}  "成功"
 // @Router /system/user/{userId}  [get]
 func (uc *UserController) UserGetInfoById(c *gin.Context) {
 	userId := baizeContext.ParamInt64(c, "userId")
@@ -230,15 +225,14 @@ func (uc *UserController) UserGetInfoById(c *gin.Context) {
 // @Summary 删除用户
 // @Description 删除用户
 // @Tags 系统用户
-// @Param userIds body  []string true "userIds"
+// @Param userIds path []int64 true "userIds"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
-// @Router /system/user [delete]
+// @Router /system/user/:userIds [delete]
 func (uc *UserController) UserRemove(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//uc.us.DeleteUserByIds(bzc.ParamInt64Array("userIds"))
-	//bzc.Success()
+	uc.us.DeleteUserByIds(c, baizeContext.ParamInt64Array(c, "userIds"))
+	baizeContext.Success(c)
 }
 
 // UserImportData 导入用户
