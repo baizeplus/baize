@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"baize/app/bzSystem/models"
-	"baize/app/bzSystem/service"
-	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/bzsystem/models"
+	"baize/app/bzsystem/service"
+	"baize/app/bzsystem/service/serviceImpl"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type DeptController struct {
@@ -24,7 +25,7 @@ func NewDeptController(ds *serviceImpl.DeptService) *DeptController {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDeptVo}}  "成功"
-// @Router /bzSystem/dept  [get]
+// @Router /system/dept  [get]
 func (dc *DeptController) DeptList(c *gin.Context) {
 	dept := new(models.SysDeptDQL)
 	_ = c.ShouldBind(dept)
@@ -41,16 +42,15 @@ func (dc *DeptController) DeptList(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDeptVo}  "成功"
-// @Router /bzSystem/dept/{deptId}  [get]
+// @Router /system/dept/{deptId}  [get]
 func (dc *DeptController) DeptGetInfo(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//deptId := bzc.ParamInt64("deptId")
-	//if deptId == 0 {
-	//	zap.L().Error("参数错误")
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//bzc.SuccessData(dc.ds.SelectDeptById(deptId))
+	deptId := baizeContext.ParamInt64(c, "deptId")
+	if deptId == 0 {
+		zap.L().Debug("参数错误")
+		baizeContext.ParameterError(c)
+		return
+	}
+	baizeContext.SuccessData(c, dc.ds.SelectDeptById(c, deptId))
 }
 
 // RoleDeptTreeSelect 获取角色部门
@@ -61,7 +61,7 @@ func (dc *DeptController) DeptGetInfo(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.RoleDeptTree}  "成功"
-// @Router /bzSystem/dept/roleDeptTreeSelect/{roleId}  [get]
+// @Router /system/dept/roleDeptTreeSelect/{roleId}  [get]
 func (dc *DeptController) RoleDeptTreeSelect(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//roleId := bzc.ParamInt64("roleId")
@@ -83,22 +83,17 @@ func (dc *DeptController) RoleDeptTreeSelect(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/dept  [post]
+// @Router /system/dept  [post]
 func (dc *DeptController) DeptAdd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysDept := new(models.SysDeptAdd)
-	//if err := c.ShouldBindJSON(sysDept); err != nil {
-	//	fmt.Println(err)
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if dc.ds.CheckDeptNameUnique(0, sysDept.ParentId, sysDept.DeptName) {
-	//	bzc.Waring("新增部门'" + sysDept.DeptName + "'失败，部门名称已存在")
-	//	return
-	//}
-	//sysDept.SetCreateBy(bzc.GetUserId())
-	//dc.ds.InsertDept(sysDept)
-	//bzc.Success()
+	sysDept := new(models.SysDeptVo)
+	_ = c.ShouldBindJSON(sysDept)
+	if dc.ds.CheckDeptNameUnique(c, 0, sysDept.ParentId, sysDept.DeptName) {
+		baizeContext.Waring(c, "新增部门'"+sysDept.DeptName+"'失败，部门名称已存在")
+		return
+	}
+	sysDept.SetCreateBy(baizeContext.GetUserId(c))
+	dc.ds.InsertDept(c, sysDept)
+	baizeContext.Success(c)
 }
 
 // DeptEdit 修改部门
@@ -109,21 +104,17 @@ func (dc *DeptController) DeptAdd(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/dept  [put]
+// @Router /system/dept  [put]
 func (dc *DeptController) DeptEdit(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysDept := new(models.SysDeptEdit)
-	//if err := c.ShouldBindJSON(sysDept); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if dc.ds.CheckDeptNameUnique(sysDept.DeptId, sysDept.ParentId, sysDept.DeptName) {
-	//	bzc.Waring("修改部门'" + sysDept.DeptName + "'失败，部门名称已存在")
-	//	return
-	//}
-	//sysDept.SetUpdateBy(bzc.GetUserId())
-	//dc.ds.UpdateDept(sysDept)
-	//bzc.Success()
+	sysDept := new(models.SysDeptVo)
+	_ = c.ShouldBindJSON(sysDept)
+	if dc.ds.CheckDeptNameUnique(c, sysDept.DeptId, sysDept.ParentId, sysDept.DeptName) {
+		baizeContext.Waring(c, "修改部门'"+sysDept.DeptName+"'失败，部门名称已存在")
+		return
+	}
+	sysDept.SetUpdateBy(baizeContext.GetUserId(c))
+	dc.ds.UpdateDept(c, sysDept)
+	baizeContext.Success(c)
 }
 
 // DeptRemove 删除部门
@@ -134,23 +125,22 @@ func (dc *DeptController) DeptEdit(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/dept/{deptId}  [delete]
+// @Router /system/dept/{deptId}  [delete]
 func (dc *DeptController) DeptRemove(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//deptId := bzc.ParamInt64("deptId")
-	//if deptId == 0 {
-	//	zap.L().Error("参数错误")
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if dc.ds.HasChildByDeptId(deptId) {
-	//	bzc.Waring("存在下级部门,不允许删除")
-	//	return
-	//}
-	//if dc.ds.CheckDeptExistUser(deptId) {
-	//	bzc.Waring("部门存在用户,不允许删除")
-	//	return
-	//}
-	//dc.ds.DeleteDeptById(deptId)
-	//bzc.Success()
+	deptId := baizeContext.ParamInt64(c, "deptId")
+	if deptId == 0 {
+		zap.L().Debug("参数错误")
+		baizeContext.ParameterError(c)
+		return
+	}
+	if dc.ds.HasChildByDeptId(c, deptId) {
+		baizeContext.Waring(c, "存在下级部门,不允许删除")
+		return
+	}
+	if dc.ds.CheckDeptExistUser(c, deptId) {
+		baizeContext.Waring(c, "部门存在用户,不允许删除")
+		return
+	}
+	dc.ds.DeleteDeptById(c, deptId)
+	baizeContext.Success(c)
 }

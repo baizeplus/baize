@@ -50,7 +50,7 @@ func hasPermissions(permissions []string, permission string) bool {
 func hasPermissionsSlice(permissions []string, p []string) bool {
 	for _, item := range permissions {
 		for _, s := range p {
-			if item == s {
+			if item == s || item == "*:*:*" {
 				return true
 			}
 		}

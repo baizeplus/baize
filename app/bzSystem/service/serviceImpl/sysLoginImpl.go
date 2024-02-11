@@ -5,7 +5,7 @@ import (
 	monitorDao "baize/app/bzMonitor/dao"
 	"baize/app/bzMonitor/dao/monitorDaoImpl"
 	monitorModels "baize/app/bzMonitor/models"
-	systemDao "baize/app/bzSystem/dao"
+	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
 	"baize/app/constant/sessionStatus"
@@ -23,9 +23,9 @@ import (
 
 type LoginService struct {
 	data        *sqly.DB
-	userDao     systemDao.IUserDao
-	menuDao     systemDao.IMenuDao
-	roleDao     systemDao.IRoleDao
+	userDao     dao.IUserDao
+	menuDao     dao.IMenuDao
+	roleDao     dao.IRoleDao
 	loginforDao monitorDao.ILogininforDao
 	driver      *base64Captcha.DriverMath
 	store       base64Captcha.Store

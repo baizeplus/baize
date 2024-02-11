@@ -1,14 +1,20 @@
 package controller
 
 import (
+	"baize/app/bzsystem/service"
+	"baize/app/bzsystem/service/serviceImpl"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
 type DictDataController struct {
+	dds service.IDictDataService
 }
 
-func NewDictDataController() *DictDataController {
-	return &DictDataController{}
+func NewDictDataController(dds *serviceImpl.DictDataService) *DictDataController {
+	return &DictDataController{
+		dds: dds,
+	}
 }
 
 // DictDataList 查询字典列表
@@ -19,7 +25,7 @@ func NewDictDataController() *DictDataController {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDictDataVo}}  "成功"
-// @Router /bzSystem/dict/data/list  [get]
+// @Router /system/dict/data/list  [get]
 func (ddc *DictDataController) DictDataList(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictData := new(models.SysDictDataDQL)
@@ -43,7 +49,7 @@ func (ddc *DictDataController) DictDataExport(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
-// @Router /bzSystem/dict/data/{dictCode}  [get]
+// @Router /system/dict/data/{dictCode}  [get]
 func (ddc *DictDataController) DictDataGetInfo(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictCode := bzc.ParamInt64("dictCode")
@@ -63,11 +69,11 @@ func (ddc *DictDataController) DictDataGetInfo(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDictDataVo}}  "成功"
-// @Router /bzSystem/dict/data/type/{dictType}  [get]
+// @Router /system/dict/data/type/{dictType}  [get]
 func (ddc *DictDataController) DictDataType(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysDictDataList := ddc.dds.SelectDictDataByType(c.Param("dictType"))
-	//bzc.SuccessData(sysDictDataList)
+
+	sysDictDataList := ddc.dds.SelectDictDataByType(c, c.Param("dictType"))
+	baizeContext.SuccessData(c, sysDictDataList)
 }
 
 // DictDataAdd 添加字典数据
@@ -78,7 +84,7 @@ func (ddc *DictDataController) DictDataType(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/dict/data  [post]
+// @Router /system/dict/data  [post]
 func (ddc *DictDataController) DictDataAdd(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictData := new(models.SysDictDataAdd)
@@ -99,7 +105,7 @@ func (ddc *DictDataController) DictDataAdd(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/dict/data  [put]
+// @Router /system/dict/data  [put]
 func (ddc *DictDataController) DictDataEdit(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictData := new(models.SysDictDataEdit)
@@ -120,7 +126,7 @@ func (ddc *DictDataController) DictDataEdit(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
-// @Router /bzSystem/dict/data  [delete]
+// @Router /system/dict/data  [delete]
 func (ddc *DictDataController) DictDataRemove(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//ddc.dds.DeleteDictDataByIds(bzc.ParamInt64Array("dictCodes"))

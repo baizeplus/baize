@@ -49,17 +49,13 @@ func (sysDeptDao *SysDeptDao) SelectDeptById(ctx context.Context, db sqly.SqlyCo
 }
 
 func (sysDeptDao *SysDeptDao) InsertDept(ctx context.Context, db sqly.SqlyContext, dept *models.SysDeptVo) {
-	insertSQL := `insert into sys_dept(dept_id,parent_id,dept_name,create_by,create_time,update_by,update_time %s)
-					values(:dept_id,:parent_id,:dept_name,:create_by,now(),:update_by,now() %s)`
+	insertSQL := `insert into sys_dept(dept_id,parent_id,dept_name,order_num,create_by,create_time,update_by,update_time %s)
+					values(:dept_id,:parent_id,:dept_name,:order_num,:create_by,now(),:update_by,now() %s)`
 	key := ""
 	value := ""
 	if dept.Ancestors != "" {
 		key += ",ancestors"
 		value += ",:ancestors"
-	}
-	if dept.OrderNum != "" {
-		key += ",order_num"
-		value += ",:order_num"
 	}
 	if dept.Leader != "" {
 		key += ",leader"
@@ -87,7 +83,7 @@ func (sysDeptDao *SysDeptDao) InsertDept(ctx context.Context, db sqly.SqlyContex
 }
 
 func (sysDeptDao *SysDeptDao) UpdateDept(ctx context.Context, db sqly.SqlyContext, dept *models.SysDeptVo) {
-	updateSQL := `update sys_dept set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_dept set order_num=:order_num , update_time = now() , update_by = :update_by `
 
 	if dept.ParentId != 0 {
 		updateSQL += ",parent_id = :parent_id"
@@ -99,9 +95,7 @@ func (sysDeptDao *SysDeptDao) UpdateDept(ctx context.Context, db sqly.SqlyContex
 	if dept.Ancestors != "" {
 		updateSQL += ",ancestors = :ancestors"
 	}
-	if dept.OrderNum != "" {
-		updateSQL += ",order_num = :order_num"
-	}
+
 	if dept.Leader != "" {
 		updateSQL += ",leader = :leader"
 	}

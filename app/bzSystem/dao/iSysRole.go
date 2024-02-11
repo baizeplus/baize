@@ -1,4 +1,4 @@
-package systemDao
+package dao
 
 import (
 	"baize/app/baize"

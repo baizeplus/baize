@@ -22,30 +22,3 @@ type SysDictDataDQL struct {
 	Status    string `form:"status" db:"status"`
 	baize.BaseEntityDQL
 }
-
-func SysDictDataListToRows(dictDatas []*SysDictDataVo) (rows [][]string) {
-	rows = make([][]string, 0, len(dictDatas)+1)
-	row1 := []string{
-		"字典类型",
-		"字典标签",
-		"字典键值",
-		"状态",
-		"备注",
-	}
-	rows = append(rows, row1)
-	for _, dictData := range dictDatas {
-		row := make([]string, 4)
-		row[0] = dictData.DictType
-		row[1] = dictData.DictLabel
-		row[2] = dictData.DictValue
-		if dictData.Status == "0" {
-			row[3] = "正常"
-		} else {
-			row[3] = "停用"
-		}
-		row[4] = dictData.Remark
-		rows = append(rows, row)
-
-	}
-	return
-}

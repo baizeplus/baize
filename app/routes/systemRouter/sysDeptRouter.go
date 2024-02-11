@@ -8,7 +8,7 @@ import (
 
 func InitSysDeptRouter(router *gin.RouterGroup, deptController *controller.DeptController) {
 	systemDept := router.Group("/system/dept")
-	systemDept.GET("/list", middlewares.HasPermission("system:dept:list"), deptController.DeptList)
+	systemDept.GET("/list", middlewares.HasPermissions([]string{"system:dept:list", "system:user:list"}), deptController.DeptList)
 	systemDept.GET("/:deptId", middlewares.HasPermission("system:dept:query"), deptController.DeptGetInfo)
 	systemDept.GET("/roleDeptTreeSelect/:roleId", middlewares.HasPermission("system:dept:query"), deptController.RoleDeptTreeSelect)
 	systemDept.POST("", middlewares.HasPermission("system:dept:add"), deptController.DeptAdd)

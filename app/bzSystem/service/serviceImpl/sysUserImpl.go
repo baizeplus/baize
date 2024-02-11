@@ -1,7 +1,7 @@
 package serviceImpl
 
 import (
-	systemDao "baize/app/bzSystem/dao"
+	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
 	"baize/app/utils/bCryptPasswordEncoder"
@@ -15,11 +15,11 @@ import (
 
 type UserService struct {
 	data        *sqly.DB
-	userDao     systemDao.IUserDao
-	userPostDao systemDao.IUserPostDao
-	userRoleDao systemDao.IUserRoleDao
-	roleDao     systemDao.IRoleDao
-	postDao     systemDao.IPostDao
+	userDao     dao.IUserDao
+	userPostDao dao.IUserPostDao
+	userRoleDao dao.IUserRoleDao
+	roleDao     dao.IRoleDao
+	postDao     dao.IPostDao
 }
 
 func NewUserService(data *sqly.DB, ud *daoImpl.SysUserDao, upd *daoImpl.SysUserPostDao, urd *daoImpl.SysUserRoleDao, rd *daoImpl.SysRoleDao, pd *daoImpl.SysPostDao) *UserService {

@@ -1,7 +1,7 @@
 package serviceImpl
 
 import (
-	systemDao "baize/app/bzSystem/dao"
+	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
 	"baize/app/utils/snowflake"
@@ -12,7 +12,7 @@ import (
 
 type PostService struct {
 	data    *sqly.DB
-	postDao systemDao.IPostDao
+	postDao dao.IPostDao
 }
 
 func NewPostService(data *sqly.DB, pd *daoImpl.SysPostDao) *PostService {

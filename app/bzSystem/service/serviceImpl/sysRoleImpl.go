@@ -2,7 +2,7 @@ package serviceImpl
 
 import (
 	"baize/app/baize"
-	systemDao "baize/app/bzSystem/dao"
+	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
 	"baize/app/utils/snowflake"
@@ -14,10 +14,10 @@ import (
 
 type RoleService struct {
 	data        *sqly.DB
-	roleDao     systemDao.IRoleDao
-	roleMenuDao systemDao.IRoleMenuDao
-	roleDeptDao systemDao.IRoleDeptDao
-	userRoleDao systemDao.IUserRoleDao
+	roleDao     dao.IRoleDao
+	roleMenuDao dao.IRoleMenuDao
+	roleDeptDao dao.IRoleDeptDao
+	userRoleDao dao.IUserRoleDao
 }
 
 func NewRoleService(data *sqly.DB, rd *daoImpl.SysRoleDao, rmd *daoImpl.SysRoleMenuDao, rdd *daoImpl.SysRoleDeptDao, urd *daoImpl.SysUserRoleDao) *RoleService {

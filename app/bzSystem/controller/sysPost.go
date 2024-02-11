@@ -19,7 +19,7 @@ func NewPostController() *PostController {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysPostVo}}  "成功"
-// @Router /bzSystem/post/list  [get]
+// @Router /system/post/list  [get]
 func (pc *PostController) PostList(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//post := new(models.SysPostDQL)
@@ -45,7 +45,7 @@ func (pc *PostController) PostExport(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysPostVo}  "成功"
-// @Router /bzSystem/post/{postId}  [get]
+// @Router /system/post/{postId}  [get]
 func (pc *PostController) PostGetInfo(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//postId := bzc.ParamInt64("postId")
@@ -64,7 +64,7 @@ func (pc *PostController) PostGetInfo(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/post  [post]
+// @Router /system/post  [post]
 func (pc *PostController) PostAdd(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//sysPost := new(models.SysPostAdd)
@@ -85,7 +85,7 @@ func (pc *PostController) PostAdd(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/post  [put]
+// @Router /system/post  [put]
 func (pc *PostController) PostEdit(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//post := new(models.SysPostEdit)
@@ -107,7 +107,7 @@ func (pc *PostController) PostEdit(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /bzSystem/post [delete]
+// @Router /system/post [delete]
 func (pc *PostController) PostRemove(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//pc.ps.DeletePostByIds(bzc.ParamInt64Array("postIds"))

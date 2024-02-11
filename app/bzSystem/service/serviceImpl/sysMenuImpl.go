@@ -15,9 +15,9 @@ import (
 
 type MenuService struct {
 	data        *sqly.DB
-	menuDao     systemDao.IMenuDao
-	roleMenuDao systemDao.IRoleMenuDao
-	roleDao     systemDao.IRoleDao
+	menuDao     dao.IMenuDao
+	roleMenuDao dao.IRoleMenuDao
+	roleDao     dao.IRoleDao
 }
 
 func NewMenuService(data *sqly.DB, md *daoImpl.SysMenuDao, rmd *daoImpl.SysRoleMenuDao, rd *daoImpl.SysRoleDao) *MenuService {
