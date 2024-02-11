@@ -40,7 +40,10 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	sysRoleDeptDao := daoImpl.NewSysRoleDeptDao()
 	roleService := serviceImpl.NewRoleService(db, sysRoleDao, sysRoleMenuDao, sysRoleDeptDao, sysUserRoleDao)
 	userController := controller.NewUserController(userService, postService, roleService)
-	engine := routes.NewGinEngine(loginController, userController)
+	sysDeptDao := daoImpl.NewSysDeptDao()
+	deptService := serviceImpl.NewDeptService(db, sysDeptDao, sysRoleDao)
+	deptController := controller.NewDeptController(deptService)
+	engine := routes.NewGinEngine(loginController, userController, deptController)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -25,6 +25,7 @@ type IUserService interface {
 	UpdateUserProfile(c *gin.Context, sysUser *models.SysUserDML)
 	MatchesPassword(c *gin.Context, rawPassword string, userId int64) bool
 	InsertUserAuth(c *gin.Context, userId int64, roleIds []int64)
+	GetUserAuthRole(c *gin.Context, userId int64) *models.UserAndRoles
 	SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *models.UserAndAccredit)
 	SelectAccredit(c *gin.Context) (sysUser *models.Accredit)
 	//ImportTemplate() (data []byte)

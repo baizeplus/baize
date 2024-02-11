@@ -286,3 +286,14 @@ func (userService *UserService) InsertUserAuth(c *gin.Context, userId int64, rol
 		userService.userRoleDao.BatchUserRole(c, userService.data, list)
 	}
 }
+func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *models.UserAndRoles {
+	uar := new(models.UserAndRoles)
+	uar.User = userService.userDao.SelectUserById(c, userService.data, userId)
+	uar.Roles = userService.roleDao.SelectRoleAll(c, userService.data)
+	rIds := userService.roleDao.SelectRoleListByUserId(c, userService.data, userId)
+	uar.RoleIds = make([]string, 0, len(rIds))
+	for _, id := range rIds {
+		uar.RoleIds = append(uar.RoleIds, strconv.FormatInt(id, 10))
+	}
+	return uar
+}

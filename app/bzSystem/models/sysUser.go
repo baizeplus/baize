@@ -47,7 +47,6 @@ type SysUserVo struct {
 	Avatar      string `json:"avatar" db:"avatar"`
 	RoleId      int64  `json:"roleId" db:"role_id"`
 	Remark      string `json:"remark" db:"remark"`
-	Roles       []*SysRole
 	baize.BaseEntity
 }
 
@@ -102,4 +101,9 @@ type UserAndAccredit struct {
 	RoleIds []string     `json:"roleIds"` //选择的角色Id
 	Posts   []*SysPostVo `json:"posts"`   //岗位
 	PostIds []string     `json:"postIds"` //选择的岗位Id
+}
+type UserAndRoles struct {
+	User    *SysUserVo   `json:"user"`    //user
+	Roles   []*SysRoleVo `json:"roles"`   //角色
+	RoleIds []string     `json:"roleIds"` //选择的角色Id
 }

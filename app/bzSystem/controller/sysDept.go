@@ -1,14 +1,19 @@
 package controller
 
 import (
+	"baize/app/bzSystem/models"
+	"baize/app/bzSystem/service"
+	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
 type DeptController struct {
+	ds service.IDeptService
 }
 
-func NewDeptController() *DeptController {
-	return &DeptController{}
+func NewDeptController(ds *serviceImpl.DeptService) *DeptController {
+	return &DeptController{ds: ds}
 }
 
 // DeptList 查询部门列表查询
@@ -21,11 +26,10 @@ func NewDeptController() *DeptController {
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDeptVo}}  "成功"
 // @Router /bzSystem/dept  [get]
 func (dc *DeptController) DeptList(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dept := new(models.SysDeptDQL)
-	//_ = c.ShouldBind(dept)
-	//dept.SetDataScope(bzc.GetUser(), "d", "")
-	//bzc.SuccessData(dc.ds.SelectDeptList(dept))
+	dept := new(models.SysDeptDQL)
+	_ = c.ShouldBind(dept)
+	dept.DataScope = baizeContext.GetDataScope(c, "d")
+	baizeContext.SuccessData(c, dc.ds.SelectDeptList(c, dept))
 
 }
 

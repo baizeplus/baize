@@ -165,31 +165,14 @@ func (uc *UserController) UserGetInfo(c *gin.Context) {
 // @Param id path string true "userId"
 // @Security BearerAuth
 // @Produce application/json
-// // @Success 200 {object}  response.ResponseData{data=models.Auth}  "成功"
+// // @Success 200 {object}  response.ResponseData{data=models.UserAndRoles}  "成功"
 // @Router /system/user/authRole/{userId}  [get]
 func (uc *UserController) UserAuthRole(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//userId := bzc.ParamInt64("userId")
-	//if userId == 0 {
-	//	bzc.ParameterError()
-	//}
-	//ar := new(models.Auth)
-	//ar.User = uc.us.SelectUserById(userId)
-	//role := new(models.SysRoleDQL)
-	//user := bzc.GetUser()
-	//role.SetDataScope(user, "d", "")
-	//roles := uc.rs.SelectRoleAll(role)
-	//if !utils.IsAdmin(user.UserId) {
-	//	for i, role := range roles {
-	//		if role.RoleId == 1 {
-	//			roles = append(roles[:i], roles[i+1:]...)
-	//			break
-	//		}
-	//	}
-	//}
-	//ar.Roles = roles
-	//ar.RoleIds = gconv.Strings(uc.rs.SelectRoleListByUserId(userId))
-	//bzc.SuccessData(ar)
+	userId := baizeContext.ParamInt64(c, "userId")
+	if userId == 0 {
+		baizeContext.ParameterError(c)
+	}
+	baizeContext.SuccessData(c, uc.us.GetUserAuthRole(c, userId))
 }
 
 // UserGetInfoById 根据用户ID获取用户信息
@@ -274,7 +257,7 @@ func (uc *UserController) UserExport(c *gin.Context) {
 	//return
 }
 
-// ImportTemplate 获取导入末班
+// ImportTemplate 获取导入模版
 // @Summary 导出用户
 // @Description 导出用户
 // @Tags 系统用户
@@ -300,9 +283,7 @@ func (uc *UserController) ImportTemplate(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysUserVo}}  "成功"
 // @Router /system/user/authRole  [put]
 func (uc *UserController) InsertAuthRole(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//array := bzc.QueryInt64Array("roleIds")
-	//uc.us.InsertUserAuth(bzc.QueryInt64("userId"), array)
-	//bzc.Success()
-	//return
+	array := baizeContext.QueryInt64Array(c, "roleIds")
+	uc.us.InsertUserAuth(c, baizeContext.QueryInt64(c, "userId"), array)
+	baizeContext.Success(c)
 }

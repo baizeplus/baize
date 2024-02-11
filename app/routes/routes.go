@@ -24,6 +24,7 @@ var noRefresh = baize.NewSet([]string{})
 func NewGinEngine(
 	loginController *controller.LoginController,
 	userController *controller.UserController,
+	deptController *controller.DeptController,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -51,7 +52,7 @@ func NewGinEngine(
 		systemRoutes.InitGetUser(group, loginController) //获取登录信息
 		//systemRoutes.InitSysProfileRouter(group, router.Sys.Profile)            //个人信息
 		systemRoutes.InitSysUserRouter(group, userController) //用户相关
-		//systemRoutes.InitSysDeptRouter(group, router.Sys.Dept)                  //部门相关
+		systemRoutes.InitSysDeptRouter(group, deptController) //部门相关
 		//systemRoutes.InitSysDictDataRouter(group, router.Sys.DictData)          //数据字典信息
 		//systemRoutes.InitSysRoleRouter(group, router.Sys.Role)                  //角色相关
 		//systemRoutes.InitSysPermissionRouter(group, router.Sys.Permission)      //权限相关
