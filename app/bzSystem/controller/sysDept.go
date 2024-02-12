@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"baize/app/bzsystem/models"
-	"baize/app/bzsystem/service"
-	"baize/app/bzsystem/service/serviceImpl"
+	"baize/app/bzSystem/models"
+	"baize/app/bzSystem/service"
+	"baize/app/bzSystem/service/serviceImpl"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

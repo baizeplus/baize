@@ -46,7 +46,12 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-
+	list = make([]*models.SysDictDataVo, 0, 16)
+	total = new(int64)
+	err := db.NamedSelectPageContext(ctx, &list, total, sysDictDataDao.dictDataSql+whereSql, dictData, dictData.ToPage())
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 

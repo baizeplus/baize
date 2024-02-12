@@ -15,6 +15,6 @@ func InitSysDictTypeRouter(router *gin.RouterGroup, dictTypeController *controll
 	systemDictType.PUT("", middlewares.HasPermission("system:dict:edit"), dictTypeController.DictTypeEdit)
 	systemDictType.DELETE("/:dictIds", middlewares.HasPermission("system:dict:remove"), dictTypeController.DictTypeRemove)
 	systemDictType.DELETE("/clearCache", middlewares.HasPermission("system:dict:remove"), dictTypeController.DictTypeClearCache)
-	systemDictType.GET("/optionselect", dictTypeController.DictTypeOptionselect)
+	systemDictType.GET("/optionSelect", dictTypeController.DictTypeOptionSelect)
 
 }

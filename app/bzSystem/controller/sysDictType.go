@@ -6,15 +6,18 @@ import (
 	"baize/app/bzSystem/service/serviceImpl"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type DictTypeController struct {
 	dts service.IDictTypeService
+	dds service.IDictDataService
 }
 
-func NewDictTypeController(dts *serviceImpl.DictTypeService) *DictTypeController {
+func NewDictTypeController(dts *serviceImpl.DictTypeService, dds *serviceImpl.DictDataService) *DictTypeController {
 	return &DictTypeController{
 		dts: dts,
+		dds: dds,
 	}
 }
 
@@ -52,16 +55,14 @@ func (dtc *DictTypeController) DictTypeExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/type/{dictCode}  [get]
 func (dtc *DictTypeController) DictTypeGetInfo(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dictId := bzc.ParamInt64("dictId")
-	//if dictId == 0 {
-	//	zap.L().Error("参数错误")
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//dictData := dtc.dts.SelectDictTypeById(dictId)
-	//
-	//bzc.SuccessData(dictData)
+	dictId := baizeContext.ParamInt64(c, "dictId")
+	if dictId == 0 {
+		zap.L().Error("参数错误")
+		baizeContext.ParameterError(c)
+		return
+	}
+	dictData := dtc.dts.SelectDictTypeById(c, dictId)
+	baizeContext.SuccessData(c, dictData)
 }
 
 // DictTypeAdd 添加字典类型数据
@@ -74,19 +75,15 @@ func (dtc *DictTypeController) DictTypeGetInfo(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/type  [post]
 func (dtc *DictTypeController) DictTypeAdd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dictType := new(models.SysDictTypeAdd)
-	//if err := c.ShouldBindJSON(dictType); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if dtc.dts.CheckDictTypeUnique(dictType.DictId, dictType.DictType) {
-	//	bzc.Waring("新增字典'" + dictType.DictName + "'失败，字典类型已存在")
-	//	return
-	//}
-	//dictType.SetCreateBy(bzc.GetUserId())
-	//dtc.dts.InsertDictType(dictType)
-	//bzc.Success()
+	dictType := new(models.SysDictTypeVo)
+	_ = c.ShouldBindJSON(dictType)
+	if dtc.dts.CheckDictTypeUnique(c, dictType.DictId, dictType.DictType) {
+		baizeContext.Waring(c, "新增字典'"+dictType.DictName+"'失败，字典类型已存在")
+		return
+	}
+	dictType.SetCreateBy(baizeContext.GetUserId(c))
+	dtc.dts.InsertDictType(c, dictType)
+	baizeContext.Success(c)
 }
 
 // DictTypeEdit 修改字典类型数据
@@ -99,20 +96,16 @@ func (dtc *DictTypeController) DictTypeAdd(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/type  [put]
 func (dtc *DictTypeController) DictTypeEdit(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dictType := new(models.SysDictTypeEdit)
-	//if err := c.ShouldBindJSON(dictType); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if dtc.dts.CheckDictTypeUnique(dictType.DictId, dictType.DictType) {
-	//	bzc.Waring("修改字典'" + dictType.DictName + "'失败，字典类型已存在")
-	//	return
-	//}
-	//
-	//dictType.SetUpdateBy(bzc.GetUserId())
-	//dtc.dts.UpdateDictType(dictType)
-	//bzc.Success()
+	dictType := new(models.SysDictTypeVo)
+	_ = c.ShouldBindJSON(dictType)
+	if dtc.dts.CheckDictTypeUnique(c, dictType.DictId, dictType.DictType) {
+		baizeContext.Waring(c, "修改字典'"+dictType.DictName+"'失败，字典类型已存在")
+		return
+	}
+
+	dictType.SetUpdateBy(baizeContext.GetUserId(c))
+	dtc.dts.UpdateDictType(c, dictType)
+	baizeContext.Success(c)
 }
 
 // DictTypeRemove 删除字典类型数据
@@ -125,15 +118,14 @@ func (dtc *DictTypeController) DictTypeEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{}  "成功"
 // @Router /system/dict/type  [delete]
 func (dtc *DictTypeController) DictTypeRemove(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dictIds := bzc.ParamInt64Array("dictIds")
-	////dictTypes := dtc.dts.SelectDictTypeByIds(dictIds)
-	////if dtc.dts.CheckDictDataByTypes(dictTypes) {
-	////	bzc.Waring("有已分配的字典,不能删除")
-	////	return
-	////}
-	//dtc.dts.DeleteDictTypeByIds(dictIds)
-	//bzc.Success()
+	dictIds := baizeContext.ParamInt64Array(c, "dictIds")
+	dictTypes := dtc.dts.SelectDictTypeByIds(c, dictIds)
+	if dtc.dds.CheckDictDataByTypes(c, dictTypes) {
+		baizeContext.Waring(c, "有已分配的字典,不能删除")
+		return
+	}
+	dtc.dts.DeleteDictTypeByIds(c, dictIds)
+	baizeContext.Success(c)
 }
 
 // DictTypeClearCache 更新字典缓存
@@ -146,12 +138,10 @@ func (dtc *DictTypeController) DictTypeRemove(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/clearCache  [put]
 func (dtc *DictTypeController) DictTypeClearCache(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dtc.dts.DictTypeClearCache()
-	//bzc.Success()
+	dtc.dts.DictTypeClearCache(c)
+	baizeContext.Success(c)
 }
 
-func (dtc *DictTypeController) DictTypeOptionselect(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//bzc.SuccessData(dtc.dts.SelectDictTypeAll())
+func (dtc *DictTypeController) DictTypeOptionSelect(c *gin.Context) {
+	baizeContext.SuccessData(c, dtc.dts.SelectDictTypeAll(c))
 }

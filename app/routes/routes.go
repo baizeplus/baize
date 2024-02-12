@@ -26,7 +26,7 @@ func NewGinEngine(
 	userController *controller.UserController,
 	deptController *controller.DeptController,
 	dictTypeController *controller.DictTypeController,
-	// dictDataController *controller.DictDataController,
+	dictDataController *controller.DictDataController,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {

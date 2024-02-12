@@ -36,7 +36,7 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db
 	}
 	list = make([]*models.SysDictTypeVo, 0, 16)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, sysDictTypeDao.dictTypeSql+whereSql, dictType, dictType.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, sysDictTypeDao.dictTypeSql+whereSql, dictType, dictType.ToPage())
 	if err != nil {
 		panic(err)
 	}

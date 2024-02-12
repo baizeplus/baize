@@ -27,10 +27,10 @@ func (b *BaseEntity) SetUpdateBy(userId int64) {
 
 type BaseEntityDQL struct {
 	DataScope string `swaggerignore:"true"`
-	OrderBy   string `form:"orderBy" `          //排序字段
-	IsAsc     string `form:"isAsc" `            //排序规则  降序desc   asc升序
-	Page      int64  `form:"page" default:"1"`  //第几页
-	Size      int64  `form:"size" default:"10"` //数量
+	OrderBy   string `form:"orderBy" `              //排序字段
+	IsAsc     string `form:"isAsc" `                //排序规则  降序desc   asc升序
+	Page      int64  `form:"pageNum" default:"1"`   //第几页
+	Size      int64  `form:"pageSize" default:"10"` //数量
 }
 
 func (b *BaseEntityDQL) GetOrder() string {
