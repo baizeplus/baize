@@ -8,12 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PostController struct {
+type Post struct {
 	ps service.IPostService
 }
 
-func NewPostController(ps *serviceImpl.PostService) *PostController {
-	return &PostController{ps: ps}
+func NewPost(ps *serviceImpl.PostService) *Post {
+	return &Post{ps: ps}
 }
 
 // PostList 查询岗位列表查询
@@ -25,7 +25,7 @@ func NewPostController(ps *serviceImpl.PostService) *PostController {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysPostVo}}  "成功"
 // @Router /system/post/list  [get]
-func (pc *PostController) PostList(c *gin.Context) {
+func (pc *Post) PostList(c *gin.Context) {
 	post := new(models.SysPostDQL)
 	_ = c.ShouldBind(post)
 	list, count := pc.ps.SelectPostList(c, post)
@@ -33,7 +33,7 @@ func (pc *PostController) PostList(c *gin.Context) {
 
 }
 
-func (pc *PostController) PostExport(c *gin.Context) {
+func (pc *Post) PostExport(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//post := new(models.SysPostDQL)
 	//_ = c.ShouldBind(post)
@@ -50,7 +50,7 @@ func (pc *PostController) PostExport(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysPostVo}  "成功"
 // @Router /system/post/{postId}  [get]
-func (pc *PostController) PostGetInfo(c *gin.Context) {
+func (pc *Post) PostGetInfo(c *gin.Context) {
 	postId := baizeContext.ParamInt64(c, "postId")
 	if postId == 0 {
 		baizeContext.ParameterError(c)
@@ -68,7 +68,7 @@ func (pc *PostController) PostGetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post  [post]
-func (pc *PostController) PostAdd(c *gin.Context) {
+func (pc *Post) PostAdd(c *gin.Context) {
 	sysPost := new(models.SysPostVo)
 	if err := c.ShouldBindJSON(sysPost); err != nil {
 		baizeContext.ParameterError(c)
@@ -88,7 +88,7 @@ func (pc *PostController) PostAdd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post  [put]
-func (pc *PostController) PostEdit(c *gin.Context) {
+func (pc *Post) PostEdit(c *gin.Context) {
 	post := new(models.SysPostVo)
 	if err := c.ShouldBindJSON(post); err != nil {
 		baizeContext.ParameterError(c)
@@ -109,7 +109,7 @@ func (pc *PostController) PostEdit(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post [delete]
-func (pc *PostController) PostRemove(c *gin.Context) {
+func (pc *Post) PostRemove(c *gin.Context) {
 	pc.ps.DeletePostByIds(c, baizeContext.ParamInt64Array(c, "postIds"))
 	baizeContext.Success(c)
 }

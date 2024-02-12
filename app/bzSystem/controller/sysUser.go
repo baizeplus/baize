@@ -8,18 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct {
+type User struct {
 	us service.IUserService
 	ps service.IPostService
 	rs service.IRoleService
 }
 
-func NewUserController(
+func NewUser(
 	us *serviceImpl.UserService,
 	ps *serviceImpl.PostService,
 	rs *serviceImpl.RoleService,
-) *UserController {
-	return &UserController{
+) *User {
+	return &User{
 		us: us,
 		ps: ps,
 		rs: rs,
@@ -35,7 +35,7 @@ func NewUserController(
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/changeStatus [put]
-func (uc *UserController) ChangeStatus(c *gin.Context) {
+func (uc *User) ChangeStatus(c *gin.Context) {
 
 	sysUser := new(models.EditUserStatus)
 	if err := c.ShouldBindJSON(sysUser); err != nil {
@@ -56,7 +56,7 @@ func (uc *UserController) ChangeStatus(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/resetPwd [put]
-func (uc *UserController) ResetPwd(c *gin.Context) {
+func (uc *User) ResetPwd(c *gin.Context) {
 	resetPwd := new(models.ResetPwd)
 	if err := c.ShouldBindJSON(resetPwd); err != nil {
 		baizeContext.ParameterError(c)
@@ -75,7 +75,7 @@ func (uc *UserController) ResetPwd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user  [put]
-func (uc *UserController) UserEdit(c *gin.Context) {
+func (uc *User) UserEdit(c *gin.Context) {
 
 	sysUser := new(models.SysUserDML)
 	_ = c.ShouldBindJSON(sysUser)
@@ -102,7 +102,7 @@ func (uc *UserController) UserEdit(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user  [post]
-func (uc *UserController) UserAdd(c *gin.Context) {
+func (uc *User) UserAdd(c *gin.Context) {
 
 	sysUser := new(models.SysUserDML)
 	_ = c.ShouldBindJSON(sysUser)
@@ -136,7 +136,7 @@ func (uc *UserController) UserAdd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysUserVo}}  "成功"
 // @Router /system/user  [get]
-func (uc *UserController) UserList(c *gin.Context) {
+func (uc *User) UserList(c *gin.Context) {
 
 	user := new(models.SysUserDQL)
 	_ = c.ShouldBind(user)
@@ -154,7 +154,7 @@ func (uc *UserController) UserList(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.Accredit}  "成功"
 // @Router /system/user/  [get]
-func (uc *UserController) UserGetInfo(c *gin.Context) {
+func (uc *User) UserGetInfo(c *gin.Context) {
 	baizeContext.SuccessData(c, uc.us.SelectAccredit(c))
 }
 
@@ -167,7 +167,7 @@ func (uc *UserController) UserGetInfo(c *gin.Context) {
 // @Produce application/json
 // // @Success 200 {object}  response.ResponseData{data=models.UserAndRoles}  "成功"
 // @Router /system/user/authRole/{userId}  [get]
-func (uc *UserController) UserAuthRole(c *gin.Context) {
+func (uc *User) UserAuthRole(c *gin.Context) {
 	userId := baizeContext.ParamInt64(c, "userId")
 	if userId == 0 {
 		baizeContext.ParameterError(c)
@@ -184,7 +184,7 @@ func (uc *UserController) UserAuthRole(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.UserAndAccredit}  "成功"
 // @Router /system/user/{userId}  [get]
-func (uc *UserController) UserGetInfoById(c *gin.Context) {
+func (uc *User) UserGetInfoById(c *gin.Context) {
 	userId := baizeContext.ParamInt64(c, "userId")
 	if userId == 0 {
 		baizeContext.ParameterError(c)
@@ -204,7 +204,7 @@ func (uc *UserController) UserGetInfoById(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/:userIds [delete]
-func (uc *UserController) UserRemove(c *gin.Context) {
+func (uc *User) UserRemove(c *gin.Context) {
 	uc.us.DeleteUserByIds(c, baizeContext.ParamInt64Array(c, "userIds"))
 	baizeContext.Success(c)
 }
@@ -219,7 +219,7 @@ func (uc *UserController) UserRemove(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/importData [post]
-func (uc *UserController) UserImportData(c *gin.Context) {
+func (uc *User) UserImportData(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//
 	//fileHeader, err := c.FormFile("file")
@@ -248,7 +248,7 @@ func (uc *UserController) UserImportData(c *gin.Context) {
 // @Produce application/octet-stream
 // @Success 200 {object} []byte
 // @Router /system/user/export [post]
-func (uc *UserController) UserExport(c *gin.Context) {
+func (uc *User) UserExport(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//user := new(models.SysUserDQL)
 	//_ = c.ShouldBind(user)
@@ -265,7 +265,7 @@ func (uc *UserController) UserExport(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} []byte
 // @Router /system/user/input [post]
-func (uc *UserController) ImportTemplate(c *gin.Context) {
+func (uc *User) ImportTemplate(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//data := uc.us.ImportTemplate()
 	//bzc.DataPackageExcel(data)
@@ -282,7 +282,7 @@ func (uc *UserController) ImportTemplate(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysUserVo}}  "成功"
 // @Router /system/user/authRole  [put]
-func (uc *UserController) InsertAuthRole(c *gin.Context) {
+func (uc *User) InsertAuthRole(c *gin.Context) {
 	array := baizeContext.QueryInt64Array(c, "roleIds")
 	uc.us.InsertUserAuth(c, baizeContext.QueryInt64(c, "userId"), array)
 	baizeContext.Success(c)

@@ -9,13 +9,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type DictTypeController struct {
+type DictType struct {
 	dts service.IDictTypeService
 	dds service.IDictDataService
 }
 
-func NewDictTypeController(dts *serviceImpl.DictTypeService, dds *serviceImpl.DictDataService) *DictTypeController {
-	return &DictTypeController{
+func NewDictType(dts *serviceImpl.DictTypeService, dds *serviceImpl.DictDataService) *DictType {
+	return &DictType{
 		dts: dts,
 		dds: dds,
 	}
@@ -30,7 +30,7 @@ func NewDictTypeController(dts *serviceImpl.DictTypeService, dds *serviceImpl.Di
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDictDataVo}}  "成功"
 // @Router /system/dict/type/list  [get]
-func (dtc *DictTypeController) DictTypeList(c *gin.Context) {
+func (dtc *DictType) DictTypeList(c *gin.Context) {
 	dictType := new(models.SysDictTypeDQL)
 	_ = c.ShouldBind(dictType)
 	list, count := dtc.dts.SelectDictTypeList(c, dictType)
@@ -38,7 +38,7 @@ func (dtc *DictTypeController) DictTypeList(c *gin.Context) {
 
 }
 
-func (dtc *DictTypeController) DictTypeExport(c *gin.Context) {
+func (dtc *DictType) DictTypeExport(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictType := new(models.SysDictTypeDQL)
 	//c.ShouldBind(dictType)
@@ -54,7 +54,7 @@ func (dtc *DictTypeController) DictTypeExport(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/type/{dictCode}  [get]
-func (dtc *DictTypeController) DictTypeGetInfo(c *gin.Context) {
+func (dtc *DictType) DictTypeGetInfo(c *gin.Context) {
 	dictId := baizeContext.ParamInt64(c, "dictId")
 	if dictId == 0 {
 		zap.L().Error("参数错误")
@@ -74,7 +74,7 @@ func (dtc *DictTypeController) DictTypeGetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/type  [post]
-func (dtc *DictTypeController) DictTypeAdd(c *gin.Context) {
+func (dtc *DictType) DictTypeAdd(c *gin.Context) {
 	dictType := new(models.SysDictTypeVo)
 	_ = c.ShouldBindJSON(dictType)
 	if dtc.dts.CheckDictTypeUnique(c, dictType.DictId, dictType.DictType) {
@@ -95,7 +95,7 @@ func (dtc *DictTypeController) DictTypeAdd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/type  [put]
-func (dtc *DictTypeController) DictTypeEdit(c *gin.Context) {
+func (dtc *DictType) DictTypeEdit(c *gin.Context) {
 	dictType := new(models.SysDictTypeVo)
 	_ = c.ShouldBindJSON(dictType)
 	if dtc.dts.CheckDictTypeUnique(c, dictType.DictId, dictType.DictType) {
@@ -117,7 +117,7 @@ func (dtc *DictTypeController) DictTypeEdit(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{}  "成功"
 // @Router /system/dict/type  [delete]
-func (dtc *DictTypeController) DictTypeRemove(c *gin.Context) {
+func (dtc *DictType) DictTypeRemove(c *gin.Context) {
 	dictIds := baizeContext.ParamInt64Array(c, "dictIds")
 	dictTypes := dtc.dts.SelectDictTypeByIds(c, dictIds)
 	if dtc.dds.CheckDictDataByTypes(c, dictTypes) {
@@ -137,11 +137,11 @@ func (dtc *DictTypeController) DictTypeRemove(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/clearCache  [put]
-func (dtc *DictTypeController) DictTypeClearCache(c *gin.Context) {
+func (dtc *DictType) DictTypeClearCache(c *gin.Context) {
 	dtc.dts.DictTypeClearCache(c)
 	baizeContext.Success(c)
 }
 
-func (dtc *DictTypeController) DictTypeOptionSelect(c *gin.Context) {
+func (dtc *DictType) DictTypeOptionSelect(c *gin.Context) {
 	baizeContext.SuccessData(c, dtc.dts.SelectDictTypeAll(c))
 }

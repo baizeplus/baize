@@ -5,13 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitLoginRouter(router *gin.RouterGroup, loginController *controller.LoginController) {
-	router.GET("/captchaImage", loginController.GetCode) //获取验证码
-	router.POST("/login", loginController.Login)         //登录
-	router.POST("/logout", loginController.Logout)
+func InitLoginRouter(router *gin.RouterGroup, login *controller.Login) {
+	router.GET("/captchaImage", login.GetCode) //获取验证码
+	router.POST("/login", login.Login)         //登录
+	router.POST("/logout", login.Logout)
 }
-func InitGetUser(router *gin.RouterGroup, loginController *controller.LoginController) {
-	router.GET("/getInfo", loginController.GetInfo)
-	router.GET("/getRouters", loginController.GetRouters)
+func InitGetUser(router *gin.RouterGroup, login *controller.Login) {
+	router.GET("/getInfo", login.GetInfo)
+	router.GET("/getRouters", login.GetRouters)
 
 }

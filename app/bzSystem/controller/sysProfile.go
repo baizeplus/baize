@@ -4,14 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProfileController struct {
+type Profile struct {
 }
 
-func NewProfileController() *ProfileController {
-	return &ProfileController{}
+func NewProfile() *Profile {
+	return &Profile{}
 }
 
-func (pc *ProfileController) Profile(c *gin.Context) {
+func (pc *Profile) Profile(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//User := bzc.GetUser()
 	//m := make(map[string]interface{})
@@ -21,7 +21,7 @@ func (pc *ProfileController) Profile(c *gin.Context) {
 	//bzc.SuccessData(m)
 }
 
-func (pc *ProfileController) ProfileUpdateProfile(c *gin.Context) {
+func (pc *Profile) ProfileUpdateProfile(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//sysUser := new(models.SysUserEdit)
 	//if err := c.ShouldBindJSON(sysUser); err != nil {
@@ -50,7 +50,7 @@ func (pc *ProfileController) ProfileUpdateProfile(c *gin.Context) {
 	//bzc.Success()
 }
 
-func (pc *ProfileController) ProfileUpdatePwd(c *gin.Context) {
+func (pc *Profile) ProfileUpdatePwd(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//oldPassword := c.Query("oldPassword")
 	//password := c.Query("newPassword")
@@ -68,7 +68,7 @@ func (pc *ProfileController) ProfileUpdatePwd(c *gin.Context) {
 
 }
 
-func (pc *ProfileController) ProfileAvatar(c *gin.Context) {
+func (pc *Profile) ProfileAvatar(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//file, err := c.FormFile("avatarfile")
 	//if err != nil {

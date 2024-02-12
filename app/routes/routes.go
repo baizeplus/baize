@@ -6,7 +6,6 @@ import (
 	"baize/app/middlewares"
 	systemRoutes "baize/app/routes/systemRouter"
 	"baize/app/setting"
-	"fmt"
 	"github.com/google/wire"
 	swaggerFiles "github.com/swaggo/files"
 	"net/http"
@@ -22,12 +21,14 @@ var ProviderSet = wire.NewSet(NewGinEngine)
 var noRefresh = baize.NewSet([]string{})
 
 func NewGinEngine(
-	loginController *controller.LoginController,
-	userController *controller.UserController,
-	deptController *controller.DeptController,
-	dictTypeController *controller.DictTypeController,
-	dictDataController *controller.DictDataController,
-	menuController *controller.MenuController,
+	login *controller.Login,
+	user *controller.User,
+	dept *controller.Dept,
+	dictType *controller.DictType,
+	dictData *controller.DictData,
+	menu *controller.Menu,
+	role *controller.Role,
+	post *controller.Post,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -45,29 +46,21 @@ func NewGinEngine(
 
 	//不做鉴权的
 	{
-		systemRoutes.InitLoginRouter(group, loginController) //获取登录信息
+		systemRoutes.InitLoginRouter(group, login) //获取登录信息
 
 	}
 	//做鉴权的
 	group.Use(middlewares.SessionAuthMiddleware(noRefresh))
 	{
 		//systemRoutes.InitSysProfileRouter(group, router.Sys.Profile)            //个人信息
-		systemRoutes.InitGetUser(group, loginController)              //获取登录信息
-		systemRoutes.InitSysUserRouter(group, userController)         //用户相关
-		systemRoutes.InitSysDeptRouter(group, deptController)         //部门相关
-		systemRoutes.InitSysDictTypeRouter(group, dictTypeController) //数据字典属性
-		systemRoutes.InitSysDictDataRouter(group, dictDataController) //数据字典信息
-		systemRoutes.InitSysMenuRouter(group, menuController)         //菜单相关
-		//systemRoutes.InitSysRoleRouter(group, router.Sys.Role)                  //角色相关
-		//systemRoutes.InitSysPermissionRouter(group, router.Sys.Permission)      //权限相关
-
-		//systemRoutes.InitSysPostRouter(group, router.Sys.Post)                  //岗位属性
-		//monitorRoutes.InitSysUserOnlineRouter(group, router.Monitor.UserOnline) //在线用户监控
-		//monitorRoutes.InitSysLogininforRouter(group, router.Monitor.Logininfor) //登录用户日志
-		//monitorRoutes.InitServerRouter(group, router.Monitor.Info)              //服务监控
-		////systemRoutes.InitSysConfigRouter(group)      //参数配置
-		//genTableRoutes.InitGenTableRouter(group, router.GenTable) //代码生成
-		////quartzRoutes.InitJobRouter(group)            //定时任务
+		systemRoutes.InitGetUser(group, login)              //获取登录信息
+		systemRoutes.InitSysUserRouter(group, user)         //用户相关
+		systemRoutes.InitSysDeptRouter(group, dept)         //部门相关
+		systemRoutes.InitSysDictTypeRouter(group, dictType) //数据字典属性
+		systemRoutes.InitSysDictDataRouter(group, dictData) //数据字典信息
+		systemRoutes.InitSysMenuRouter(group, menu)         //菜单相关
+		systemRoutes.InitSysRoleRouter(group, role)         //角色相关
+		systemRoutes.InitSysPostRouter(group, post)         //岗位属性
 	}
 
 	r.NoRoute(func(c *gin.Context) {
@@ -86,16 +79,16 @@ func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method               //请求方法
 		origin := c.Request.Header.Get("Origin") //请求头部
-		var headerKeys []string                  // 声明请求头keys
-		for k, _ := range c.Request.Header {
-			headerKeys = append(headerKeys, k)
-		}
-		headerStr := strings.Join(headerKeys, ", ")
-		if headerStr != "" {
-			headerStr = fmt.Sprintf("access-control-allow-origin, access-control-allow-headers, %s", headerStr)
-		} else {
-			headerStr = "access-control-allow-origin, access-control-allow-headers"
-		}
+		//var headerKeys []string                  // 声明请求头keys
+		//for k, _ := range c.Request.Header {
+		//	headerKeys = append(headerKeys, k)
+		//}
+		//headerStr := strings.Join(headerKeys, ", ")
+		//if headerStr != "" {
+		//	headerStr = fmt.Sprintf("access-control-allow-origin, access-control-allow-headers, %s", headerStr)
+		//} else {
+		//	headerStr = "access-control-allow-origin, access-control-allow-headers"
+		//}
 		if origin != "" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Origin", "*")                                       // 这是允许访问所有域

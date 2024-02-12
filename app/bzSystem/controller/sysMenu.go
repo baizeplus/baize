@@ -9,21 +9,21 @@ import (
 	"go.uber.org/zap"
 )
 
-type MenuController struct {
+type Menu struct {
 	ms service.IMenuService
 }
 
-func NewMenuController(ms *serviceImpl.MenuService) *MenuController {
-	return &MenuController{ms: ms}
+func NewMenu(ms *serviceImpl.MenuService) *Menu {
+	return &Menu{ms: ms}
 }
 
-func (mc *MenuController) MenuList(c *gin.Context) {
+func (mc *Menu) MenuList(c *gin.Context) {
 	menu := new(models.SysMenuDQL)
 	_ = c.ShouldBind(menu)
 	list := mc.ms.SelectMenuList(c, menu, baizeContext.GetUserId(c))
 	baizeContext.SuccessData(c, list)
 }
-func (mc *MenuController) MenuGetInfo(c *gin.Context) {
+func (mc *Menu) MenuGetInfo(c *gin.Context) {
 	menuId := baizeContext.ParamInt64(c, "menuId")
 	if menuId == 0 {
 		zap.L().Debug("参数错误")
@@ -33,11 +33,11 @@ func (mc *MenuController) MenuGetInfo(c *gin.Context) {
 	menu := mc.ms.SelectMenuById(c, menuId)
 	baizeContext.SuccessData(c, menu)
 }
-func (mc *MenuController) MenuTreeSelect(c *gin.Context) {
+func (mc *Menu) MenuTreeSelect(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)
 	baizeContext.SuccessData(c, mc.ms.SelectMenuList(c, new(models.SysMenuDQL), userId))
 }
-func (mc *MenuController) MenuAdd(c *gin.Context) {
+func (mc *Menu) MenuAdd(c *gin.Context) {
 	sysMenu := new(models.SysMenuVo)
 	_ = c.ShouldBind(sysMenu)
 	if mc.ms.CheckMenuNameUnique(c, sysMenu) {
@@ -48,7 +48,7 @@ func (mc *MenuController) MenuAdd(c *gin.Context) {
 	mc.ms.InsertMenu(c, sysMenu)
 	baizeContext.Success(c)
 }
-func (mc *MenuController) MenuEdit(c *gin.Context) {
+func (mc *Menu) MenuEdit(c *gin.Context) {
 	sysMenu := new(models.SysMenuVo)
 	_ = c.ShouldBind(sysMenu)
 	if mc.ms.CheckMenuNameUnique(c, sysMenu) {
@@ -60,7 +60,7 @@ func (mc *MenuController) MenuEdit(c *gin.Context) {
 	mc.ms.UpdateMenu(c, sysMenu)
 	baizeContext.Success(c)
 }
-func (mc *MenuController) MenuRemove(c *gin.Context) {
+func (mc *Menu) MenuRemove(c *gin.Context) {
 	menuId := baizeContext.ParamInt64(c, "menuId")
 	if menuId == 0 {
 		zap.L().Debug("参数错误")
@@ -78,7 +78,7 @@ func (mc *MenuController) MenuRemove(c *gin.Context) {
 	mc.ms.DeleteMenuById(c, menuId)
 	baizeContext.Success(c)
 }
-func (mc *MenuController) RoleMenuTreeSelect(c *gin.Context) {
+func (mc *Menu) RoleMenuTreeSelect(c *gin.Context) {
 	roleId := baizeContext.ParamInt64(c, "roleId")
 	if roleId == 0 {
 		zap.L().Debug("参数错误")

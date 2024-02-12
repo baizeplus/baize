@@ -8,12 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type DictDataController struct {
+type DictData struct {
 	dds service.IDictDataService
 }
 
-func NewDictDataController(dds *serviceImpl.DictDataService) *DictDataController {
-	return &DictDataController{
+func NewDictData(dds *serviceImpl.DictDataService) *DictData {
+	return &DictData{
 		dds: dds,
 	}
 }
@@ -27,14 +27,14 @@ func NewDictDataController(dds *serviceImpl.DictDataService) *DictDataController
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDictDataVo}}  "成功"
 // @Router /system/dict/data/list  [get]
-func (ddc *DictDataController) DictDataList(c *gin.Context) {
+func (ddc *DictData) DictDataList(c *gin.Context) {
 	dictData := new(models.SysDictDataDQL)
 	_ = c.ShouldBind(dictData)
 	list, count := ddc.dds.SelectDictDataList(c, dictData)
 	baizeContext.SuccessListData(c, list, count)
 }
 
-func (ddc *DictDataController) DictDataExport(c *gin.Context) {
+func (ddc *DictData) DictDataExport(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictData := new(models.SysDictDataDQL)
 	//_ = c.ShouldBind(dictData)
@@ -50,7 +50,7 @@ func (ddc *DictDataController) DictDataExport(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/data/{dictCode}  [get]
-func (ddc *DictDataController) DictDataGetInfo(c *gin.Context) {
+func (ddc *DictData) DictDataGetInfo(c *gin.Context) {
 	dictCode := baizeContext.ParamInt64(c, "dictCode")
 	if dictCode == 0 {
 		baizeContext.ParameterError(c)
@@ -69,7 +69,7 @@ func (ddc *DictDataController) DictDataGetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDictDataVo}}  "成功"
 // @Router /system/dict/data/type/{dictType}  [get]
-func (ddc *DictDataController) DictDataType(c *gin.Context) {
+func (ddc *DictData) DictDataType(c *gin.Context) {
 	sysDictDataList := ddc.dds.SelectDictDataByType(c, c.Param("dictType"))
 	baizeContext.SuccessData(c, sysDictDataList)
 }
@@ -83,7 +83,7 @@ func (ddc *DictDataController) DictDataType(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/data  [post]
-func (ddc *DictDataController) DictDataAdd(c *gin.Context) {
+func (ddc *DictData) DictDataAdd(c *gin.Context) {
 	dictData := new(models.SysDictDataVo)
 	_ = c.ShouldBindJSON(dictData)
 	dictData.SetCreateBy(baizeContext.GetUserId(c))
@@ -100,7 +100,7 @@ func (ddc *DictDataController) DictDataAdd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dict/data  [put]
-func (ddc *DictDataController) DictDataEdit(c *gin.Context) {
+func (ddc *DictData) DictDataEdit(c *gin.Context) {
 	dictData := new(models.SysDictDataVo)
 	_ = c.ShouldBindJSON(dictData)
 	dictData.SetUpdateBy(baizeContext.GetUserId(c))
@@ -117,7 +117,7 @@ func (ddc *DictDataController) DictDataEdit(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDictDataVo}  "成功"
 // @Router /system/dict/data/{dictCodes}  [delete]
-func (ddc *DictDataController) DictDataRemove(c *gin.Context) {
+func (ddc *DictData) DictDataRemove(c *gin.Context) {
 	ddc.dds.DeleteDictDataByIds(c, baizeContext.ParamInt64Array(c, "dictCodes"))
 	baizeContext.Success(c)
 }

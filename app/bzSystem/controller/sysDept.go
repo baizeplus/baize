@@ -9,12 +9,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type DeptController struct {
+type Dept struct {
 	ds service.IDeptService
 }
 
-func NewDeptController(ds *serviceImpl.DeptService) *DeptController {
-	return &DeptController{ds: ds}
+func NewDept(ds *serviceImpl.DeptService) *Dept {
+	return &Dept{ds: ds}
 }
 
 // DeptList 查询部门列表查询
@@ -26,7 +26,7 @@ func NewDeptController(ds *serviceImpl.DeptService) *DeptController {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysDeptVo}}  "成功"
 // @Router /system/dept  [get]
-func (dc *DeptController) DeptList(c *gin.Context) {
+func (dc *Dept) DeptList(c *gin.Context) {
 	dept := new(models.SysDeptDQL)
 	_ = c.ShouldBind(dept)
 	dept.DataScope = baizeContext.GetDataScope(c, "d")
@@ -43,7 +43,7 @@ func (dc *DeptController) DeptList(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.SysDeptVo}  "成功"
 // @Router /system/dept/{deptId}  [get]
-func (dc *DeptController) DeptGetInfo(c *gin.Context) {
+func (dc *Dept) DeptGetInfo(c *gin.Context) {
 	deptId := baizeContext.ParamInt64(c, "deptId")
 	if deptId == 0 {
 		zap.L().Debug("参数错误")
@@ -62,7 +62,7 @@ func (dc *DeptController) DeptGetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.RoleDeptTree}  "成功"
 // @Router /system/dept/roleDeptTreeSelect/{roleId}  [get]
-func (dc *DeptController) RoleDeptTreeSelect(c *gin.Context) {
+func (dc *Dept) RoleDeptTreeSelect(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//roleId := bzc.ParamInt64("roleId")
 	//if roleId == 0 {
@@ -84,7 +84,7 @@ func (dc *DeptController) RoleDeptTreeSelect(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dept  [post]
-func (dc *DeptController) DeptAdd(c *gin.Context) {
+func (dc *Dept) DeptAdd(c *gin.Context) {
 	sysDept := new(models.SysDeptVo)
 	_ = c.ShouldBindJSON(sysDept)
 	if dc.ds.CheckDeptNameUnique(c, 0, sysDept.ParentId, sysDept.DeptName) {
@@ -105,7 +105,7 @@ func (dc *DeptController) DeptAdd(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dept  [put]
-func (dc *DeptController) DeptEdit(c *gin.Context) {
+func (dc *Dept) DeptEdit(c *gin.Context) {
 	sysDept := new(models.SysDeptVo)
 	_ = c.ShouldBindJSON(sysDept)
 	if dc.ds.CheckDeptNameUnique(c, sysDept.DeptId, sysDept.ParentId, sysDept.DeptName) {
@@ -126,7 +126,7 @@ func (dc *DeptController) DeptEdit(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dept/{deptId}  [delete]
-func (dc *DeptController) DeptRemove(c *gin.Context) {
+func (dc *Dept) DeptRemove(c *gin.Context) {
 	deptId := baizeContext.ParamInt64(c, "deptId")
 	if deptId == 0 {
 		zap.L().Debug("参数错误")

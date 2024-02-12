@@ -12,14 +12,14 @@ import (
 	"go.uber.org/zap"
 )
 
-type LoginController struct {
+type Login struct {
 	ls service.ILoginService
 	us service.IUserService
 	ms service.IMenuService
 }
 
-func NewLoginController(ls *serviceImpl.LoginService, us *serviceImpl.UserService, ms *serviceImpl.MenuService) *LoginController {
-	return &LoginController{ls: ls, us: us, ms: ms}
+func NewLogin(ls *serviceImpl.LoginService, us *serviceImpl.UserService, ms *serviceImpl.MenuService) *Login {
+	return &Login{ls: ls, us: us, ms: ms}
 }
 
 // Login 用户登录
@@ -33,7 +33,7 @@ func NewLoginController(ls *serviceImpl.LoginService, us *serviceImpl.UserServic
 // @Failure 500 {object}  response.ResponseData "服务器错误"
 // @Failure 600 {object}  response.ResponseData "用户名密码错误"
 // @Router /login [post]
-func (lc *LoginController) Login(c *gin.Context) {
+func (lc *Login) Login(c *gin.Context) {
 	var login models.LoginBody
 	if err := c.ShouldBindJSON(&login); err != nil {
 		zap.L().Debug("参数错误", zap.Error(err))
@@ -85,7 +85,7 @@ func (lc *LoginController) Login(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=models.GetInfo}  "获取成功"
 // @Router /getInfo [get]
-func (lc *LoginController) GetInfo(c *gin.Context) {
+func (lc *Login) GetInfo(c *gin.Context) {
 
 	baizeContext.SuccessData(c, lc.ls.GetInfo(c))
 
@@ -99,7 +99,7 @@ func (lc *LoginController) GetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "退出成功"
 // @Router /logout [post]
-func (lc *LoginController) Logout(c *gin.Context) {
+func (lc *Login) Logout(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//loginUser := bzc.GetCurrentUser()
 	//if loginUser != nil {
@@ -116,10 +116,10 @@ func (lc *LoginController) Logout(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "获取成功"
 // @Router /captchaImage [get]
-func (lc *LoginController) GetCode(c *gin.Context) {
+func (lc *Login) GetCode(c *gin.Context) {
 	baizeContext.SuccessData(c, lc.ls.GenerateCode(c))
 }
-func (lc *LoginController) GetRouters(c *gin.Context) {
+func (lc *Login) GetRouters(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)
 	menus := lc.ms.SelectMenuTreeByUserId(c, userId)
 	buildMenus := lc.ms.BuildMenus(c, menus)

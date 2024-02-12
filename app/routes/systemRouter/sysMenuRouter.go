@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitSysMenuRouter(router *gin.RouterGroup, menuController *controller.MenuController) {
-	menu := router.Group("/system/menu")
-	menu.GET("/list", middlewares.HasPermission("system:menu:list"), menuController.MenuList)
-	menu.GET("/:menuId", middlewares.HasPermission("system:menu:query"), menuController.MenuGetInfo)
-	menu.GET("/treeSelect", menuController.MenuTreeSelect)
-	menu.POST("", middlewares.HasPermission("system:menu:add"), menuController.MenuAdd)
-	menu.PUT("", middlewares.HasPermission("system:menu:edit"), menuController.MenuEdit)
-	menu.DELETE("/:menuId", middlewares.HasPermission("system:menu:remove"), menuController.MenuRemove)
-	menu.GET("/roleMenuTreeSelect/:roleId", menuController.RoleMenuTreeSelect)
+func InitSysMenuRouter(router *gin.RouterGroup, menu *controller.Menu) {
+	rm := router.Group("/system/menu")
+	rm.GET("/list", middlewares.HasPermission("system:menu:list"), menu.MenuList)
+	rm.GET("/:menuId", middlewares.HasPermission("system:menu:query"), menu.MenuGetInfo)
+	rm.GET("/treeSelect", menu.MenuTreeSelect)
+	rm.POST("", middlewares.HasPermission("system:menu:add"), menu.MenuAdd)
+	rm.PUT("", middlewares.HasPermission("system:menu:edit"), menu.MenuEdit)
+	rm.DELETE("/:menuId", middlewares.HasPermission("system:menu:remove"), menu.MenuRemove)
+	rm.GET("/roleMenuTreeSelect/:roleId", menu.RoleMenuTreeSelect)
 }

@@ -50,7 +50,9 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	dictTypeController := controller.NewDictTypeController(dictTypeService, dictDataService)
 	dictDataController := controller.NewDictDataController(dictDataService)
 	menuController := controller.NewMenuController(menuService)
-	engine := routes.NewGinEngine(loginController, userController, deptController, dictTypeController, dictDataController, menuController)
+	roleController := controller.NewRoleController(roleService)
+	postController := controller.NewPostController(postService)
+	engine := routes.NewGinEngine(loginController, userController, deptController, dictTypeController, dictDataController, menuController, roleController, postController)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -2,5 +2,5 @@ package controller
 
 import "github.com/google/wire"
 
-var ProviderSet = wire.NewSet(NewUserController, NewRoleController, NewPostController, NewMenuController, NewLoginController, NewDictTypeController,
-	NewProfileController, NewDictDataController, NewDeptController)
+var ProviderSet = wire.NewSet(NewUser, NewRole, NewPost, NewMenu, NewLogin, NewDictType,
+	NewProfile, NewDictData, NewDept)
