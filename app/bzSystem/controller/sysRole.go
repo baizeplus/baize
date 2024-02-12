@@ -1,159 +1,135 @@
 package controller
 
 import (
+	"baize/app/bzSystem/models"
+	"baize/app/bzSystem/service"
+	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
 type RoleController struct {
+	rs service.IRoleService
 }
 
-func NewRoleController() *RoleController {
-	return &RoleController{}
+func NewRoleController(rs *serviceImpl.RoleService) *RoleController {
+	return &RoleController{rs: rs}
 }
 
 func (rc *RoleController) RoleList(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//role := new(models.SysRoleDQL)
-	//_ = c.ShouldBind(role)
-	//role.SetDataScope(bzc.GetUser(), "d", "")
-	//list, count := rc.rs.SelectRoleList(role)
-	//bzc.SuccessListData(list, count)
-
+	role := new(models.SysRoleDQL)
+	_ = c.ShouldBind(role)
+	role.DataScope = baizeContext.GetDataScope(c, "d")
+	list, count := rc.rs.SelectRoleList(c, role)
+	baizeContext.SuccessListData(c, list, count)
 }
 
 func (rc *RoleController) RoleExport(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//role := new(models.SysRoleDQL)
-	//_ = c.ShouldBind(role)
-	//role.SetDataScope(bzc.GetUser(), "d", "")
-	//bzc.DataPackageExcel(rc.rs.RoleExport(role))
-
+	role := new(models.SysRoleDQL)
+	_ = c.ShouldBind(role)
+	role.DataScope = baizeContext.GetDataScope(c, "d")
+	list, count := rc.rs.SelectRoleList(c, role)
+	baizeContext.SuccessListData(c, list, count)
 }
 func (rc *RoleController) RoleGetInfo(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//roleId := bzc.ParamInt64("roleId")
-	//if roleId == 0 {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//sysUser := rc.rs.SelectRoleById(roleId)
-	//bzc.SuccessData(sysUser)
+	roleId := baizeContext.ParamInt64(c, "roleId")
+	if roleId == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
+	sysUser := rc.rs.SelectRoleById(c, roleId)
+	baizeContext.SuccessData(c, sysUser)
 }
 func (rc *RoleController) RoleAdd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysRole := new(models.SysRoleAdd)
-	//if err := c.ShouldBindJSON(sysRole); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if rc.rs.CheckRoleNameUnique(0, sysRole.RoleName) {
-	//	bzc.Waring("新增角色'" + sysRole.RoleName + "'失败，角色名称已存在")
-	//	return
-	//}
-	//if rc.rs.CheckRoleKeyUnique(0, sysRole.RoleKey) {
-	//	bzc.Waring("新增角色'" + sysRole.RoleKey + "'失败，角色权限已存在")
-	//	return
-	//}
-	//sysRole.SetCreateBy(bzc.GetUserId())
-	//rc.rs.InsertRole(sysRole)
-	//bzc.Success()
+	sysRole := new(models.SysRoleDML)
+	_ = c.ShouldBindJSON(sysRole)
+	if rc.rs.CheckRoleNameUnique(c, 0, sysRole.RoleName) {
+		baizeContext.Waring(c, "新增角色'"+sysRole.RoleName+"'失败，角色名称已存在")
+		return
+	}
+	if rc.rs.CheckRoleKeyUnique(c, 0, sysRole.RoleKey) {
+		baizeContext.Waring(c, "新增角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
+		return
+	}
+	sysRole.SetCreateBy(baizeContext.GetUserId(c))
+	rc.rs.InsertRole(c, sysRole)
+	baizeContext.Success(c)
 
 }
 func (rc *RoleController) RoleEdit(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysRole := new(models.SysRoleEdit)
-	//if err := c.ShouldBindJSON(sysRole); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if rc.rs.CheckRoleNameUnique(sysRole.RoleId, sysRole.RoleName) {
-	//	bzc.Waring("新增角色'" + sysRole.RoleName + "'失败，角色名称已存在")
-	//	return
-	//}
-	//if rc.rs.CheckRoleKeyUnique(sysRole.RoleId, sysRole.RoleKey) {
-	//	bzc.Waring("新增角色'" + sysRole.RoleKey + "'失败，角色权限已存在")
-	//	return
-	//}
-	//sysRole.SetUpdateBy(bzc.GetUserId())
-	//rc.rs.UpdateRole(sysRole)
-	//bzc.Success()
+	sysRole := new(models.SysRoleDML)
+	_ = c.ShouldBindJSON(sysRole)
+	if rc.rs.CheckRoleNameUnique(c, sysRole.RoleId, sysRole.RoleName) {
+		baizeContext.Waring(c, "新增角色'"+sysRole.RoleName+"'失败，角色名称已存在")
+		return
+	}
+	if rc.rs.CheckRoleKeyUnique(c, sysRole.RoleId, sysRole.RoleKey) {
+		baizeContext.Waring(c, "新增角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
+		return
+	}
+	sysRole.SetUpdateBy(baizeContext.GetUserId(c))
+	rc.rs.UpdateRole(c, sysRole)
+	baizeContext.Success(c)
 }
 func (rc *RoleController) RoleDataScope(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysRole := new(models.SysRoleEdit)
-	//if err := c.ShouldBindJSON(sysRole); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//sysRole.SetUpdateBy(bzc.GetUserId())
-	//rc.rs.AuthDataScope(sysRole)
-	//bzc.Success()
+	sysRole := new(models.SysRoleDML)
+	_ = c.ShouldBindJSON(sysRole)
+	sysRole.SetUpdateBy(baizeContext.GetUserId(c))
+	rc.rs.AuthDataScope(c, sysRole)
+	baizeContext.Success(c)
 }
 
 func (rc *RoleController) RoleChangeStatus(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysRole := new(models.SysRoleEdit)
-	//if err := c.ShouldBindJSON(sysRole); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//sysRole.SetUpdateBy(bzc.GetUserId())
-	//rc.rs.UpdateRoleStatus(sysRole)
-	//bzc.Success()
+	sysRole := new(models.SysRoleDML)
+	_ = c.ShouldBindJSON(sysRole)
+	sysRole.SetUpdateBy(baizeContext.GetUserId(c))
+	rc.rs.UpdateRoleStatus(c, sysRole)
+	baizeContext.Success(c)
 }
 func (rc *RoleController) RoleRemove(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//ids := bzc.ParamInt64Array("rolesIds")
-	//if rc.rs.CountUserRoleByRoleId(ids) {
-	//	bzc.Waring("角色已分配，不能删除")
-	//	return
-	//}
-	//rc.rs.DeleteRoleByIds(ids)
-	//bzc.Success()
+	ids := baizeContext.ParamInt64Array(c, "rolesIds")
+	if rc.rs.CountUserRoleByRoleId(c, ids) {
+		baizeContext.Waring(c, "角色已分配，不能删除")
+		return
+	}
+	rc.rs.DeleteRoleByIds(c, ids)
+	baizeContext.Success(c)
 }
 func (rc *RoleController) AllocatedList(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//user := new(models.SysRoleAndUserDQL)
-	//if err := c.ShouldBind(user); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//user.SetDataScope(bzc.GetUser(), "d", "u")
-	//list, count := rc.rs.SelectAllocatedList(user)
-	//bzc.SuccessListData(list, count)
+	user := new(models.SysRoleAndUserDQL)
+	if err := c.ShouldBind(user); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	user.DataScope = baizeContext.GetDataScope(c, "d")
+	list, count := rc.rs.SelectAllocatedList(c, user)
+	baizeContext.SuccessListData(c, list, count)
 
 }
 func (rc *RoleController) UnallocatedList(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//user := new(models.SysRoleAndUserDQL)
-	//if err := c.ShouldBind(user); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//user.SetDataScope(bzc.GetUser(), "d", "u")
-	//list, count := rc.rs.SelectUnallocatedList(user)
-	//bzc.SuccessListData(list, count)
+	user := new(models.SysRoleAndUserDQL)
+	if err := c.ShouldBind(user); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	user.DataScope = baizeContext.GetDataScope(c, "d")
+	list, count := rc.rs.SelectUnallocatedList(c, user)
+	baizeContext.SuccessListData(c, list, count)
 }
 func (rc *RoleController) InsertAuthUser(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//rc.rs.InsertAuthUsers(bzc.QueryInt64("roleId"), bzc.QueryInt64Array("userIds"))
-	//bzc.Success()
-	//return
+	rc.rs.InsertAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
+	baizeContext.Success(c)
 }
 func (rc *RoleController) CancelAuthUser(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//userRole := new(models.SysUserRole)
-	//if err := c.ShouldBindJSON(userRole); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//rc.rs.DeleteAuthUserRole(userRole)
-	//bzc.Success()
-	//return
+	userRole := new(models.SysUserRole)
+	if err := c.ShouldBindJSON(userRole); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	rc.rs.DeleteAuthUserRole(c, userRole)
+	baizeContext.Success(c)
 }
 func (rc *RoleController) CancelAuthUserAll(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//rc.rs.DeleteAuthUsers(bzc.QueryInt64("roleId"), bzc.QueryInt64Array("userIds"))
-	//bzc.Success()
-	//return
+	rc.rs.DeleteAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
+	baizeContext.Success(c)
 }

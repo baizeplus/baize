@@ -1,14 +1,19 @@
 package controller
 
 import (
+	"baize/app/bzSystem/models"
+	"baize/app/bzSystem/service"
+	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
 type PostController struct {
+	ps service.IPostService
 }
 
-func NewPostController() *PostController {
-	return &PostController{}
+func NewPostController(ps *serviceImpl.PostService) *PostController {
+	return &PostController{ps: ps}
 }
 
 // PostList 查询岗位列表查询
@@ -21,11 +26,10 @@ func NewPostController() *PostController {
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]models.SysPostVo}}  "成功"
 // @Router /system/post/list  [get]
 func (pc *PostController) PostList(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//post := new(models.SysPostDQL)
-	//_ = c.ShouldBind(post)
-	//list, count := pc.ps.SelectPostList(post)
-	//bzc.SuccessListData(list, count)
+	post := new(models.SysPostDQL)
+	_ = c.ShouldBind(post)
+	list, count := pc.ps.SelectPostList(c, post)
+	baizeContext.SuccessListData(c, list, count)
 
 }
 
@@ -47,13 +51,12 @@ func (pc *PostController) PostExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=models.SysPostVo}  "成功"
 // @Router /system/post/{postId}  [get]
 func (pc *PostController) PostGetInfo(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//postId := bzc.ParamInt64("postId")
-	//if postId == 0 {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//bzc.SuccessData(pc.ps.SelectPostById(postId))
+	postId := baizeContext.ParamInt64(c, "postId")
+	if postId == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
+	baizeContext.SuccessData(c, pc.ps.SelectPostById(c, postId))
 }
 
 // PostAdd 添加岗位
@@ -66,15 +69,14 @@ func (pc *PostController) PostGetInfo(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post  [post]
 func (pc *PostController) PostAdd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysPost := new(models.SysPostAdd)
-	//if err := c.ShouldBindJSON(sysPost); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//sysPost.SetCreateBy(bzc.GetUserId())
-	//pc.ps.InsertPost(sysPost)
-	//bzc.Success()
+	sysPost := new(models.SysPostVo)
+	if err := c.ShouldBindJSON(sysPost); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	sysPost.SetCreateBy(baizeContext.GetUserId(c))
+	pc.ps.InsertPost(c, sysPost)
+	baizeContext.Success(c)
 }
 
 // PostEdit 修改岗位
@@ -87,15 +89,14 @@ func (pc *PostController) PostAdd(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post  [put]
 func (pc *PostController) PostEdit(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//post := new(models.SysPostEdit)
-	//if err := c.ShouldBindJSON(post); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//post.SetUpdateBy(bzc.GetUserId())
-	//pc.ps.UpdatePost(post)
-	//bzc.Success()
+	post := new(models.SysPostVo)
+	if err := c.ShouldBindJSON(post); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	post.SetUpdateBy(baizeContext.GetUserId(c))
+	pc.ps.UpdatePost(c, post)
+	baizeContext.Success(c)
 
 }
 
@@ -109,7 +110,6 @@ func (pc *PostController) PostEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post [delete]
 func (pc *PostController) PostRemove(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//pc.ps.DeletePostByIds(bzc.ParamInt64Array("postIds"))
-	//bzc.Success()
+	pc.ps.DeletePostByIds(c, baizeContext.ParamInt64Array(c, "postIds"))
+	baizeContext.Success(c)
 }

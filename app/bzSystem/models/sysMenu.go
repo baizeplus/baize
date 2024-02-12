@@ -19,7 +19,7 @@ type SysMenuVo struct {
 	MenuName   string `json:"menuName" db:"menu_name"`
 	ParentName string `json:"parentName" db:"parent_name"`
 	ParentId   int64  `json:"parentId" db:"parent_id"`
-	OrderNum   string `json:"orderNum" db:"order_num"`
+	OrderNum   int64  `json:"orderNum" db:"order_num"`
 	Path       string `json:"path" db:"path"`
 	Component  string `json:"component" db:"component"`
 	IsFrame    string `json:"isFrame" db:"is_frame"`

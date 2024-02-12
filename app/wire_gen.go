@@ -49,7 +49,8 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	dictDataService := serviceImpl.NewDictDataService(db, sysDictDataDao)
 	dictTypeController := controller.NewDictTypeController(dictTypeService, dictDataService)
 	dictDataController := controller.NewDictDataController(dictDataService)
-	engine := routes.NewGinEngine(loginController, userController, deptController, dictTypeController, dictDataController)
+	menuController := controller.NewMenuController(menuService)
+	engine := routes.NewGinEngine(loginController, userController, deptController, dictTypeController, dictDataController, menuController)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -27,6 +27,7 @@ func NewGinEngine(
 	deptController *controller.DeptController,
 	dictTypeController *controller.DictTypeController,
 	dictDataController *controller.DictDataController,
+	menuController *controller.MenuController,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -56,6 +57,7 @@ func NewGinEngine(
 		systemRoutes.InitSysDeptRouter(group, deptController)         //部门相关
 		systemRoutes.InitSysDictTypeRouter(group, dictTypeController) //数据字典属性
 		systemRoutes.InitSysDictDataRouter(group, dictDataController) //数据字典信息
+		systemRoutes.InitSysMenuRouter(group, menuController)         //菜单相关
 		//systemRoutes.InitSysRoleRouter(group, router.Sys.Role)                  //角色相关
 		//systemRoutes.InitSysPermissionRouter(group, router.Sys.Permission)      //权限相关
 

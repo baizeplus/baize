@@ -47,7 +47,7 @@ func (sysMenuDao *SysMenuDao) SelectMenuList(ctx context.Context, db sqly.SqlyCo
 	whereSql += " order by m.parent_id, m.order_num"
 
 	list = make([]*models.SysMenuVo, 0, 16)
-	err := db.NamedSelectContext(ctx, list, sysMenuDao.selectMenuSql+whereSql, menu)
+	err := db.NamedSelectContext(ctx, &list, sysMenuDao.selectMenuSql+whereSql, menu)
 
 	if err != nil {
 		panic(err)
@@ -73,7 +73,7 @@ func (sysMenuDao *SysMenuDao) SelectMenuListByUserId(ctx context.Context, db sql
 	whereSql += " m.parent_id, m.order_num"
 
 	list = make([]*models.SysMenuVo, 0, 16)
-	err := db.NamedSelectContext(ctx, list, sysMenuDao.selectMenuSql+whereSql, menu)
+	err := db.NamedSelectContext(ctx, &list, sysMenuDao.selectMenuSql+whereSql, menu)
 
 	if err != nil {
 		panic(err)
@@ -87,7 +87,7 @@ func (sysMenuDao *SysMenuDao) InsertMenu(ctx context.Context, db sqly.SqlyContex
 					values(:menu_id,:menu_name,:parent_id,:create_by,now(),:update_by,now() %s)`
 	key := ""
 	value := ""
-	if menu.OrderNum != "" {
+	if menu.OrderNum != 0 {
 		key += ",order_num"
 		value += ",:order_num"
 	}
@@ -119,7 +119,7 @@ func (sysMenuDao *SysMenuDao) InsertMenu(ctx context.Context, db sqly.SqlyContex
 		key += ",status"
 		value += ",:status"
 	}
-	if menu.OrderNum != "" {
+	if menu.Perms != "" {
 		key += ",Perms"
 		value += ",:perms"
 	}
@@ -149,7 +149,7 @@ func (sysMenuDao *SysMenuDao) UpdateMenu(ctx context.Context, db sqly.SqlyContex
 	if menu.MenuName != "" {
 		updateSQL += ",menu_name = :menu_name"
 	}
-	if menu.OrderNum != "" {
+	if menu.OrderNum != 0 {
 		updateSQL += ",order_num = :order_num"
 	}
 	if menu.Path != "" {
