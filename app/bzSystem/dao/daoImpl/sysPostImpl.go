@@ -58,7 +58,7 @@ func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyConte
 	}
 	list = make([]*models.SysPostVo, 0, 16)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, postDao.postSql+whereSql, post, post.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, postDao.postSql+whereSql, post, post.ToPage())
 	if err != nil {
 		panic(err)
 	}

@@ -43,7 +43,7 @@ func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, r
 	}
 	list = make([]*models.SysRoleVo, 0, 16)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, rd.selectSql+whereSql, role, role.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, rd.selectSql+whereSql, role, role.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -227,7 +227,7 @@ func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyConte
 	}
 	list = make([]*models.SysUserVo, 0, 16)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, selectStr+whereSql, user, user.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -252,7 +252,7 @@ func (rd *SysRoleDao) SelectUnallocatedList(ctx context.Context, db sqly.SqlyCon
 	}
 	list = make([]*models.SysUserVo, 0, 16)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, selectStr+whereSql, user, user.ToPage())
 	if err != nil {
 		panic(err)
 	}
