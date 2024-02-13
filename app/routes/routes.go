@@ -6,6 +6,8 @@ import (
 	"baize/app/middlewares"
 	systemRoutes "baize/app/routes/systemRouter"
 	"baize/app/setting"
+	"baize/app/utils/IOFile"
+	"baize/app/utils/logger"
 	"github.com/google/wire"
 	swaggerFiles "github.com/swaggo/files"
 	"net/http"
@@ -29,13 +31,14 @@ func NewGinEngine(
 	menu *controller.Menu,
 	role *controller.Role,
 	post *controller.Post,
+	profile *controller.Profile,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
 		gin.SetMode(gin.ReleaseMode) // gin设置成发布模式
 	}
 	r := gin.New()
-	//r.Use(logger.GinLogger(), logger.GinRecovery(true))
+	r.Use(logger.GinLogger(), logger.GinRecovery())
 	r.Use(Cors())
 	group := r.Group("")
 
@@ -46,13 +49,16 @@ func NewGinEngine(
 
 	//不做鉴权的
 	{
+		if setting.Conf.UploadFile.Type == "localhost" {
+			group.Static(IOFile.ResourcePrefix, setting.Conf.UploadFile.Localhost.PublicPath)
+		}
 		systemRoutes.InitLoginRouter(group, login) //获取登录信息
 
 	}
 	//做鉴权的
 	group.Use(middlewares.SessionAuthMiddleware(noRefresh))
 	{
-		//systemRoutes.InitSysProfileRouter(group, router.Sys.Profile)            //个人信息
+		systemRoutes.InitSysProfileRouter(group, profile)   //个人信息
 		systemRoutes.InitGetUser(group, login)              //获取登录信息
 		systemRoutes.InitSysUserRouter(group, user)         //用户相关
 		systemRoutes.InitSysDeptRouter(group, dept)         //部门相关
@@ -79,16 +85,6 @@ func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method               //请求方法
 		origin := c.Request.Header.Get("Origin") //请求头部
-		//var headerKeys []string                  // 声明请求头keys
-		//for k, _ := range c.Request.Header {
-		//	headerKeys = append(headerKeys, k)
-		//}
-		//headerStr := strings.Join(headerKeys, ", ")
-		//if headerStr != "" {
-		//	headerStr = fmt.Sprintf("access-control-allow-origin, access-control-allow-headers, %s", headerStr)
-		//} else {
-		//	headerStr = "access-control-allow-origin, access-control-allow-headers"
-		//}
 		if origin != "" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Origin", "*")                                       // 这是允许访问所有域

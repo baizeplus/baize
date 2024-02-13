@@ -27,4 +27,11 @@ datasource:
     db: 0
     pool_size: 100
 token:
-  expire_time: 600
+  expire_time: 60
+
+upload_file:
+  type: localhost     #上传地点 本地->localhost(集群部署需要做硬盘挂载,挂载路径需一直)  亚马逊->s3   移动云->eos  如果不填则默认本地当前目录
+  domain_name: http://localhost:8080   #如果本地则填写服务器域名,其他存储桶填写对应域名
+  localhost:
+    public_path: ./public/
+    private_path: ./private/

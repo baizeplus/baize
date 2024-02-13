@@ -3,6 +3,7 @@ package service
 import (
 	"baize/app/bzSystem/models"
 	"github.com/gin-gonic/gin"
+	"mime/multipart"
 )
 
 type IUserService interface {
@@ -20,7 +21,7 @@ type IUserService interface {
 	DeleteUserByIds(c *gin.Context, ids []int64)
 	//UserImportData(rows [][]string, userId int64, deptId int64) (msg string, failureNum int)
 	UpdateLoginInformation(c *gin.Context, userId int64, ip string)
-	//UpdateUserAvatar(loginUser *models.LoginUser, file *multipart.FileHeader) string
+	UpdateUserAvatar(c *gin.Context, file *multipart.FileHeader) string
 	ResetUserPwd(c *gin.Context, userId int64, password string)
 	UpdateUserProfile(c *gin.Context, sysUser *models.SysUserDML)
 	MatchesPassword(c *gin.Context, rawPassword string, userId int64) bool

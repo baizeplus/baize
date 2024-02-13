@@ -52,7 +52,8 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	menu := controller.NewMenu(menuService)
 	role := controller.NewRole(roleService)
 	post := controller.NewPost(postService)
-	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post)
+	profile := controller.NewProfile(roleService, postService, userService)
+	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile)
 	return engine, func() {
 		cleanup()
 	}, nil

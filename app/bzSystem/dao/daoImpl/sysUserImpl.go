@@ -83,10 +83,13 @@ func (userDao *SysUserDao) InsertUser(ctx context.Context, db sqly.SqlyContext, 
 }
 
 func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, sysUser *models.SysUserDML) {
-	updateSQL := `update sys_user set dept_id=:dept_id,update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_user set update_time = now() , update_by = :update_by`
 
 	if sysUser.Email != "" {
 		updateSQL += ",email = :email"
+	}
+	if sysUser.DeptId != 0 {
+		updateSQL += ",dept_id = :dept_id"
 	}
 
 	if sysUser.Avatar != "" {

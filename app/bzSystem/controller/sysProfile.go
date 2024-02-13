@@ -1,79 +1,76 @@
 package controller
 
 import (
+	"baize/app/bzSystem/models"
+	"baize/app/bzSystem/service"
+	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
 type Profile struct {
+	rs service.IRoleService
+	ps service.IPostService
+	us service.IUserService
 }
 
-func NewProfile() *Profile {
-	return &Profile{}
+func NewProfile(rs *serviceImpl.RoleService, ps *serviceImpl.PostService, us *serviceImpl.UserService) *Profile {
+	return &Profile{rs: rs, ps: ps, us: us}
 }
 
 func (pc *Profile) Profile(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//User := bzc.GetUser()
-	//m := make(map[string]interface{})
-	//m["user"] = User
-	//m["roleGroup"] = pc.rs.SelectUserRoleGroupByUserId(User.UserId)
-	//m["postGroup"] = pc.ps.SelectUserPostGroupByUserId(User.UserId)
-	//bzc.SuccessData(m)
+
+	m := make(map[string]interface{})
+	m["user"] = pc.us.SelectUserById(c, baizeContext.GetUserId(c))
+	m["roleGroup"] = pc.rs.SelectUserRoleGroupByUserId(c, baizeContext.GetUserId(c))
+	m["postGroup"] = pc.ps.SelectUserPostGroupByUserId(c, baizeContext.GetUserId(c))
+	baizeContext.SuccessData(c, m)
 }
 
 func (pc *Profile) ProfileUpdateProfile(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//sysUser := new(models.SysUserEdit)
-	//if err := c.ShouldBindJSON(sysUser); err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//if pc.us.CheckPhoneUnique(sysUser.UserId, sysUser.Phonenumber) {
-	//	bzc.Waring("修改失败'" + sysUser.Phonenumber + "'失败，手机号码已存在")
-	//	return
-	//}
-	//
-	//if pc.us.CheckEmailUnique(sysUser.UserId, sysUser.Email) {
-	//	bzc.Waring("修改失败'" + sysUser.Email + "'失败，邮箱账号已存在")
-	//	return
-	//}
-	//loginUser := bzc.GetCurrentUser()
-	//user := loginUser.User
-	//sysUser.UserId = user.UserId
-	//sysUser.SetUpdateBy(user.UserId)
-	//pc.us.UpdateUserProfile(sysUser)
+
+	sysUser := new(models.SysUserDML)
+	sysUser.UserId = baizeContext.GetUserId(c)
+	_ = c.ShouldBindJSON(sysUser)
+	if pc.us.CheckPhoneUnique(c, sysUser.UserId, sysUser.Phonenumber) {
+		baizeContext.Waring(c, "修改失败'"+sysUser.Phonenumber+"'失败，手机号码已存在")
+		return
+	}
+
+	if pc.us.CheckEmailUnique(c, sysUser.UserId, sysUser.Email) {
+		baizeContext.Waring(c, "修改失败'"+sysUser.Email+"'失败，邮箱账号已存在")
+		return
+	}
+	sysUser.SetUpdateBy(sysUser.UserId)
+	pc.us.UpdateUserProfile(c, sysUser)
 	//user.NickName = sysUser.NickName
 	//user.Phonenumber = &sysUser.Phonenumber
 	//user.Email = &sysUser.Email
 	//user.Sex = sysUser.Sex
-	//go token.RefreshToken(loginUser)
-	//bzc.Success()
+	baizeContext.Success(c)
 }
 
 func (pc *Profile) ProfileUpdatePwd(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//oldPassword := c.Query("oldPassword")
-	//password := c.Query("newPassword")
-	//if oldPassword == password {
-	//	bzc.Waring("新密码不能与旧密码相同")
-	//	return
-	//}
-	//userId := bzc.GetUserId()
-	//if !pc.us.MatchesPassword(oldPassword, userId) {
-	//	bzc.Waring("修改密码失败，旧密码错误")
-	//	return
-	//}
-	//pc.us.ResetUserPwd(userId, password)
-	//bzc.Success()
-
+	oldPassword := c.Query("oldPassword")
+	password := c.Query("newPassword")
+	if oldPassword == password {
+		baizeContext.Waring(c, "新密码不能与旧密码相同")
+		return
+	}
+	userId := baizeContext.GetUserId(c)
+	if !pc.us.MatchesPassword(c, oldPassword, userId) {
+		baizeContext.Waring(c, "修改密码失败，旧密码错误")
+		return
+	}
+	pc.us.ResetUserPwd(c, userId, password)
+	baizeContext.Success(c)
 }
 
 func (pc *Profile) ProfileAvatar(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//file, err := c.FormFile("avatarfile")
-	//if err != nil {
-	//	bzc.ParameterError()
-	//	return
-	//}
-	//bzc.SuccessData(pc.us.UpdateUserAvatar(bzc.GetCurrentUser(), file))
+	file, err := c.FormFile("avatarfile")
+	if err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	baizeContext.SuccessData(c, pc.us.UpdateUserAvatar(c, file))
 }

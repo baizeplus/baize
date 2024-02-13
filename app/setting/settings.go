@@ -17,6 +17,7 @@ type AppConfig struct {
 	*TokenConfig `mapstructure:"token"`
 	*LogConfig   `mapstructure:"log"`
 	*Datasource  `mapstructure:"datasource"`
+	*UploadFile  `mapstructure:"upload_file"`
 }
 
 type TokenConfig struct {

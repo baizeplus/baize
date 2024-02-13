@@ -4,12 +4,15 @@ import (
 	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
+	"baize/app/utils/IOFile"
 	"baize/app/utils/bCryptPasswordEncoder"
+	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
 	"context"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"github.com/gogf/gf/v2/util/gconv"
+	"mime/multipart"
 	"strconv"
 )
 
@@ -247,22 +250,19 @@ func (userService *UserService) UpdateLoginInformation(c *gin.Context, userId in
 	userService.userDao.UpdateLoginInformation(c, userService.data, userId, ip)
 }
 
-//func (userService *UserService) UpdateUserAvatar(loginUser *models.LoginUser, file *multipart.FileHeader) string {
-//userId := loginUser.User.UserId
-//open, err := file.Open()
-//if err != nil {
-//	panic(err)
-//}
-//extension := stringUtils.GetExtension(file)
-//avatar, err := IOFile.GetConfig().PublicUploadFile(IOFile.NewFileParamsRandomName(stringUtils.GetTenantRandomName(userId, extension), open))
-//if err != nil {
-//	panic(err)
-//}
-//loginUser.User.Avatar = &avatar
-//go token.RefreshToken(loginUser)
-//userService.userDao.UpdateUserAvatar(userService.data, userId, avatar)
-//return avatar
-//}
+func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart.FileHeader) string {
+	userId := baizeContext.GetUserId(c)
+	open, err := file.Open()
+	if err != nil {
+		panic(err)
+	}
+	avatar, err := IOFile.GetConfig().PublicUploadFile(IOFile.NewFileParamsRandomName(IOFile.GetTenantRandomName(userId, IOFile.GetExtension(file)), open))
+	if err != nil {
+		panic(err)
+	}
+	userService.userDao.UpdateUserAvatar(c, userService.data, userId, avatar)
+	return avatar
+}
 
 func (userService *UserService) ResetUserPwd(c *gin.Context, userId int64, password string) {
 	userService.userDao.ResetUserPwd(c, userService.data, userId, bCryptPasswordEncoder.HashPassword(password))
