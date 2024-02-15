@@ -1,8 +1,9 @@
 package IOFile
 
 import (
-	"baize/app/utils/pathUtils"
-	"bytes"
+	"context"
+	"io"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 )
@@ -17,40 +18,28 @@ type localHostIOFile struct {
 	domainName  string
 }
 
-func (l *localHostIOFile) PublicUploadFile(file *fileParams) (string, error) {
-	buf := &bytes.Buffer{}
-	_, err := buf.ReadFrom(file.data)
+func (l *localHostIOFile) PublicUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+	if err := os.MkdirAll(filepath.Dir(keyName), 0750); err != nil {
+		return "", err
+	}
+	out, err := os.Create(l.publicPath + keyName)
 	if err != nil {
 		return "", err
 	}
-	b := buf.Bytes()
-	pathAndName := l.publicPath + file.keyName
-	err = pathUtils.CreateMutiDir(filepath.Dir(pathAndName))
-	if err != nil {
-		return "", err
-	}
-	err = os.WriteFile(pathAndName, b, 0664)
-	if err != nil {
-		return "", err
-	}
-	return l.domainName + ResourcePrefix + "/" + file.keyName, nil
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	return l.domainName + ResourcePrefix + "/" + keyName, nil
 }
 
-func (l *localHostIOFile) privateUploadFile(file *fileParams) (string, error) {
-	buf := &bytes.Buffer{}
-	_, err := buf.ReadFrom(file.data)
+func (l *localHostIOFile) privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+	if err := os.MkdirAll(filepath.Dir(keyName), 0750); err != nil {
+		return "", err
+	}
+	out, err := os.Create(l.privatePath + keyName)
 	if err != nil {
 		return "", err
 	}
-	pathAndName := l.privatePath + file.keyName
-	err = pathUtils.CreateMutiDir(filepath.Dir(pathAndName))
-	if err != nil {
-		return "", err
-	}
-	b := buf.Bytes()
-	err = os.WriteFile(pathAndName, b, 0664)
-	if err != nil {
-		return "", err
-	}
-	return file.keyName, nil
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	return keyName, nil
 }

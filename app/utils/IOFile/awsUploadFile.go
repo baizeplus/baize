@@ -5,40 +5,44 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"mime/multipart"
 )
 
 type s3IOFile struct {
-	s3Config   *s3.Client
-	bucket     string
-	domainName string
+	s3Config      *s3.Client
+	publicBucket  string
+	privateBucket string
+	domainName    string
 }
 
-func (s *s3IOFile) PublicUploadFile(file *fileParams) (string, error) {
+func (s *s3IOFile) PublicUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+	ct := GetFileContentType(file)
 	obj := &s3.PutObjectInput{
-		Bucket:      aws.String(s.bucket),
-		Key:         aws.String(file.keyName),
-		Body:        file.data,
-		ContentType: aws.String(file.contentType),
+		Bucket:      aws.String(s.publicBucket),
+		Key:         aws.String(keyName),
+		Body:        file,
+		ContentType: aws.String(ct),
 		ACL:         types.ObjectCannedACLPublicRead,
 	}
-	_, err := s.s3Config.PutObject(context.TODO(), obj)
+	_, err := s.s3Config.PutObject(ctx, obj)
 	if err != nil {
 		return "", err
 	}
-	return s.domainName + "/" + file.keyName, nil
+	return s.domainName + "/" + keyName, nil
 }
 
-func (s *s3IOFile) privateUploadFile(file *fileParams) (string, error) {
+func (s *s3IOFile) privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+	ct := GetFileContentType(file)
 	obj := &s3.PutObjectInput{
-		Bucket:      aws.String(s.bucket),
-		Key:         aws.String("private/" + file.keyName),
-		Body:        file.data,
-		ContentType: aws.String(file.contentType),
+		Bucket:      aws.String(s.privateBucket),
+		Key:         aws.String(keyName),
+		Body:        file,
+		ContentType: aws.String(ct),
 		ACL:         types.ObjectCannedACLPrivate,
 	}
-	_, err := s.s3Config.PutObject(context.TODO(), obj)
+	_, err := s.s3Config.PutObject(ctx, obj)
 	if err != nil {
 		return "", err
 	}
-	return file.keyName, nil
+	return keyName, nil
 }

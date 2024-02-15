@@ -2,17 +2,12 @@ package IOFile
 
 import (
 	"baize/app/setting"
+	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"io"
+	"mime/multipart"
 )
-
-type fileParams struct {
-	keyName     string
-	contentType string
-	data        io.Reader
-}
 
 const (
 	awsS3     = "s3"
@@ -21,8 +16,8 @@ const (
 )
 
 type IOFile interface {
-	PublicUploadFile(file *fileParams) (string, error)
-	privateUploadFile(file *fileParams) (string, error)
+	PublicUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error)
+	privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error)
 }
 
 var ioFile IOFile
@@ -40,7 +35,8 @@ func init() {
 		}
 		s := new(s3IOFile)
 		s.s3Config = s3.NewFromConfig(config)
-		s.bucket = setting.Conf.UploadFile.S3.BucketName
+		s.publicBucket = setting.Conf.UploadFile.S3.PublicBucketName
+		s.privateBucket = setting.Conf.UploadFile.S3.PrivateBucketName
 		s.domainName = setting.Conf.UploadFile.DomainName
 		ioFile = s
 	case yiDong:
@@ -55,7 +51,8 @@ func init() {
 		}
 		s := new(s3IOFile)
 		s.s3Config = s3.NewFromConfig(config)
-		s.bucket = setting.Conf.UploadFile.Eos.BucketName
+		s.publicBucket = setting.Conf.UploadFile.S3.PublicBucketName
+		s.privateBucket = setting.Conf.UploadFile.S3.PrivateBucketName
 		s.domainName = setting.Conf.UploadFile.DomainName
 		ioFile = s
 	default:

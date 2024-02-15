@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gogf/gf/v2/util/gconv"
 	"mime/multipart"
+	"path/filepath"
 	"strconv"
 )
 
@@ -256,7 +257,10 @@ func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart
 	if err != nil {
 		panic(err)
 	}
-	avatar, err := IOFile.GetConfig().PublicUploadFile(IOFile.NewFileParamsRandomName(IOFile.GetTenantRandomName(userId, IOFile.GetExtension(file)), open))
+
+	name := IOFile.GetTenantRandomName(userId, filepath.Ext(file.Filename))
+
+	avatar, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
 	}
