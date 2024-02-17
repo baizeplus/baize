@@ -14,6 +14,7 @@ type IMenuDao interface {
 	UpdateMenu(ctx context.Context, db sqly.SqlyContext, menu *models.SysMenuVo)
 	DeleteMenuById(ctx context.Context, db sqly.SqlyContext, menuId int64)
 	SelectMenuPermsByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (perms []string)
+	SelectMenuPermsAll(ctx context.Context, db sqly.SqlyContext) (perms []string)
 	SelectMenuTreeAll(ctx context.Context, db sqly.SqlyContext) (sysMenus []*models.SysMenuVo)
 	SelectMenuTreeByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (sysMenus []*models.SysMenuVo)
 	CheckMenuNameUnique(ctx context.Context, db sqly.SqlyContext, menuName string, parentId int64) int64

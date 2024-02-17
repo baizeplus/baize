@@ -19,7 +19,7 @@ type localHostIOFile struct {
 }
 
 func (l *localHostIOFile) PublicUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
-	if err := os.MkdirAll(filepath.Dir(keyName), 0750); err != nil {
+	if err := os.MkdirAll(filepath.Dir(l.publicPath+keyName), 0750); err != nil {
 		return "", err
 	}
 	out, err := os.Create(l.publicPath + keyName)
@@ -32,7 +32,7 @@ func (l *localHostIOFile) PublicUploadFile(ctx context.Context, file multipart.F
 }
 
 func (l *localHostIOFile) privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
-	if err := os.MkdirAll(filepath.Dir(keyName), 0750); err != nil {
+	if err := os.MkdirAll(filepath.Dir(l.privatePath+keyName), 0750); err != nil {
 		return "", err
 	}
 	out, err := os.Create(l.privatePath + keyName)

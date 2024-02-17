@@ -213,6 +213,16 @@ func (sysMenuDao *SysMenuDao) SelectMenuPermsByUserId(ctx context.Context, db sq
 	}
 	return
 }
+func (sysMenuDao *SysMenuDao) SelectMenuPermsAll(ctx context.Context, db sqly.SqlyContext) (perms []string) {
+	sqlStr := `	select distinct m.perms
+				from sys_menu m`
+	perms = make([]string, 0, 2)
+	err := db.SelectContext(ctx, &perms, sqlStr)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
 
 func (sysMenuDao *SysMenuDao) SelectMenuTreeAll(ctx context.Context, db sqly.SqlyContext) (sysMenus []*models.SysMenuVo) {
 	whereSql := ` where m.menu_type in ('M', 'C') and m.status = 0

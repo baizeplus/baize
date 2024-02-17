@@ -3,8 +3,6 @@ package models
 import (
 	"baize/app/utils/ipUtils"
 	"fmt"
-
-	"github.com/gogf/gf/util/gconv"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/host"
@@ -19,9 +17,10 @@ import (
 type Server struct {
 	CpuNum          int              `json:"cpuNum"`
 	CpuNumThread    int              `json:"cpuNumThread"`
-	CpuUsed         float64          `json:"cpuUsed"`
-	CpuAvg5         float64          `json:"cpuAvg5"`
-	CpuAvg15        float64          `json:"cpuAvg15"`
+	CpuUsed         string           `json:"cpuUsed"`
+	CpuAvg1         string           `json:"cpuAvg1"`
+	CpuAvg5         string           `json:"cpuAvg5"`
+	CpuAvg15        string           `json:"cpuAvg15"`
 	MemTotal        string           `json:"memTotal"`
 	MemUsed         string           `json:"memUsed"`
 	MemFree         string           `json:"memFree"`
@@ -32,11 +31,8 @@ type Server struct {
 	SysComputerName string           `json:"sysComputerName"`
 	SysOsName       string           `json:"sysOsName"`
 	SysOsArch       string           `json:"sysOsArch"`
-	GoName          string           `json:"goName"`
-	GoVersion       string           `json:"goVersion,"`
 	GoStartTime     string           `json:"goStartTime"`
 	GoRunTime       int64            `json:"goRunTime"`
-	GoHome          string           `json:"goHome,"`
 	GoUserDir       string           `json:"goUserDir"`
 	DiskList        []disk.UsageStat `json:"diskList"`
 }
@@ -50,26 +46,27 @@ func NewServer() *Server {
 
 	cpuInfo, err := cpu.Percent(time.Duration(time.Second), false)
 	if err == nil {
-		server.CpuUsed, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", cpuInfo[0]), 64)
+		server.CpuUsed = fmt.Sprintf("%.2f", cpuInfo[0])
 	}
 
 	loadInfo, err := load.Avg()
 	if err == nil {
-		server.CpuAvg5, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", loadInfo.Load5), 64)
-		server.CpuAvg15, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", loadInfo.Load15), 64)
+		server.CpuAvg1 = fmt.Sprintf("%.2f", loadInfo.Load1)
+		server.CpuAvg5 = fmt.Sprintf("%.2f", loadInfo.Load5)
+		server.CpuAvg15 = fmt.Sprintf("%.2f", loadInfo.Load15)
 	}
 
 	v, err := mem.VirtualMemory()
 	if err == nil {
-		server.MemTotal = fmt.Sprintf("%.2f", gconv.Float64(v.Total)/1024/1024/1024)
-		server.MemFree = fmt.Sprintf("%.2f", gconv.Float64(v.Free)/1024/1024/1024)
-		server.MemUsed = fmt.Sprintf("%.2f", gconv.Float64(v.Used)/1024/1024/1024)
+		server.MemTotal = fmt.Sprintf("%.2f", float64(v.Total)/1024/1024/1024)
+		server.MemFree = fmt.Sprintf("%.2f", float64(v.Free)/1024/1024/1024)
+		server.MemUsed = fmt.Sprintf("%.2f", float64(v.Used)/1024/1024/1024)
 		server.MemUsage = fmt.Sprintf("%.2f", v.UsedPercent)
 	}
 
 	var gomem runtime.MemStats
 	runtime.ReadMemStats(&gomem)
-	server.GoUsed = fmt.Sprintf("%.2f", gconv.Float64(gomem.Sys)/1024/1024/1024)
+	server.GoUsed = fmt.Sprintf("%.2f", float64(gomem.Sys)/1024/1024/1024)
 
 	ip, err := ipUtils.GetLocalIP()
 	if err == nil {
@@ -84,13 +81,9 @@ func NewServer() *Server {
 		server.SysOsArch = sysInfo.KernelArch
 	}
 
-	server.GoName = "GoLang"             //语言环境
-	server.GoVersion = runtime.Version() //版本
-
 	server.GoStartTime = StartTime.Format(time.DateTime) //启动时间
 
 	server.GoRunTime = int64(time.Since(StartTime).Seconds()) //运行时长
-	server.GoHome = runtime.GOROOT()                          //安装路径
 
 	curDir, err := os.Getwd()
 

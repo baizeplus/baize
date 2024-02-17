@@ -2,8 +2,10 @@ package routes
 
 import (
 	"baize/app/baize"
+	controllerM "baize/app/bzMonitor/controller"
 	"baize/app/bzSystem/controller"
 	"baize/app/middlewares"
+	"baize/app/routes/monitorRouter"
 	systemRoutes "baize/app/routes/systemRouter"
 	"baize/app/setting"
 	"baize/app/utils/IOFile"
@@ -32,6 +34,8 @@ func NewGinEngine(
 	role *controller.Role,
 	post *controller.Post,
 	profile *controller.Profile,
+	server *controllerM.InfoServer,
+	userOnline *controllerM.UserOnline,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -67,6 +71,8 @@ func NewGinEngine(
 		systemRoutes.InitSysMenuRouter(group, menu)         //菜单相关
 		systemRoutes.InitSysRoleRouter(group, role)         //角色相关
 		systemRoutes.InitSysPostRouter(group, post)         //岗位属性
+		monitorRouter.InitServerRouter(group, server)
+		monitorRouter.InitSysUserOnlineRouter(group, userOnline) //在线用户监控
 	}
 
 	r.NoRoute(func(c *gin.Context) {

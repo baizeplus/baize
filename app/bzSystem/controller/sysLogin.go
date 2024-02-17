@@ -8,6 +8,7 @@ import (
 	"baize/app/constant/userStatus"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/session"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -100,12 +101,9 @@ func (lc *Login) GetInfo(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "退出成功"
 // @Router /logout [post]
 func (lc *Login) Logout(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//loginUser := bzc.GetCurrentUser()
-	//if loginUser != nil {
-	//	lc.ls.ForceLogout(loginUser.Token)
-	//}
-	//bzc.Success()
+	manager := session.NewManger()
+	manager.RemoveSession(c)
+	baizeContext.Success(c)
 }
 
 // GetCode 获取验证码

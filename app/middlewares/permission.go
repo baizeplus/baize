@@ -41,7 +41,7 @@ func HasPermission(permission string) func(c *gin.Context) {
 
 func hasPermissions(permissions []string, permission string) bool {
 	for _, item := range permissions {
-		if item == permission || item == "*:*:*" {
+		if item == permission {
 			return true
 		}
 	}
@@ -50,7 +50,7 @@ func hasPermissions(permissions []string, permission string) bool {
 func hasPermissionsSlice(permissions []string, p []string) bool {
 	for _, item := range permissions {
 		for _, s := range p {
-			if item == s || item == "*:*:*" {
+			if item == s {
 				return true
 			}
 		}

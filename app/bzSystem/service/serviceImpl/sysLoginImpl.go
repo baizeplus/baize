@@ -42,7 +42,6 @@ func (loginService *LoginService) Login(c *gin.Context, user *models.User, l *mo
 	l.Status = 0
 	l.Msg = "登录成功"
 	manager := session.NewManger()
-
 	session, _ := manager.InitSession(c, user.UserId)
 	roles := loginService.roleDao.SelectBasicRolesByUserId(c, loginService.data, user.UserId)
 	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
@@ -74,17 +73,18 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 }
 
 func (loginService *LoginService) getPermissionPermission(c *gin.Context, userId int64) []string {
-	perms := make([]string, 0, 1)
+	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
-		perms = append(perms, "*:*:*")
+		//perms = append(perms, "*:*:*")
+		perms = loginService.menuDao.SelectMenuPermsAll(c, loginService.data)
 	} else {
-		mysqlPerms := loginService.menuDao.SelectMenuPermsByUserId(c, loginService.data, userId)
+		perms = loginService.menuDao.SelectMenuPermsByUserId(c, loginService.data, userId)
 
-		for _, perm := range mysqlPerms {
-			if len(perm) != 0 {
-				perms = append(perms, perm)
-			}
-		}
+		//for _, perm := range mysqlPerms {
+		//	if len(perm) != 0 {
+		//		perms = append(perms, perm)
+		//	}
+		//}
 	}
 	return perms
 }

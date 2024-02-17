@@ -4,6 +4,7 @@ import (
 	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
 	"baize/app/bzSystem/models"
+	"baize/app/constant/sessionStatus"
 	"baize/app/utils/IOFile"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
@@ -265,6 +266,8 @@ func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart
 		panic(err)
 	}
 	userService.userDao.UpdateUserAvatar(c, userService.data, userId, avatar)
+
+	baizeContext.GetSession(c).Set(c, sessionStatus.Avatar, avatar)
 	return avatar
 }
 
