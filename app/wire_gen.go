@@ -8,7 +8,7 @@ package main
 
 import (
 	controller2 "baize/app/bzMonitor/controller"
-	"baize/app/bzMonitor/dao/monitorDaoImpl"
+	daoImpl2 "baize/app/bzMonitor/dao/daoImpl"
 	serviceImpl2 "baize/app/bzMonitor/service/serviceImpl"
 	"baize/app/bzSystem/controller"
 	"baize/app/bzSystem/dao/daoImpl"
@@ -29,7 +29,7 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	sysUserDao := daoImpl.NewSysUserDao()
 	sysMenuDao := daoImpl.NewSysMenuDao()
 	sysRoleDao := daoImpl.NewSysRoleDao()
-	logininforDao := monitorDaoImpl.NewLogininforDao()
+	logininforDao := daoImpl2.NewLogininforDao()
 	loginService := serviceImpl.NewLoginService(db, sysUserDao, sysMenuDao, sysRoleDao, logininforDao)
 	sysUserPostDao := daoImpl.NewSysUserPostDao()
 	sysUserRoleDao := daoImpl.NewSysUserRoleDao()
@@ -57,8 +57,10 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	profile := controller.NewProfile(roleService, postService, userService)
 	infoServer := controller2.NewInfoServer()
 	userOnlineService := serviceImpl2.NewUserOnlineService()
-	userOnline := controller2.NewUserOnlineController(userOnlineService)
-	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile, infoServer, userOnline)
+	userOnline := controller2.NewUserOnline(userOnlineService)
+	logininforService := serviceImpl2.NewLogininforService(db, logininforDao)
+	logininfor := controller2.NewLogininfor(logininforService)
+	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile, infoServer, userOnline, logininfor)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -3,7 +3,7 @@ package serviceImpl
 import (
 	"baize/app/baize"
 	monitorDao "baize/app/bzMonitor/dao"
-	"baize/app/bzMonitor/dao/monitorDaoImpl"
+	monitorDaoImpl "baize/app/bzMonitor/dao/daoImpl"
 	monitorModels "baize/app/bzMonitor/models"
 	"baize/app/bzSystem/dao"
 	"baize/app/bzSystem/dao/daoImpl"
@@ -11,6 +11,7 @@ import (
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/session"
+	"context"
 
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
@@ -56,6 +57,9 @@ func (loginService *LoginService) Login(c *gin.Context, user *models.User, l *mo
 	session.Set(c, sessionStatus.UserName, user.UserName)
 	session.Set(c, sessionStatus.Avatar, user.Avatar)
 	session.Set(c, sessionStatus.DeptId, user.DeptId)
+	go func() {
+		loginService.loginforDao.InserLogininfor(context.Background(), loginService.data, l)
+	}()
 	return session.Id()
 }
 

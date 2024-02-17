@@ -1,4 +1,4 @@
-package monitorDao
+package dao
 
 import (
 	monitorModels "baize/app/bzMonitor/models"

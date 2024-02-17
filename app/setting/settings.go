@@ -39,7 +39,6 @@ type Datasource struct {
 	Redis *Redis `mapstructure:"redis"`
 }
 type Mysql struct {
-	DriverName   string `mapstructure:"driver_name"`
 	Host         string `mapstructure:"host"`
 	User         string `mapstructure:"user"`
 	Password     string `mapstructure:"password"`

@@ -11,7 +11,7 @@ type UserOnline struct {
 	uos service.IUserOnlineService
 }
 
-func NewUserOnlineController(uos *serviceImpl.UserOnlineService) *UserOnline {
+func NewUserOnline(uos *serviceImpl.UserOnlineService) *UserOnline {
 	return &UserOnline{
 		uos: uos,
 	}

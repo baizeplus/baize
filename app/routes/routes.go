@@ -36,6 +36,7 @@ func NewGinEngine(
 	profile *controller.Profile,
 	server *controllerM.InfoServer,
 	userOnline *controllerM.UserOnline,
+	logfor *controllerM.Logininfor,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -73,6 +74,7 @@ func NewGinEngine(
 		systemRoutes.InitSysPostRouter(group, post)         //岗位属性
 		monitorRouter.InitServerRouter(group, server)
 		monitorRouter.InitSysUserOnlineRouter(group, userOnline) //在线用户监控
+		monitorRouter.InitSysLogininforRouter(group, logfor)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

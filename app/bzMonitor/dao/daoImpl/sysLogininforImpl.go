@@ -1,4 +1,4 @@
-package monitorDaoImpl
+package daoImpl
 
 import (
 	monitorModels "baize/app/bzMonitor/models"
@@ -40,7 +40,7 @@ func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyC
 	}
 	list = make([]*monitorModels.Logininfor, 0)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, list, total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
 	if err != nil {
 		panic(err)
 	}

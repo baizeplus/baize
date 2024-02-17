@@ -1,4 +1,4 @@
-package monitorDaoImpl
+package daoImpl
 
 import "github.com/google/wire"
 
