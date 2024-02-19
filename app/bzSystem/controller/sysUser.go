@@ -249,12 +249,11 @@ func (uc *User) UserImportData(c *gin.Context) {
 // @Success 200 {object} []byte
 // @Router /system/user/export [post]
 func (uc *User) UserExport(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//user := new(models.SysUserDQL)
-	//_ = c.ShouldBind(user)
-	//user.SetDataScope(bzc.GetUser(), "d", "u")
-	//bzc.DataPackageExcel(uc.us.UserExport(user))
-	//return
+	user := new(models.SysUserDQL)
+	_ = c.ShouldBind(user)
+	user.DataScope = baizeContext.GetDataScope(c, "d")
+	baizeContext.DataPackageExcel(c, uc.us.UserExport(c, user))
+	return
 }
 
 // ImportTemplate 获取导入模版

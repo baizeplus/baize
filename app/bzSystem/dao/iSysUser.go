@@ -15,6 +15,7 @@ type IUserDao interface {
 	SelectUserByUserName(ctx context.Context, db sqly.SqlyContext, userName string) (loginUser *models.User)
 	SelectUserById(ctx context.Context, db sqly.SqlyContext, userId int64) (sysUser *models.SysUserVo)
 	SelectUserList(ctx context.Context, db sqly.SqlyContext, user *models.SysUserDQL) (sysUserList []*models.SysUserVo, total *int64)
+	SelectUserListAll(ctx context.Context, db sqly.SqlyContext, user *models.SysUserDQL) (list []*models.SysUserVo)
 	DeleteUserByIds(ctx context.Context, db sqly.SqlyContext, ids []int64)
 	UpdateLoginInformation(ctx context.Context, db sqly.SqlyContext, userId int64, ip string)
 	UpdateUserAvatar(ctx context.Context, db sqly.SqlyContext, userId int64, avatar string)

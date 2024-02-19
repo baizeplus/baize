@@ -8,6 +8,7 @@ import (
 	"baize/app/utils/IOFile"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"context"
 	"github.com/baizeplus/sqly"
@@ -46,17 +47,26 @@ func (userService *UserService) SelectUserList(c *gin.Context, user *models.SysU
 	return userService.userDao.SelectUserList(c, userService.data, user)
 }
 
-//func (userService *UserService) UserExport(user *models.SysUserDQL) (data []byte) {
-//	sysUserList, _ := userService.userDao.SelectUserList(userService.data.GetSlaveDb(), user)
-//	return exceLize.SetRows(models.SysUserListToRows(sysUserList))
-//}
+func (userService *UserService) UserExport(c *gin.Context, user *models.SysUserDQL) (data []byte) {
+	sysUserList := userService.userDao.SelectUserListAll(c, userService.data, user)
+	toExcel, err := excel.SliceToExcel(sysUserList)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
+}
+
 //func (userService *UserService) ImportTemplate() (data []byte) {
 //f := excelize.NewFile()
 //template := models.SysUserImportTemplate()
 //f.SetSheetRow("Sheet1", "A1", &template)
 //buffer, _ := f.WriteToBuffer()
 //return buffer.Bytes()
-
+//
 //}
 
 func (userService *UserService) SelectUserById(c *gin.Context, userId int64) (sysUser *models.SysUserVo) {

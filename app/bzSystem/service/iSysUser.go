@@ -9,7 +9,7 @@ import (
 type IUserService interface {
 	SelectUserByUserName(c *gin.Context, userName string) *models.User
 	SelectUserList(c *gin.Context, user *models.SysUserDQL) (sysUserList []*models.SysUserVo, count *int64)
-	//UserExport(user *models.SysUserDQL) (data []byte)
+	UserExport(c *gin.Context, user *models.SysUserDQL) (data []byte)
 	SelectUserById(c *gin.Context, userId int64) (sysUser *models.SysUserVo)
 	InsertUser(c *gin.Context, sysUser *models.SysUserDML)
 	UpdateUser(c *gin.Context, sysUser *models.SysUserDML)

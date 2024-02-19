@@ -190,6 +190,36 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 
 }
 
+func (userDao *SysUserDao) SelectUserListAll(ctx context.Context, db sqly.SqlyContext, user *models.SysUserDQL) (list []*models.SysUserVo) {
+	sql := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
+			 from sys_user u left join sys_dept d on u.dept_id = d.dept_id where u.del_flag = '0'`
+	if user.UserName != "" {
+		sql += " AND u.user_name like concat('%', :user_name, '%')"
+	}
+	if user.Status != "" {
+		sql += " AND  u.status = :status"
+	}
+	if user.Phonenumber != "" {
+		sql += " AND u.phonenumber like concat('%', :phonenumber, '%')"
+	}
+	if user.BeginTime != "" {
+		sql += " AND date_format(u.create_time,'%y%m%d') >= date_format(:begin_time,'%y%m%d')"
+	}
+	if user.EndTime != "" {
+		sql += " AND date_format(u.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
+	}
+	if user.DeptId != 0 {
+		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
+	}
+	list = make([]*models.SysUserVo, 0, 16)
+	err := db.NamedSelectContext(ctx, &list, sql, user)
+	if err != nil {
+		panic(err)
+	}
+	return
+
+}
+
 func (userDao *SysUserDao) DeleteUserByIds(ctx context.Context, db sqly.SqlyContext, ids []int64) {
 	query, i, err := sqly.In("update sys_user set del_flag = '2' where user_id in(?)", ids)
 	if err != nil {

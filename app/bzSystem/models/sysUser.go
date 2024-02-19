@@ -34,16 +34,16 @@ type SysUserDML struct {
 
 type SysUserVo struct {
 	UserId      int64  `json:"userId,string" db:"user_id"`
-	UserName    string `json:"userName" db:"user_name"`
-	NickName    string `json:"nickName" db:"nick_name"`
-	Sex         string `json:"sex" db:"sex"`
+	UserName    string `json:"userName" db:"user_name" bze:"1,用户名"`
+	NickName    string `json:"nickName" db:"nick_name" bze:"2,用户昵称"`
+	Sex         string `json:"sex" db:"sex" bze:"3,性别"`
 	Status      string `json:"status" db:"status"`
 	DelFlag     string `json:"delFlag" db:"del_flag"`
 	DeptId      int64  `json:"deptId,string" db:"dept_id"`
-	DeptName    string `json:"deptName" db:"dept_name"`
+	DeptName    string `json:"deptName" db:"dept_name" bze:"4,部门名称"`
 	Leader      string `json:"leader" db:"leader"`
 	Email       string `json:"email" db:"email"`
-	Phonenumber string `json:"phonenumber"db:"phonenumber"`
+	Phonenumber string `json:"phonenumber"db:"phonenumber" bze:"5,电话""`
 	Avatar      string `json:"avatar" db:"avatar"`
 	RoleId      int64  `json:"roleId" db:"role_id"`
 	Remark      string `json:"remark" db:"remark"`
