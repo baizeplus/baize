@@ -19,6 +19,7 @@ stages:
         golangVersion: '1.18'
         commands:
           - mkdir output
+          - go mod tidy
           - cd app && GOOS=linux GOARCH=amd64 go build -o output/main.amd64 main.go
         artifacts:
           - name: BUILD_ARTIFACT
