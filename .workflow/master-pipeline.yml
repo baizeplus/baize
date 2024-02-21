@@ -7,6 +7,9 @@ triggers:
     branches:
       include:
         - master
+variables:
+  GO111MODULE: 'on'
+  GOPROXY: https://goproxy.cn,direct
 stages:
   - name: compile
     displayName: 编译
