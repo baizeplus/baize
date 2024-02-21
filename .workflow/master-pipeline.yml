@@ -19,7 +19,7 @@ stages:
       - step: build@golang
         name: build_golang
         displayName: Golang 构建
-        golangVersion: '1.18'
+        golangVersion: '1.20'
         commands:
           - mkdir output
           - go mod tidy
