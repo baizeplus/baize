@@ -23,7 +23,7 @@ stages:
         commands:
           - mkdir output
           - go mod tidy
-          - cd app && GOOS=linux GOARCH=amd64 go build -o output/main.amd64
+          - cd app && GOOS=linux GOARCH=amd64 go build -o baize
         artifacts:
           - name: BUILD_ARTIFACT
             path:
@@ -47,3 +47,48 @@ stages:
         dependArtifact: output
         version: 1.0.0.0
         autoIncrement: true
+        strategy: {}
+  - name: stage-a1385d90
+    displayName: 未命名
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: deploy@agent
+        name: deploy_agent
+        displayName: 主机部署
+        hostGroupID:
+          ID: baizeService
+          hostID:
+            - f714b580-0d03-4d6a-8061-b19ec5d4b525
+        deployArtifact:
+          - source: build
+            name: output
+            target: ~/gitee_go/deploy
+            dependArtifact: output
+        script:
+          - '# 功能：部署脚本会在部署主机组的每台机器上执行'
+          - '# 使用场景：先将制品包解压缩到指定目录中，再执行启动脚本deploy.sh，脚本示例地址：https://gitee.com/gitee-go/spring-boot-maven-deploy-case/blob/master/deploy.sh'
+          - '# mkdir -p /home/admin/app'
+          - '# tar zxvf ~/gitee_go/deploy/output.tar.gz -C /home/admin/app'
+          - '# sh /home/admin/app/deploy.sh restart'
+          - '# 如果你是php之类的无需制品包的制品方式，可以使用 git clone 或者 git pull 将源代码更新到服务器，再执行其他命令'
+          - '# git clone ***@***.git'
+          - cd ~/baize
+          - tar -zxvf output.tar.gz
+          - PID=$(ps -ef | grep app | grep -v grep | awk '{print $2}')
+          - ''
+          - '# 检查是否存在该进程'
+          - if [ -z "$PID" ]
+          - then
+          - '    echo "No baize processes to kill"'
+          - else
+          - '    # 杀死进程'
+          - '    kill -9 $PID'
+          - '    echo "Killed baize process with PID: $PID"'
+          - fi
+          - ''
+          - nohup ./baize >nohup.out &
+        notify: []
+        strategy:
+          retry: '0'
