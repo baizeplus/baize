@@ -23,7 +23,7 @@ stages:
         commands:
           - mkdir output
           - go mod tidy
-          - cd app && GOOS=linux GOARCH=amd64 go build -o baize
+          - cd app && GOOS=linux GOARCH=amd64 go build -o output/baize
         artifacts:
           - name: BUILD_ARTIFACT
             path:
