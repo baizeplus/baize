@@ -7,12 +7,12 @@
 package main
 
 import (
-	controller2 "baize/app/bzMonitor/controller"
-	daoImpl2 "baize/app/bzMonitor/dao/daoImpl"
-	serviceImpl2 "baize/app/bzMonitor/service/serviceImpl"
-	"baize/app/bzSystem/controller"
-	"baize/app/bzSystem/dao/daoImpl"
-	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/business/monitor/monitorController"
+	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
+	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/business/system/systemController"
+	"baize/app/business/system/systemDao/systemDaoImpl"
+	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/datasource"
 	"baize/app/routes"
 	"baize/app/setting"
@@ -26,40 +26,40 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	if err != nil {
 		return nil, nil, err
 	}
-	sysUserDao := daoImpl.NewSysUserDao()
-	sysMenuDao := daoImpl.NewSysMenuDao()
-	sysRoleDao := daoImpl.NewSysRoleDao()
-	logininforDao := daoImpl2.NewLogininforDao()
-	loginService := serviceImpl.NewLoginService(db, sysUserDao, sysMenuDao, sysRoleDao, logininforDao)
-	sysUserPostDao := daoImpl.NewSysUserPostDao()
-	sysUserRoleDao := daoImpl.NewSysUserRoleDao()
-	sysPostDao := daoImpl.NewSysPostDao()
-	userService := serviceImpl.NewUserService(db, sysUserDao, sysUserPostDao, sysUserRoleDao, sysRoleDao, sysPostDao)
-	sysRoleMenuDao := daoImpl.NewSysRoleMenuDao()
-	menuService := serviceImpl.NewMenuService(db, sysMenuDao, sysRoleMenuDao, sysRoleDao)
-	login := controller.NewLogin(loginService, userService, menuService)
-	postService := serviceImpl.NewPostService(db, sysPostDao)
-	sysRoleDeptDao := daoImpl.NewSysRoleDeptDao()
-	roleService := serviceImpl.NewRoleService(db, sysRoleDao, sysRoleMenuDao, sysRoleDeptDao, sysUserRoleDao)
-	user := controller.NewUser(userService, postService, roleService)
-	sysDeptDao := daoImpl.NewSysDeptDao()
-	deptService := serviceImpl.NewDeptService(db, sysDeptDao, sysRoleDao)
-	dept := controller.NewDept(deptService)
-	sysDictTypeDao := daoImpl.NewSysDictTypeDao()
-	dictTypeService := serviceImpl.NewDictTypeService(db, sysDictTypeDao)
-	sysDictDataDao := daoImpl.NewSysDictDataDao()
-	dictDataService := serviceImpl.NewDictDataService(db, sysDictDataDao)
-	dictType := controller.NewDictType(dictTypeService, dictDataService)
-	dictData := controller.NewDictData(dictDataService)
-	menu := controller.NewMenu(menuService)
-	role := controller.NewRole(roleService)
-	post := controller.NewPost(postService)
-	profile := controller.NewProfile(roleService, postService, userService)
-	infoServer := controller2.NewInfoServer()
-	userOnlineService := serviceImpl2.NewUserOnlineService()
-	userOnline := controller2.NewUserOnline(userOnlineService)
-	logininforService := serviceImpl2.NewLogininforService(db, logininforDao)
-	logininfor := controller2.NewLogininfor(logininforService)
+	sysUserDao := systemDaoImpl.NewSysUserDao()
+	sysMenuDao := systemDaoImpl.NewSysMenuDao()
+	sysRoleDao := systemDaoImpl.NewSysRoleDao()
+	logininforDao := monitorDaoImpl.NewLogininforDao()
+	loginService := systemServiceImpl.NewLoginService(db, sysUserDao, sysMenuDao, sysRoleDao, logininforDao)
+	sysUserPostDao := systemDaoImpl.NewSysUserPostDao()
+	sysUserRoleDao := systemDaoImpl.NewSysUserRoleDao()
+	sysPostDao := systemDaoImpl.NewSysPostDao()
+	userService := systemServiceImpl.NewUserService(db, sysUserDao, sysUserPostDao, sysUserRoleDao, sysRoleDao, sysPostDao)
+	sysRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao()
+	menuService := systemServiceImpl.NewMenuService(db, sysMenuDao, sysRoleMenuDao, sysRoleDao)
+	login := systemController.NewLogin(loginService, userService, menuService)
+	postService := systemServiceImpl.NewPostService(db, sysPostDao)
+	sysRoleDeptDao := systemDaoImpl.NewSysRoleDeptDao()
+	roleService := systemServiceImpl.NewRoleService(db, sysRoleDao, sysRoleMenuDao, sysRoleDeptDao, sysUserRoleDao)
+	user := systemController.NewUser(userService, postService, roleService)
+	sysDeptDao := systemDaoImpl.NewSysDeptDao()
+	deptService := systemServiceImpl.NewDeptService(db, sysDeptDao, sysRoleDao)
+	dept := systemController.NewDept(deptService)
+	sysDictTypeDao := systemDaoImpl.NewSysDictTypeDao()
+	dictTypeService := systemServiceImpl.NewDictTypeService(db, sysDictTypeDao)
+	sysDictDataDao := systemDaoImpl.NewSysDictDataDao()
+	dictDataService := systemServiceImpl.NewDictDataService(db, sysDictDataDao)
+	dictType := systemController.NewDictType(dictTypeService, dictDataService)
+	dictData := systemController.NewDictData(dictDataService)
+	menu := systemController.NewMenu(menuService)
+	role := systemController.NewRole(roleService)
+	post := systemController.NewPost(postService)
+	profile := systemController.NewProfile(roleService, postService, userService)
+	infoServer := monitorController.NewInfoServer()
+	userOnlineService := monitorServiceImpl.NewUserOnlineService()
+	userOnline := monitorController.NewUserOnline(userOnlineService)
+	logininforService := monitorServiceImpl.NewLogininforService(db, logininforDao)
+	logininfor := monitorController.NewLogininfor(logininforService)
 	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile, infoServer, userOnline, logininfor)
 	return engine, func() {
 		cleanup()

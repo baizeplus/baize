@@ -18,7 +18,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/bzSystem/dept": {
+        "/system/dept": {
             "get": {
                 "security": [
                     {
@@ -75,7 +75,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysDeptVo"
+                                                                "$ref": "#/definitions/systemModels.SysDeptVo"
                                                             }
                                                         }
                                                     }
@@ -110,7 +110,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDeptVo"
+                            "$ref": "#/definitions/systemModels.SysDeptVo"
                         }
                     }
                 ],
@@ -144,7 +144,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDeptVo"
+                            "$ref": "#/definitions/systemModels.SysDeptVo"
                         }
                     }
                 ],
@@ -158,7 +158,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dept/roleDeptTreeSelect/{roleId}": {
+        "/system/dept/roleDeptTreeSelect/{roleId}": {
             "get": {
                 "security": [
                     {
@@ -194,7 +194,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.RoleDeptTree"
+                                            "$ref": "#/definitions/systemModels.RoleDeptTree"
                                         }
                                     }
                                 }
@@ -204,7 +204,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dept/{deptId}": {
+        "/system/dept/{deptId}": {
             "get": {
                 "security": [
                     {
@@ -240,7 +240,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysDeptVo"
+                                            "$ref": "#/definitions/systemModels.SysDeptVo"
                                         }
                                     }
                                 }
@@ -282,7 +282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/clearCache": {
+        "/system/dict/clearCache": {
             "put": {
                 "security": [
                     {
@@ -323,7 +323,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                                         }
                                     }
                                 }
@@ -333,7 +333,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/data": {
+        "/system/dict/data": {
             "put": {
                 "security": [
                     {
@@ -355,7 +355,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                         }
                     }
                 ],
@@ -389,7 +389,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                         }
                     }
                 ],
@@ -442,7 +442,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                                         }
                                     }
                                 }
@@ -452,7 +452,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/data/list": {
+        "/system/dict/data/list": {
             "get": {
                 "security": [
                     {
@@ -532,7 +532,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
                                                             }
                                                         }
                                                     }
@@ -547,7 +547,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/data/type/{dictType}": {
+        "/system/dict/data/type/{dictType}": {
             "get": {
                 "security": [
                     {
@@ -593,7 +593,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
                                                             }
                                                         }
                                                     }
@@ -608,7 +608,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/data/{dictCode}": {
+        "/system/dict/data/{dictCode}": {
             "get": {
                 "security": [
                     {
@@ -644,7 +644,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                                         }
                                     }
                                 }
@@ -654,7 +654,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/type": {
+        "/system/dict/type": {
             "put": {
                 "security": [
                     {
@@ -676,7 +676,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                         }
                     }
                 ],
@@ -710,7 +710,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                         }
                     }
                 ],
@@ -761,7 +761,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/type/list": {
+        "/system/dict/type/list": {
             "get": {
                 "security": [
                     {
@@ -841,7 +841,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
                                                             }
                                                         }
                                                     }
@@ -856,7 +856,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/dict/type/{dictCode}": {
+        "/system/dict/type/{dictCode}": {
             "get": {
                 "security": [
                     {
@@ -892,7 +892,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                                         }
                                     }
                                 }
@@ -902,7 +902,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/post": {
+        "/system/post": {
             "put": {
                 "security": [
                     {
@@ -924,7 +924,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysPostVo"
+                            "$ref": "#/definitions/systemModels.SysPostVo"
                         }
                     }
                 ],
@@ -958,7 +958,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysPostVo"
+                            "$ref": "#/definitions/systemModels.SysPostVo"
                         }
                     }
                 ],
@@ -1008,7 +1008,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/post/list": {
+        "/system/post/list": {
             "get": {
                 "security": [
                     {
@@ -1088,7 +1088,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysPostVo"
+                                                                "$ref": "#/definitions/systemModels.SysPostVo"
                                                             }
                                                         }
                                                     }
@@ -1103,7 +1103,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/bzSystem/post/{postId}": {
+        "/system/post/{postId}": {
             "get": {
                 "security": [
                     {
@@ -1139,7 +1139,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.SysPostVo"
+                                            "$ref": "#/definitions/systemModels.SysPostVo"
                                         }
                                     }
                                 }
@@ -1201,7 +1201,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.GetInfo"
+                                            "$ref": "#/definitions/systemModels.GetInfo"
                                         }
                                     }
                                 }
@@ -1228,7 +1228,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginBody"
+                            "$ref": "#/definitions/systemModels.LoginBody"
                         }
                     }
                 ],
@@ -1386,7 +1386,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysUserVo"
+                                                                "$ref": "#/definitions/systemModels.SysUserVo"
                                                             }
                                                         }
                                                     }
@@ -1421,7 +1421,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysUserDML"
+                            "$ref": "#/definitions/systemModels.SysUserDML"
                         }
                     }
                 ],
@@ -1455,7 +1455,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysUserDML"
+                            "$ref": "#/definitions/systemModels.SysUserDML"
                         }
                     }
                 ],
@@ -1496,7 +1496,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Accredit"
+                                            "$ref": "#/definitions/systemModels.Accredit"
                                         }
                                     }
                                 }
@@ -1597,7 +1597,7 @@ const docTemplate = `{
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysUserVo"
+                                                                "$ref": "#/definitions/systemModels.SysUserVo"
                                                             }
                                                         }
                                                     }
@@ -1661,7 +1661,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditUserStatus"
+                            "$ref": "#/definitions/systemModels.EditUserStatus"
                         }
                     }
                 ],
@@ -1854,7 +1854,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ResetPwd"
+                            "$ref": "#/definitions/systemModels.ResetPwd"
                         }
                     }
                 ],
@@ -1904,7 +1904,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.UserAndAccredit"
+                                            "$ref": "#/definitions/systemModels.UserAndAccredit"
                                         }
                                     }
                                 }
@@ -1916,26 +1916,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Accredit": {
+        "systemModels.Accredit": {
             "type": "object",
             "properties": {
                 "posts": {
                     "description": "岗位",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysPostVo"
+                        "$ref": "#/definitions/systemModels.SysPostVo"
                     }
                 },
                 "roles": {
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleVo"
                     }
                 }
             }
         },
-        "models.EditUserStatus": {
+        "systemModels.EditUserStatus": {
             "type": "object",
             "required": [
                 "status",
@@ -1969,7 +1969,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GetInfo": {
+        "systemModels.GetInfo": {
             "type": "object",
             "properties": {
                 "permissions": {
@@ -1985,11 +1985,11 @@ const docTemplate = `{
                     }
                 },
                 "user": {
-                    "$ref": "#/definitions/models.User"
+                    "$ref": "#/definitions/systemModels.User"
                 }
             }
         },
-        "models.LoginBody": {
+        "systemModels.LoginBody": {
             "type": "object",
             "required": [
                 "code",
@@ -2016,7 +2016,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ResetPwd": {
+        "systemModels.ResetPwd": {
             "type": "object",
             "required": [
                 "password",
@@ -2034,7 +2034,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.RoleDeptTree": {
+        "systemModels.RoleDeptTree": {
             "type": "object",
             "properties": {
                 "checkedKeys": {
@@ -2048,12 +2048,12 @@ const docTemplate = `{
                     "description": "部门",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysDeptVo"
+                        "$ref": "#/definitions/systemModels.SysDeptVo"
                     }
                 }
             }
         },
-        "models.SysDeptVo": {
+        "systemModels.SysDeptVo": {
             "type": "object",
             "properties": {
                 "ancestors": {
@@ -2116,7 +2116,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysDictDataVo": {
+        "systemModels.SysDictDataVo": {
             "type": "object",
             "properties": {
                 "createBy": {
@@ -2168,7 +2168,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysPostVo": {
+        "systemModels.SysPostVo": {
             "type": "object",
             "properties": {
                 "createBy": {
@@ -2208,7 +2208,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysRole": {
+        "systemModels.SysRole": {
             "type": "object",
             "properties": {
                 "dataScope": {
@@ -2225,7 +2225,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysRoleVo": {
+        "systemModels.SysRoleVo": {
             "type": "object",
             "properties": {
                 "createBy": {
@@ -2277,7 +2277,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysUserDML": {
+        "systemModels.SysUserDML": {
             "type": "object",
             "required": [
                 "deptId",
@@ -2360,7 +2360,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SysUserVo": {
+        "systemModels.SysUserVo": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2405,7 +2405,7 @@ const docTemplate = `{
                 "roles": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysRole"
+                        "$ref": "#/definitions/systemModels.SysRole"
                     }
                 },
                 "sex": {
@@ -2431,7 +2431,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.User": {
+        "systemModels.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2447,7 +2447,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserAndAccredit": {
+        "systemModels.UserAndAccredit": {
             "type": "object",
             "properties": {
                 "postIds": {
@@ -2461,7 +2461,7 @@ const docTemplate = `{
                     "description": "岗位",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysPostVo"
+                        "$ref": "#/definitions/systemModels.SysPostVo"
                     }
                 },
                 "roleIds": {
@@ -2475,14 +2475,14 @@ const docTemplate = `{
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleVo"
                     }
                 },
                 "user": {
                     "description": "user",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.SysUserVo"
+                            "$ref": "#/definitions/systemModels.SysUserVo"
                         }
                     ]
                 }

@@ -2,11 +2,13 @@ package routes
 
 import (
 	"baize/app/baize"
-	controllerM "baize/app/bzMonitor/controller"
-	"baize/app/bzSystem/controller"
+	"baize/app/business/monitor/monitorController"
+	"baize/app/business/monitor/monitorRouter"
+	"baize/app/business/system/systemController"
+	systemRoutes "baize/app/business/system/systemRouter"
+
 	"baize/app/middlewares"
-	"baize/app/routes/monitorRouter"
-	systemRoutes "baize/app/routes/systemRouter"
+
 	"baize/app/setting"
 	"baize/app/utils/IOFile"
 	"baize/app/utils/logger"
@@ -25,18 +27,18 @@ var ProviderSet = wire.NewSet(NewGinEngine)
 var noRefresh = baize.NewSet([]string{})
 
 func NewGinEngine(
-	login *controller.Login,
-	user *controller.User,
-	dept *controller.Dept,
-	dictType *controller.DictType,
-	dictData *controller.DictData,
-	menu *controller.Menu,
-	role *controller.Role,
-	post *controller.Post,
-	profile *controller.Profile,
-	server *controllerM.InfoServer,
-	userOnline *controllerM.UserOnline,
-	logfor *controllerM.Logininfor,
+	login *systemController.Login,
+	user *systemController.User,
+	dept *systemController.Dept,
+	dictType *systemController.DictType,
+	dictData *systemController.DictData,
+	menu *systemController.Menu,
+	role *systemController.Role,
+	post *systemController.Post,
+	profile *systemController.Profile,
+	server *monitorController.InfoServer,
+	userOnline *monitorController.UserOnline,
+	logfor *monitorController.Logininfor,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {

@@ -4,12 +4,12 @@
 package main
 
 import (
-	controllerM "baize/app/bzMonitor/controller"
-	daoImplM "baize/app/bzMonitor/dao/daoImpl"
-	serviceImplM "baize/app/bzMonitor/service/serviceImpl"
-	"baize/app/bzSystem/controller"
-	"baize/app/bzSystem/dao/daoImpl"
-	"baize/app/bzSystem/service/serviceImpl"
+	"baize/app/business/monitor/monitorController"
+	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
+	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/business/system/systemController"
+	"baize/app/business/system/systemDao/systemDaoImpl"
+	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/datasource"
 	"baize/app/routes"
 	"baize/app/setting"
@@ -19,13 +19,13 @@ import (
 
 func wireApp(*setting.Datasource) (*gin.Engine, func(), error) {
 	panic(wire.Build(
-		daoImplM.ProviderSet,
-		daoImpl.ProviderSet,
+		systemDaoImpl.ProviderSet,
+		systemServiceImpl.ProviderSet,
+		systemController.ProviderSet,
+		monitorDaoImpl.ProviderSet,
+		monitorServiceImpl.ProviderSet,
+		monitorController.ProviderSet,
 		datasource.ProviderSet,
-		serviceImplM.ProviderSet,
-		serviceImpl.ProviderSet,
-		controller.ProviderSet,
-		controllerM.ProviderSet,
 		routes.ProviderSet,
 	))
 }
