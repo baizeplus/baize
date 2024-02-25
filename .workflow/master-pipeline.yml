@@ -49,7 +49,7 @@ stages:
         autoIncrement: true
         strategy: {}
   - name: stage-a1385d90
-    displayName: 未命名
+    displayName: 部署
     strategy: naturally
     trigger: auto
     executor: []
@@ -64,8 +64,8 @@ stages:
         deployArtifact:
           - source: build
             name: output
-            target: ~/gitee_go/deploy
-            dependArtifact: output
+            target: ~/baize
+            dependArtifact: BUILD_ARTIFACT
         script:
           - '# 功能：部署脚本会在部署主机组的每台机器上执行'
           - '# 使用场景：先将制品包解压缩到指定目录中，再执行启动脚本deploy.sh，脚本示例地址：https://gitee.com/gitee-go/spring-boot-maven-deploy-case/blob/master/deploy.sh'
