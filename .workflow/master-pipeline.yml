@@ -27,7 +27,7 @@ stages:
         artifacts:
           - name: BUILD_ARTIFACT
             path:
-              - ./output
+              - ./app/output
         strategy: {}
       - step: publish@general_artifacts
         name: publish_general_artifacts
