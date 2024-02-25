@@ -76,8 +76,10 @@ stages:
           - '# git clone ***@***.git'
           - cd ~/baize
           - tar -zxvf output.tar.gz
+          - cd output
+          - mv baize ..
+          - cd ..
           - PID=$(ps -ef | grep app | grep -v grep | awk '{print $2}')
-          - ''
           - '# 检查是否存在该进程'
           - if [ -z "$PID" ]
           - then
