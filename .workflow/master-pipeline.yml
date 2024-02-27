@@ -64,7 +64,7 @@ stages:
         deployArtifact:
           - source: build
             name: output
-            target: ~/baize
+            target: /usr/local/baize
             dependArtifact: BUILD_ARTIFACT
         script:
           - '# 功能：部署脚本会在部署主机组的每台机器上执行'
@@ -74,7 +74,7 @@ stages:
           - '# sh /home/admin/app/deploy.sh restart'
           - '# 如果你是php之类的无需制品包的制品方式，可以使用 git clone 或者 git pull 将源代码更新到服务器，再执行其他命令'
           - '# git clone ***@***.git'
-          - cd ~/baize
+          - cd /usr/local/baize
           - tar -zxvf output.tar.gz
           - cd output
           - mv baize ..
@@ -91,6 +91,9 @@ stages:
           - fi
           - ''
           - nohup ./baize >nohup.out &
+          - ''
+          - rm -r output.tar.gz
+          - rm -rf output/
         notify: []
         strategy:
           retry: '0'
