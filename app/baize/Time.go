@@ -19,7 +19,7 @@ func NewTime() *Time {
 // MarshalJSON implements json.Marshaler.
 func (t *Time) MarshalJSON() ([]byte, error) {
 	//do your serializing here
-	seconds := t.Unix()
+	seconds := t.UnixMilli()
 	return []byte(strconv.FormatInt(seconds, 10)), nil
 }
 

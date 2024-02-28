@@ -17,6 +17,7 @@ import (
 	"mime/multipart"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 type UserService struct {
@@ -69,10 +70,6 @@ func (userService *UserService) UserExport(c *gin.Context, user *systemModels.Sy
 //
 //}
 
-func (userService *UserService) SelectUserById(c *gin.Context, userId int64) (sysUser *systemModels.SysUserVo) {
-	return userService.userDao.SelectUserById(c, userService.data, userId)
-
-}
 func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit) {
 	uaa := new(systemModels.UserAndAccredit)
 	uaa.User = userService.userDao.SelectUserById(c, userService.data, userId)
@@ -313,4 +310,19 @@ func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *s
 		uar.RoleIds = append(uar.RoleIds, strconv.FormatInt(id, 10))
 	}
 	return uar
+}
+
+func (userService *UserService) GetUserProfile(c *gin.Context) *systemModels.UserProfile {
+	userId := baizeContext.GetUserId(c)
+	up := new(systemModels.UserProfile)
+	up.User = userService.userDao.SelectUserById(c, userService.data, userId)
+	roles := userService.roleDao.SelectBasicRolesByUserId(c, userService.data, userId)
+	roleNames := make([]string, 0, len(roles))
+	for _, role := range roles {
+		roleNames = append(roleNames, role.RoleName)
+	}
+	up.RoleGroup = strings.Join(roleNames, ",")
+	up.PostGroup = strings.Join(userService.postDao.SelectPostNameListByUserId(c, userService.data, userId), ",")
+
+	return up
 }

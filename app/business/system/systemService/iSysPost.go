@@ -12,5 +12,4 @@ type IPostService interface {
 	InsertPost(c *gin.Context, post *systemModels.SysPostVo)
 	UpdatePost(c *gin.Context, post *systemModels.SysPostVo)
 	DeletePostByIds(c *gin.Context, postId []int64)
-	SelectUserPostGroupByUserId(c *gin.Context, userId int64) string
 }
