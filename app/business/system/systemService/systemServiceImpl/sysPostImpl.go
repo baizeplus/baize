@@ -7,7 +7,6 @@ import (
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 type PostService struct {
@@ -49,9 +48,4 @@ func (postService *PostService) UpdatePost(c *gin.Context, post *systemModels.Sy
 func (postService *PostService) DeletePostByIds(c *gin.Context, postId []int64) {
 	postService.postDao.DeletePostByIds(c, postService.data, postId)
 	return
-}
-func (postService *PostService) SelectUserPostGroupByUserId(c *gin.Context, userId int64) string {
-
-	return strings.Join(postService.postDao.SelectPostNameListByUserId(c, postService.data, userId), ",")
-
 }

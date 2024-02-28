@@ -21,7 +21,6 @@ type IRoleService interface {
 
 	CheckRoleNameUnique(c *gin.Context, id int64, roleName string) bool
 	CheckRoleKeyUnique(c *gin.Context, id int64, roleKey string) bool
-	SelectUserRoleGroupByUserId(c *gin.Context, userId int64) string
 	SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64)
 	SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64)
 	InsertAuthUsers(c *gin.Context, roleId int64, userIds []int64)

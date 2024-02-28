@@ -10,7 +10,6 @@ type IUserService interface {
 	SelectUserByUserName(c *gin.Context, userName string) *systemModels.User
 	SelectUserList(c *gin.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, count *int64)
 	UserExport(c *gin.Context, user *systemModels.SysUserDQL) (data []byte)
-	SelectUserById(c *gin.Context, userId int64) (sysUser *systemModels.SysUserVo)
 	InsertUser(c *gin.Context, sysUser *systemModels.SysUserDML)
 	UpdateUser(c *gin.Context, sysUser *systemModels.SysUserDML)
 	UpdateUserStatus(c *gin.Context, sysUser *systemModels.EditUserStatus)
@@ -30,4 +29,5 @@ type IUserService interface {
 	SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit)
 	SelectAccredit(c *gin.Context) (sysUser *systemModels.Accredit)
 	//ImportTemplate() (data []byte)
+	GetUserProfile(c *gin.Context) *systemModels.UserProfile
 }

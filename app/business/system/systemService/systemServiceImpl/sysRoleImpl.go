@@ -10,7 +10,6 @@ import (
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"strconv"
-	"strings"
 )
 
 type RoleService struct {
@@ -188,15 +187,7 @@ func (roleService *RoleService) CheckRoleKeyUnique(c *gin.Context, id int64, rol
 	}
 	return true
 }
-func (roleService *RoleService) SelectUserRoleGroupByUserId(c *gin.Context, userId int64) string {
-	roles := roleService.roleDao.SelectBasicRolesByUserId(c, roleService.data, userId)
-	roleNames := make([]string, 0, len(roles))
-	for _, role := range roles {
-		roleNames = append(roleNames, role.RoleName)
-	}
-	return strings.Join(roleNames, ",")
 
-}
 func (roleService *RoleService) insertRoleDept(c *gin.Context, db sqly.SqlyContext, sysRole *systemModels.SysRoleDML) {
 	deptIds := sysRole.DeptIds
 	if len(deptIds) != 0 {

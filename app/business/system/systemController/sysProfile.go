@@ -9,22 +9,15 @@ import (
 )
 
 type Profile struct {
-	rs systemService.IRoleService
-	ps systemService.IPostService
 	us systemService.IUserService
 }
 
-func NewProfile(rs *systemServiceImpl.RoleService, ps *systemServiceImpl.PostService, us *systemServiceImpl.UserService) *Profile {
-	return &Profile{rs: rs, ps: ps, us: us}
+func NewProfile(us *systemServiceImpl.UserService) *Profile {
+	return &Profile{us: us}
 }
 
 func (pc *Profile) Profile(c *gin.Context) {
-
-	m := make(map[string]interface{})
-	m["user"] = pc.us.SelectUserById(c, baizeContext.GetUserId(c))
-	m["roleGroup"] = pc.rs.SelectUserRoleGroupByUserId(c, baizeContext.GetUserId(c))
-	m["postGroup"] = pc.ps.SelectUserPostGroupByUserId(c, baizeContext.GetUserId(c))
-	baizeContext.SuccessData(c, m)
+	baizeContext.SuccessData(c, pc.us.GetUserProfile(c))
 }
 
 func (pc *Profile) ProfileUpdateProfile(c *gin.Context) {

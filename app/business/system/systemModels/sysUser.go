@@ -107,3 +107,9 @@ type UserAndRoles struct {
 	Roles   []*SysRoleVo `json:"roles"`   //角色
 	RoleIds []string     `json:"roleIds"` //选择的角色Id
 }
+
+type UserProfile struct {
+	User      *SysUserVo `json:"user"`      //user
+	RoleGroup string     `json:"roleGroup"` //角色
+	PostGroup string     `json:"postGroup"` //选择的角色Id
+}
