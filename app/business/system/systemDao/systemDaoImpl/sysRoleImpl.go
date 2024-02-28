@@ -1,7 +1,6 @@
 package systemDaoImpl
 
 import (
-	"baize/app/baize"
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
@@ -12,7 +11,7 @@ import (
 
 func NewSysRoleDao() *SysRoleDao {
 	return &SysRoleDao{
-		selectSql: ` select distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.menu_check_strictly, r.dept_check_strictly, r.status, r.del_flag, r.create_time, r.remark from sys_role r
+		selectSql: ` select distinct r.role_id, r.role_name, r.role_key, r.role_sort,  r.menu_check_strictly, r.dept_check_strictly, r.status, r.del_flag, r.create_time, r.remark from sys_role r
 	        left join sys_user_role ur on ur.role_id = r.role_id
 	        left join sys_user u on u.user_id = ur.user_id
 	        left join sys_dept d on u.dept_id = d.dept_id`,
@@ -71,7 +70,7 @@ func (rd *SysRoleDao) SelectRoleById(ctx context.Context, db sqly.SqlyContext, r
 }
 
 func (rd *SysRoleDao) SelectBasicRolesByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []*systemModels.SysRole) {
-	sqlStr := `select  r.role_id, r.role_name, r.role_key,r.data_scope
+	sqlStr := `select  r.role_id, r.role_name, r.role_key
 				from sys_role r
 				left join sys_user_role ur  on r.role_id = ur.role_id
 				where  ur.user_id = ?`
@@ -89,18 +88,6 @@ func (rd *SysRoleDao) SelectRolePermissionByUserId(ctx context.Context, db sqly.
 				left join sys_user_role ur  on r.role_id = ur.role_id
 				where  ur.user_id = ?`
 	roles = make([]string, 0, 1)
-	err := db.SelectContext(ctx, &roles, sqlStr, userId)
-	if err != nil && err != sql.ErrNoRows {
-		panic(err)
-	}
-	return
-}
-func (rd *SysRoleDao) SelectRoleIdAndDataScopeByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []*baize.Role) {
-	sqlStr := `select  r.role_id, r.data_scope
-				from sys_role r
-				left join sys_user_role ur  on r.role_id = ur.role_id
-				where  ur.user_id = ?`
-	roles = make([]*baize.Role, 0, 2)
 	err := db.SelectContext(ctx, &roles, sqlStr, userId)
 	if err != nil && err != sql.ErrNoRows {
 		panic(err)
@@ -127,10 +114,6 @@ func (rd *SysRoleDao) InsertRole(ctx context.Context, db sqly.SqlyContext, sysRo
 					values(:role_id,:role_name,:role_key,:role_sort,:create_by,now(),:update_by,now() %s)`
 	key := ""
 	value := ""
-	if sysRole.DataScope != "" {
-		key += ",data_scope"
-		value += ",:data_scope"
-	}
 
 	if sysRole.Status != "" {
 		key += ",status"
@@ -161,15 +144,7 @@ func (rd *SysRoleDao) UpdateRole(ctx context.Context, db sqly.SqlyContext, sysRo
 	if sysRole.RoleSort != -1 {
 		updateSQL += ",role_sort = :role_sort"
 	}
-	if sysRole.DataScope != "" {
-		updateSQL += ",data_scope = :data_scope"
-	}
-	//if sysRole.PermissionCheckStrictly != nil {
-	//	updateSQL += ",permission_check_strictly = :permission_check_strictly"
-	//}
-	//if sysRole.DeptCheckStrictly != nil {
-	//	updateSQL += ",dept_check_strictly = :dept_check_strictly"
-	//}
+
 	if sysRole.Remake != "" {
 		updateSQL += ",remake = :remake"
 	}

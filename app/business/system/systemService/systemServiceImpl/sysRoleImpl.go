@@ -1,7 +1,6 @@
 package systemServiceImpl
 
 import (
-	"baize/app/baize"
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
@@ -154,8 +153,8 @@ func (roleService *RoleService) SelectBasicRolesByUserId(c *gin.Context, userId 
 
 }
 
-func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (rolePerms []string, loginRoles []*baize.Role) {
-	loginRoles = make([]*baize.Role, 0, len(roles))
+func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (rolePerms []string, loginRoles []int64) {
+	loginRoles = make([]int64, 0, len(roles))
 	rolePerms = make([]string, 0, len(roles))
 	for _, role := range roles {
 		rolePerms = append(rolePerms, role.RoleKey)
