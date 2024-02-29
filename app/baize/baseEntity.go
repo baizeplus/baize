@@ -46,7 +46,3 @@ func (b *BaseEntityDQL) ToPage() *sqly.Page {
 	s.OrderBy = b.GetOrder()
 	return s
 }
-
-type User interface {
-	GetDeptId() int64
-}

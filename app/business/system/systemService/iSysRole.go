@@ -12,7 +12,6 @@ type IRoleService interface {
 	InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	UpdateRole(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	UpdateRoleStatus(c *gin.Context, sysRole *systemModels.SysRoleDML)
-	AuthDataScope(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	DeleteRoleByIds(c *gin.Context, ids []int64)
 	CountUserRoleByRoleId(c *gin.Context, ids []int64) bool
 	SelectBasicRolesByUserId(c *gin.Context, userId int64) (roles []*systemModels.SysRole)

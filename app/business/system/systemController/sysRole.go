@@ -71,13 +71,6 @@ func (rc *Role) RoleEdit(c *gin.Context) {
 	rc.rs.UpdateRole(c, sysRole)
 	baizeContext.Success(c)
 }
-func (rc *Role) RoleDataScope(c *gin.Context) {
-	sysRole := new(systemModels.SysRoleDML)
-	_ = c.ShouldBindJSON(sysRole)
-	sysRole.SetUpdateBy(baizeContext.GetUserId(c))
-	rc.rs.AuthDataScope(c, sysRole)
-	baizeContext.Success(c)
-}
 
 func (rc *Role) RoleChangeStatus(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)

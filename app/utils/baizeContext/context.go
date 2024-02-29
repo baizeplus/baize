@@ -97,13 +97,13 @@ func GetDataScope(c *gin.Context, deptAlias string) string {
 	case dataScopeAspect.DataScopeAll:
 		sqlString = ""
 	case dataScopeAspect.DataScopeCustom:
-		sqlString += fmt.Sprintf("%s.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = %d ) ", deptAlias, GetUserId(c))
+		sqlString += fmt.Sprintf(" %s.dept_id IN ( SELECT dept_id FROM sys_user_dept_scope WHERE user_id = %d ) ", deptAlias, GetUserId(c))
 	case dataScopeAspect.DataScopeDept:
-		sqlString += fmt.Sprintf("%s.dept_id = %d ", deptAlias, GetDeptId(c))
+		sqlString += fmt.Sprintf(" %s.dept_id = %d ", deptAlias, GetDeptId(c))
 	case dataScopeAspect.DataScopeDeptAndChild:
-		sqlString += fmt.Sprintf("%s.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = %d or find_in_set( %d , ancestors ) ) ", deptAlias, GetDeptId(c), GetDeptId(c))
+		sqlString += fmt.Sprintf(" %s.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = %d or find_in_set( %d , ancestors ) ) ", deptAlias, GetDeptId(c), GetDeptId(c))
 	case dataScopeAspect.NoDataScope:
-		sqlString += fmt.Sprintf("1=0")
+		sqlString += fmt.Sprintf(" 1=0")
 	}
 
 	return sqlString

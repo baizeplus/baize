@@ -113,3 +113,7 @@ type UserProfile struct {
 	RoleGroup string     `json:"roleGroup"` //角色
 	PostGroup string     `json:"postGroup"` //选择的角色Id
 }
+type SysUserDeptScope struct {
+	UserId int64 `db:"user_id"`
+	DeptId int64 `db:"dept_id"`
+}

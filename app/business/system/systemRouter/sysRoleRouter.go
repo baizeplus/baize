@@ -13,7 +13,6 @@ func InitSysRoleRouter(router *gin.RouterGroup, role *systemController.Role) {
 	rr.GET("/:roleId", middlewares.HasPermission("system:role:query"), role.RoleGetInfo)
 	rr.POST("", middlewares.HasPermission("system:role:add"), role.RoleAdd)
 	rr.PUT("", middlewares.HasPermission("system:role:edit"), role.RoleEdit)
-	rr.PUT("/dataScope", middlewares.HasPermission("system:role:edit"), role.RoleDataScope)
 	rr.PUT("/changeStatus", middlewares.HasPermission("system:role:edit"), role.RoleChangeStatus)
 	rr.DELETE("/:rolesIds", middlewares.HasPermission("system:role:remove"), role.RoleRemove)
 	rr.GET("/authUser/allocatedList", middlewares.HasPermission("system:role:list"), role.AllocatedList)

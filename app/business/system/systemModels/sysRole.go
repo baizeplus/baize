@@ -45,11 +45,6 @@ type SysRoleMenu struct {
 	MenuId int64 `db:"menu_id"`
 }
 
-type SysRoleDept struct {
-	RoleId int64 `db:"role_id"`
-	DeptId int64 `db:"dept_id"`
-}
-
 type SysRoleAndUserDQL struct {
 	RoleId      string `form:"roleId" db:"role_id" binding:"required"`
 	UserName    string `form:"userName" db:"user_name"`
