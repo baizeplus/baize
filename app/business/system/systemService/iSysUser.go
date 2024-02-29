@@ -12,6 +12,7 @@ type IUserService interface {
 	UserExport(c *gin.Context, user *systemModels.SysUserDQL) (data []byte)
 	InsertUser(c *gin.Context, sysUser *systemModels.SysUserDML)
 	UpdateUser(c *gin.Context, sysUser *systemModels.SysUserDML)
+
 	UpdateUserStatus(c *gin.Context, sysUser *systemModels.EditUserStatus)
 	ResetPwd(c *gin.Context, userId int64, password string)
 	CheckUserNameUnique(c *gin.Context, userName string) bool
@@ -30,4 +31,7 @@ type IUserService interface {
 	SelectAccredit(c *gin.Context) (sysUser *systemModels.Accredit)
 	//ImportTemplate() (data []byte)
 	GetUserProfile(c *gin.Context) *systemModels.UserProfile
+
+	UpdateUserDataScope(c *gin.Context, uds *systemModels.SysUserDataScope)
+	SelectUserDataScope(c *gin.Context, userId int64) *systemModels.SysUserDataScope
 }

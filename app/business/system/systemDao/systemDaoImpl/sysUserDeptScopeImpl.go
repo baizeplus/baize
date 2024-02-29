@@ -25,6 +25,14 @@ func (uds *SysUserDeptScopeDao) DeleteUserDeptScope(ctx context.Context, db sqly
 	}
 	return
 }
+func (uds *SysUserDeptScopeDao) SelectUserDeptScopeDeptIdByUserId(ctx context.Context, db sqly.SqlyContext, id int64) []string {
+	ids := make([]string, 0)
+	err := db.SelectContext(ctx, &ids, "select dept_id from sys_user_dept_scope where user_id = ?", id)
+	if err != nil {
+		panic(err)
+	}
+	return ids
+}
 
 func (uds *SysUserDeptScopeDao) DeleteUserDeptScopeByUserId(ctx context.Context, db sqly.SqlyContext, id int64) {
 
@@ -35,7 +43,6 @@ func (uds *SysUserDeptScopeDao) DeleteUserDeptScopeByUserId(ctx context.Context,
 
 }
 func (uds *SysUserDeptScopeDao) BatchUserDeptScope(ctx context.Context, db sqly.SqlyContext, list []*systemModels.SysUserDeptScope) {
-
 	_, err := db.NamedExecContext(ctx, "insert into sys_user_dept_scope(user_id, dept_id) values (:user_id,:dept_id)", list)
 	if err != nil {
 		panic(err)
