@@ -36,7 +36,7 @@ func (uds *SysUserDeptScopeDao) SelectUserDeptScopeDeptIdByUserId(ctx context.Co
 
 func (uds *SysUserDeptScopeDao) DeleteUserDeptScopeByUserId(ctx context.Context, db sqly.SqlyContext, id int64) {
 
-	_, err := db.ExecContext(ctx, "delete from sys_user_dept_scope where role_id=? ", id)
+	_, err := db.ExecContext(ctx, "delete from sys_user_dept_scope where user_id=? ", id)
 	if err != nil {
 		panic(err)
 	}

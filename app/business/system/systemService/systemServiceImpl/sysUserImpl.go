@@ -364,10 +364,12 @@ func (userService *UserService) UpdateUserDataScope(c *gin.Context, uds *systemM
 
 func (userService *UserService) SelectUserDataScope(c *gin.Context, userId int64) *systemModels.SysUserDataScope {
 	s := new(systemModels.SysUserDataScope)
-
+	s.UserId = userId
 	s.DataScope = userService.userDao.SelectUserById(c, userService.data, userId).DataScope
 	if s.DataScope == dataScopeAspect.DataScopeCustom {
 		s.DeptIds = userService.uds.SelectUserDeptScopeDeptIdByUserId(c, userService.data, userId)
+	} else {
+		s.DeptIds = make([]string, 0)
 	}
 	return s
 }
