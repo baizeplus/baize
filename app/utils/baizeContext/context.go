@@ -1,7 +1,6 @@
 package baizeContext
 
 import (
-	"baize/app/baize"
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
@@ -23,16 +22,16 @@ func SetUserAgent(c *gin.Context, login *monitorModels.Logininfor) {
 	login.Browser, _ = ua.Browser()
 }
 func IsAdmin(c *gin.Context) bool {
-	for _, role := range GetRoles(c) {
-		if role.RoleId == 1 {
+	for _, id := range GetRoles(c) {
+		if id == 1 {
 			return true
 		}
 	}
 	return false
 }
-func GetRoles(c *gin.Context) []*baize.Role {
+func GetRoles(c *gin.Context) []int64 {
 	get := GetSession(c).Get(c, sessionStatus.Role)
-	roles := make([]*baize.Role, 0)
+	roles := make([]int64, 0)
 	err := json.Unmarshal([]byte(get), &roles)
 	if err != nil {
 		panic(err)
@@ -81,6 +80,10 @@ func GetDeptId(c *gin.Context) int64 {
 	return i
 }
 
+func GetDataScopeAspect(c *gin.Context) string {
+	return GetSession(c).Get(c, sessionStatus.DataScopeAspect)
+}
+
 func GetUserName(c *gin.Context) string {
 	return GetSession(c).Get(c, sessionStatus.UserName)
 }
@@ -88,25 +91,20 @@ func GetAvatar(c *gin.Context) string {
 	return GetSession(c).Get(c, sessionStatus.Avatar)
 }
 func GetDataScope(c *gin.Context, deptAlias string) string {
-	roles := GetRoles(c)
+
 	var sqlString string
-	for _, role := range roles {
-
-		switch role.DataScope {
-		case dataScopeAspect.DataScopeAll:
-			sqlString = ""
-			break
-		case dataScopeAspect.DataScopeCustom:
-			sqlString += fmt.Sprintf(" OR %s.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = %d ) ", deptAlias, role.RoleId)
-		case dataScopeAspect.DataScopeDept:
-			sqlString += fmt.Sprintf(" OR %s.dept_id = %d ", deptAlias, GetDeptId(c))
-		case dataScopeAspect.DataScopeDeptAndChild:
-			sqlString += fmt.Sprintf(" OR %s.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = %d or find_in_set( %d , ancestors ) ) ", deptAlias, GetDeptId(c), GetDeptId(c))
-		}
-
+	switch GetDataScopeAspect(c) {
+	case dataScopeAspect.DataScopeAll:
+		sqlString = ""
+	case dataScopeAspect.DataScopeCustom:
+		sqlString += fmt.Sprintf(" %s.dept_id IN ( SELECT dept_id FROM sys_user_dept_scope WHERE user_id = %d ) ", deptAlias, GetUserId(c))
+	case dataScopeAspect.DataScopeDept:
+		sqlString += fmt.Sprintf(" %s.dept_id = %d ", deptAlias, GetDeptId(c))
+	case dataScopeAspect.DataScopeDeptAndChild:
+		sqlString += fmt.Sprintf(" %s.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = %d or find_in_set( %d , ancestors ) ) ", deptAlias, GetDeptId(c), GetDeptId(c))
+	case dataScopeAspect.NoDataScope:
+		sqlString += fmt.Sprintf(" 1=0")
 	}
-	if sqlString != "" {
-		sqlString = " (" + sqlString[4:] + ")"
-	}
+
 	return sqlString
 }

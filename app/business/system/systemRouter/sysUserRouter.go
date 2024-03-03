@@ -14,7 +14,9 @@ func InitSysUserRouter(router *gin.RouterGroup, user *systemController.User) {
 	systemUser.GET("/authRole/:userId", middlewares.HasPermission("system:user:edit"), user.UserAuthRole)
 	systemUser.GET("/:userId", middlewares.HasPermission("system:user:query"), user.UserGetInfoById)
 	systemUser.POST("", middlewares.HasPermission("system:user:add"), user.UserAdd)
-	systemUser.PUT("", middlewares.HasPermission("system:user:edit"), user.UserEdit)
+	systemUser.GET("/dataScope/:userId", middlewares.HasPermission("system:user:query"), user.SelectUserDataScope)
+	systemUser.PUT("/dataScope", middlewares.HasPermission("system:user:edit"), user.UpdateUserDataScope)
+
 	systemUser.PUT("/resetPwd", middlewares.HasPermission("system:user:edit"), user.ResetPwd)
 	systemUser.PUT("/changeStatus", middlewares.HasPermission("system:user:edit"), user.ChangeStatus)
 	systemUser.DELETE("", middlewares.HasPermission("system:user:remove"), user.UserRemove)

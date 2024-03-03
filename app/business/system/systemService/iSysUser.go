@@ -12,6 +12,10 @@ type IUserService interface {
 	UserExport(c *gin.Context, user *systemModels.SysUserDQL) (data []byte)
 	InsertUser(c *gin.Context, sysUser *systemModels.SysUserDML)
 	UpdateUser(c *gin.Context, sysUser *systemModels.SysUserDML)
+
+	UpdateUserDataScope(c *gin.Context, uds *systemModels.SysUserDataScope)
+	SelectUserDataScope(c *gin.Context, userId int64) *systemModels.SysUserDataScope
+
 	UpdateUserStatus(c *gin.Context, sysUser *systemModels.EditUserStatus)
 	ResetPwd(c *gin.Context, userId int64, password string)
 	CheckUserNameUnique(c *gin.Context, userName string) bool

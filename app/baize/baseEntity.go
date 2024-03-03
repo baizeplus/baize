@@ -46,12 +46,3 @@ func (b *BaseEntityDQL) ToPage() *sqly.Page {
 	s.OrderBy = b.GetOrder()
 	return s
 }
-
-type User interface {
-	GetRoles() []*Role
-	GetDeptId() int64
-}
-type Role struct {
-	RoleId    int64  `db:"role_id"`
-	DataScope string `db:"data_scope"`
-}

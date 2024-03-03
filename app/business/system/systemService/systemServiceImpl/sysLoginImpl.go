@@ -1,7 +1,6 @@
 package systemServiceImpl
 
 import (
-	"baize/app/baize"
 	"baize/app/business/monitor/monitorDao"
 	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
@@ -116,12 +115,12 @@ func (loginService *LoginService) ForceLogout(c *gin.Context, token string) {
 	panic("等待补充")
 }
 
-func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (rolePerms []string, loginRoles []*baize.Role) {
-	loginRoles = make([]*baize.Role, 0, len(roles))
+func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (rolePerms []string, loginRoles []int64) {
+	loginRoles = make([]int64, 0, len(roles))
 	rolePerms = make([]string, 0, len(roles))
 	for _, role := range roles {
 		rolePerms = append(rolePerms, role.RoleKey)
-		loginRoles = append(loginRoles, &baize.Role{RoleId: role.RoleId, DataScope: role.DataScope})
+		loginRoles = append(loginRoles, role.RoleId)
 	}
 	return
 }

@@ -22,7 +22,7 @@ func (sysRoleMenuDao *SysRoleMenuDao) BatchRoleMenu(ctx context.Context, db sqly
 }
 
 func (sysRoleMenuDao *SysRoleMenuDao) DeleteRoleMenu(ctx context.Context, db sqly.SqlyContext, ids []int64) {
-	query, i, err := sqly.In("delete from sys_role_menu where role_id in", ids)
+	query, i, err := sqly.In("delete from sys_role_menu where role_id in (?)", ids)
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,6 @@ func (sysRoleMenuDao *SysRoleMenuDao) DeleteRoleMenu(ctx context.Context, db sql
 }
 
 func (sysRoleMenuDao *SysRoleMenuDao) DeleteRoleMenuByRoleId(ctx context.Context, db sqly.SqlyContext, roleId int64) {
-
 	_, err := db.ExecContext(ctx, "delete from sys_role_menu where role_id=?", roleId)
 	if err != nil {
 		panic(err)

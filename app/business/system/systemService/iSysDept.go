@@ -14,5 +14,4 @@ type IDeptService interface {
 	CheckDeptNameUnique(c *gin.Context, id, parentId int64, deptName string) bool
 	HasChildByDeptId(c *gin.Context, deptId int64) bool
 	CheckDeptExistUser(c *gin.Context, deptId int64) bool
-	SelectDeptListByRoleId(c *gin.Context, roleId int64) []string
 }

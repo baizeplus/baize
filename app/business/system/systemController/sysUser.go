@@ -93,6 +93,47 @@ func (uc *User) UserEdit(c *gin.Context) {
 	baizeContext.Success(c)
 }
 
+// UpdateUserDataScope 修改数据权限
+// @Summary 修改数据权限
+// @Description 修改数据权限
+// @Tags 用户相关
+// @Param  object body systemModels.SysUserDataScope true "用户权限信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData  "成功"
+// @Router /system/user/dataScope  [put]
+func (uc *User) UpdateUserDataScope(c *gin.Context) {
+
+	uds := new(systemModels.SysUserDataScope)
+	if err := c.ShouldBindJSON(uds); err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+
+	uc.us.UpdateUserDataScope(c, uds)
+	baizeContext.Success(c)
+}
+
+// SelectUserDataScope 查询用户数据权限
+// @Summary 查询用户数据权限
+// @Description 查询用户数据权限
+// @Tags 用户相关
+// @Param id path int64 true "userId"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData  "成功"
+// @Router /system/user/dataScope/{userId}   [get]
+func (uc *User) SelectUserDataScope(c *gin.Context) {
+
+	userId := baizeContext.ParamInt64(c, "userId")
+	if userId == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
+
+	baizeContext.SuccessData(c, uc.us.SelectUserDataScope(c, userId))
+}
+
 // UserAdd 添加用户
 // @Summary 添加用户
 // @Description 添加用户
@@ -220,23 +261,27 @@ func (uc *User) UserRemove(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/importData [post]
 func (uc *User) UserImportData(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
+	// bzc := baizeContext.NewBaiZeContext(c)
 	//
-	//fileHeader, err := c.FormFile("file")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//file, _ := fileHeader.Open()
-	//defer file.Close()
-	//excelFile, _ := excelize.OpenReader(file)
-	//rows := excelFile.GetRows("Sheet1")
-	//loginUser := bzc.GetUser()
-	//data, num := uc.us.UserImportData(rows, loginUser.UserId, loginUser.DeptId)
-	//if num > 0 {
-	//	bzc.Waring(data)
-	//	return
-	//}
-	//bzc.SuccessMsg(data)
+	// fileHeader, err := c.FormFile("file")
+	//
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//
+	// file, _ := fileHeader.Open()
+	// defer file.Close()
+	// excelFile, _ := excelize.OpenReader(file)
+	// rows := excelFile.GetRows("Sheet1")
+	// loginUser := bzc.GetUser()
+	// data, num := uc.us.UserImportData(rows, loginUser.UserId, loginUser.DeptId)
+	//
+	//	if num > 0 {
+	//		bzc.Waring(data)
+	//		return
+	//	}
+	//
+	// bzc.SuccessMsg(data)
 }
 
 // UserExport 导出用户
@@ -265,10 +310,10 @@ func (uc *User) UserExport(c *gin.Context) {
 // @Success 200 {object} []byte
 // @Router /system/user/input [post]
 func (uc *User) ImportTemplate(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//data := uc.us.ImportTemplate()
-	//bzc.DataPackageExcel(data)
-	//return
+	// bzc := baizeContext.NewBaiZeContext(c)
+	// data := uc.us.ImportTemplate()
+	// bzc.DataPackageExcel(data)
+	// return
 }
 
 // InsertAuthRole 授权角色

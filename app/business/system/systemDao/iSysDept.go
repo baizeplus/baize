@@ -15,5 +15,4 @@ type IDeptDao interface {
 	CheckDeptNameUnique(ctx context.Context, db sqly.SqlyContext, deptName string, parentId int64) int64
 	HasChildByDeptId(ctx context.Context, db sqly.SqlyContext, deptId int64) int
 	CheckDeptExistUser(ctx context.Context, db sqly.SqlyContext, deptId int64) int
-	SelectDeptListByRoleId(ctx context.Context, db sqly.SqlyContext, roleId int64, deptCheckStrictly bool) (deptIds []string)
 }
