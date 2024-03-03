@@ -1,7 +1,6 @@
 package systemService
 
 import (
-	"baize/app/baize"
 	"baize/app/business/system/systemModels"
 	"github.com/gin-gonic/gin"
 )
@@ -13,11 +12,10 @@ type IRoleService interface {
 	InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	UpdateRole(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	UpdateRoleStatus(c *gin.Context, sysRole *systemModels.SysRoleDML)
-	AuthDataScope(c *gin.Context, sysRole *systemModels.SysRoleDML)
 	DeleteRoleByIds(c *gin.Context, ids []int64)
 	CountUserRoleByRoleId(c *gin.Context, ids []int64) bool
 	SelectBasicRolesByUserId(c *gin.Context, userId int64) (roles []*systemModels.SysRole)
-	RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (rolePerms []string, loginRoles []*baize.Role)
+	RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (rolePerms []string, loginRoles []int64)
 
 	CheckRoleNameUnique(c *gin.Context, id int64, roleName string) bool
 	CheckRoleKeyUnique(c *gin.Context, id int64, roleKey string) bool

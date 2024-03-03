@@ -56,7 +56,3 @@ func (ds *DeptService) HasChildByDeptId(c *gin.Context, deptId int64) bool {
 func (ds *DeptService) CheckDeptExistUser(c *gin.Context, deptId int64) bool {
 	return ds.deptDao.CheckDeptExistUser(c, ds.data, deptId) > 0
 }
-func (ds *DeptService) SelectDeptListByRoleId(c *gin.Context, roleId int64) []string {
-	role := ds.roleDao.SelectRoleById(c, ds.data, roleId)
-	return ds.deptDao.SelectDeptListByRoleId(c, ds.data, roleId, role.DeptCheckStrictly)
-}

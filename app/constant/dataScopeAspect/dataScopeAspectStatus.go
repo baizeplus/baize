@@ -9,4 +9,6 @@ const (
 	DataScopeDept = "3"
 	// DataScopeDeptAndChild 部门及以下数据权限
 	DataScopeDeptAndChild = "4"
+	// 没有权限 部门及以下数据权限
+	NoDataScope = "5"
 )

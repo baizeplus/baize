@@ -49,8 +49,8 @@ func (userDao *SysUserDao) CheckEmailUnique(ctx context.Context, db sqly.SqlyCon
 }
 
 func (userDao *SysUserDao) InsertUser(ctx context.Context, db sqly.SqlyContext, sysUser *systemModels.SysUserDML) {
-	insertSQL := `insert into sys_user(user_id,user_name,nick_name,sex,password,status,create_by,create_time,update_by,update_time %s)
-					values(:user_id,:user_name,:nick_name,:sex,:password,:status,:create_by,now(),:update_by,now() %s)`
+	insertSQL := `insert into sys_user(user_id,user_name,nick_name,sex,password,data_scope,status,create_by,create_time,update_by,update_time %s)
+					values(:user_id,:user_name,:nick_name,:sex,:password,:data_scope,:status,:create_by,now(),:update_by,now() %s)`
 	key := ""
 	value := ""
 	if sysUser.DeptId != 0 {
@@ -92,6 +92,9 @@ func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, 
 		updateSQL += ",dept_id = :dept_id"
 	}
 
+	if sysUser.DataScope != "" {
+		updateSQL += ",data_scope = :data_scope"
+	}
 	if sysUser.Avatar != "" {
 		updateSQL += ",avatar = :avatar"
 	}
@@ -119,13 +122,7 @@ func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, 
 }
 
 func (userDao *SysUserDao) SelectUserByUserName(ctx context.Context, db sqly.SqlyContext, userName string) (loginUser *systemModels.User) {
-	//sqlStr := `select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.remark, u.create_time,
-	//     d.parent_id, d.dept_name
-	//    from sys_user u
-	//	    left join sys_dept d on u.dept_id = d.dept_id
-	//		where u.user_name = ?
-	//		`
-	sqlStr := `select u.user_id, u.dept_id, u.user_name,  u.avatar, u.password, u.status, u.del_flag
+	sqlStr := `select u.user_id, u.dept_id, u.user_name,  u.avatar, u.password, u.status, u.del_flag,u.data_scope
         from sys_user u
 		where u.user_name = ?			
 			`
@@ -140,8 +137,7 @@ func (userDao *SysUserDao) SelectUserByUserName(ctx context.Context, db sqly.Sql
 	return
 }
 func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyContext, userId int64) (sysUser *systemModels.SysUserVo) {
-	sqlStr := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag,  u.create_by, u.create_time, u.remark, d.dept_name, d.leader,  
-        r.role_id
+	sqlStr := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag,  u.create_by, u.create_time, u.remark, d.dept_name, d.leader,  u.data_scope,  r.role_id
         from sys_user u
 		    left join sys_dept d on u.dept_id = d.dept_id
 		    left join sys_user_role ur on u.user_id = ur.user_id

@@ -25,6 +25,7 @@ type SysUserDML struct {
 	Phonenumber string   `json:"phonenumber" db:"phonenumber"`                   //手机号
 	Sex         string   `json:"sex" db:"sex"  binding:"required"`               //性别
 	Password    string   `json:"password" db:"password" binding:"required"`      //密码
+	DataScope   string   `json:"dataScope" db:"data_scope"`                      //权限范围
 	Status      string   `json:"status" db:"status"`                             //状态
 	Remark      string   `json:"remark" db:"remark"`                             //备注
 	PostIds     []string `json:"postIds"`                                        //岗位IDS
@@ -45,18 +46,25 @@ type SysUserVo struct {
 	Email       string `json:"email" db:"email"`
 	Phonenumber string `json:"phonenumber"db:"phonenumber" bze:"5,电话""`
 	Avatar      string `json:"avatar" db:"avatar"`
-	RoleId      int64  `json:"roleId" db:"role_id"`
+	DataScope   string `json:"dataScope" db:"data_scope"`
+	RoleId      *int64 `json:"roleId" db:"role_id"`
 	Remark      string `json:"remark" db:"remark"`
 	baize.BaseEntity
 }
+type SysUserDataScope struct {
+	UserId    int64    `json:"userId,string"  binding:"required"` //用户ID
+	DataScope string   `json:"dataScope"  binding:"required"`     //数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限,无任何）权限
+	DeptIds   []string `json:"deptIds"`                           //如果是自定义就是部门ID 其他不填
+	Ds        []int64  `json:"-"`                                 //如果是自定义就是部门ID 其他不填
+}
 
 type ResetPwd struct {
-	UserId   int64  `json:"userId,string" db:"user_id"binding:"required"` //用户ID
-	Password string `json:"password" db:"password"binding:"required"`     //新密码
+	UserId   int64  `json:"userId,string" db:"user_id" binding:"required"` //用户ID
+	Password string `json:"password" db:"password" binding:"required"`     //新密码
 }
 type EditUserStatus struct {
-	UserId int64  `json:"userId,string"binding:"required"` //用户id
-	Status string `json:"status"binding:"required"`        //状态
+	UserId int64  `json:"userId,string" binding:"required"` //用户id
+	Status string `json:"status" binding:"required"`        //状态
 	baize.BaseEntity
 }
 
@@ -112,4 +120,8 @@ type UserProfile struct {
 	User      *SysUserVo `json:"user"`      //user
 	RoleGroup string     `json:"roleGroup"` //角色
 	PostGroup string     `json:"postGroup"` //选择的角色Id
+}
+type SysUserDeptScope struct {
+	UserId int64 `db:"user_id"`
+	DeptId int64 `db:"dept_id"`
 }

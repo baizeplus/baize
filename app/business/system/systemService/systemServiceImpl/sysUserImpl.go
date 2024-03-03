@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/IOFile"
 	"baize/app/utils/bCryptPasswordEncoder"
@@ -27,9 +28,10 @@ type UserService struct {
 	userRoleDao systemDao.IUserRoleDao
 	roleDao     systemDao.IRoleDao
 	postDao     systemDao.IPostDao
+	uds         systemDao.IUserDeptScopeDao
 }
 
-func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao) *UserService {
+func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao, uds *systemDaoImpl.SysUserDeptScopeDao) *UserService {
 	return &UserService{
 		data:        data,
 		userDao:     ud,
@@ -37,6 +39,7 @@ func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoI
 		userRoleDao: urd,
 		roleDao:     rd,
 		postDao:     pd,
+		uds:         uds,
 	}
 }
 
@@ -109,10 +112,10 @@ func (userService *UserService) InsertUser(c *gin.Context, sysUser *systemModels
 			err = tx.Commit() // err is nil; if Commit returns error update err
 		}
 	}()
+	sysUser.DataScope = dataScopeAspect.NoDataScope
 	userService.userDao.InsertUser(c, tx, sysUser)
 	userService.insertUserPost(c, tx, sysUser.UserId, sysUser.PostIds)
 	userService.insertUserRole(c, tx, sysUser.UserId, sysUser.RoleIds)
-
 }
 
 func (userService *UserService) UpdateUser(c *gin.Context, sysUser *systemModels.SysUserDML) {
@@ -134,7 +137,6 @@ func (userService *UserService) UpdateUser(c *gin.Context, sysUser *systemModels
 	userService.userRoleDao.DeleteUserRoleByUserId(c, tx, userId)
 	userService.insertUserRole(c, tx, sysUser.UserId, sysUser.RoleIds)
 	userService.userDao.UpdateUser(c, tx, sysUser)
-
 }
 
 func (userService *UserService) UpdateUserStatus(c *gin.Context, sysUser *systemModels.EditUserStatus) {
@@ -325,4 +327,49 @@ func (userService *UserService) GetUserProfile(c *gin.Context) *systemModels.Use
 	up.PostGroup = strings.Join(userService.postDao.SelectPostNameListByUserId(c, userService.data, userId), ",")
 
 	return up
+}
+
+func (userService *UserService) UpdateUserDataScope(c *gin.Context, uds *systemModels.SysUserDataScope) {
+	userId := uds.UserId
+	su := new(systemModels.SysUserDML)
+	su.SetUpdateBy(baizeContext.GetUserId(c))
+	su.UserId = userId
+	su.DataScope = uds.DataScope
+	tx, err := userService.data.Beginx()
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p) // re-throw panic after Rollback
+		} else {
+			err = tx.Commit() // err is nil; if Commit returns error update err
+		}
+	}()
+	userService.uds.DeleteUserDeptScopeByUserId(c, tx, userId)
+	userService.userDao.UpdateUser(c, tx, su)
+	if uds.DataScope == dataScopeAspect.DataScopeCustom && len(uds.DeptIds) != 0 {
+		scopes := make([]*systemModels.SysUserDeptScope, 0, len(uds.DeptIds))
+		for _, id := range uds.DeptIds {
+			i, err := strconv.ParseInt(id, 10, 64)
+			if err != nil {
+				panic(err)
+			}
+			scopes = append(scopes, &systemModels.SysUserDeptScope{UserId: userId, DeptId: i})
+		}
+		userService.uds.BatchUserDeptScope(c, tx, scopes)
+	}
+}
+
+func (userService *UserService) SelectUserDataScope(c *gin.Context, userId int64) *systemModels.SysUserDataScope {
+	s := new(systemModels.SysUserDataScope)
+	s.UserId = userId
+	s.DataScope = userService.userDao.SelectUserById(c, userService.data, userId).DataScope
+	if s.DataScope == dataScopeAspect.DataScopeCustom {
+		s.DeptIds = userService.uds.SelectUserDeptScopeDeptIdByUserId(c, userService.data, userId)
+	} else {
+		s.DeptIds = make([]string, 0)
+	}
+	return s
 }

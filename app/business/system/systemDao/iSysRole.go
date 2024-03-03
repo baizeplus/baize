@@ -1,7 +1,6 @@
 package systemDao
 
 import (
-	"baize/app/baize"
 	"baize/app/business/system/systemModels"
 	"context"
 	"github.com/baizeplus/sqly"
@@ -13,7 +12,6 @@ type IRoleDao interface {
 	SelectRoleById(ctx context.Context, db sqly.SqlyContext, roleId int64) (role *systemModels.SysRoleVo)
 	SelectBasicRolesByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []*systemModels.SysRole)
 	SelectRolePermissionByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []string)
-	SelectRoleIdAndDataScopeByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []*baize.Role)
 	SelectRoleListByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (list []int64)
 	InsertRole(ctx context.Context, db sqly.SqlyContext, sysRole *systemModels.SysRoleDML)
 	UpdateRole(ctx context.Context, db sqly.SqlyContext, sysRole *systemModels.SysRoleDML)
