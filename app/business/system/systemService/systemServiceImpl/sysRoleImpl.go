@@ -58,11 +58,11 @@ func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels
 		}
 	}()
 	roleService.roleDao.InsertRole(c, tx, sysRole)
-	PermissionIds := sysRole.PermissionIds
-	l := len(PermissionIds)
+	menuIds := sysRole.MenuIds
+	l := len(menuIds)
 	if l != 0 {
 		list := make([]*systemModels.SysRoleMenu, 0, l)
-		for _, PermissionId := range PermissionIds {
+		for _, PermissionId := range menuIds {
 			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
 			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
 		}
@@ -87,11 +87,11 @@ func (roleService *RoleService) UpdateRole(c *gin.Context, sysRole *systemModels
 	}()
 	roleService.roleDao.UpdateRole(c, tx, sysRole)
 	roleService.roleMenuDao.DeleteRoleMenuByRoleId(c, tx, sysRole.RoleId)
-	permissionIds := sysRole.PermissionIds
-	l := len(permissionIds)
+	menuIds := sysRole.MenuIds
+	l := len(menuIds)
 	if l != 0 {
 		list := make([]*systemModels.SysRoleMenu, 0, l)
-		for _, PermissionId := range permissionIds {
+		for _, PermissionId := range menuIds {
 			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
 			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
 		}

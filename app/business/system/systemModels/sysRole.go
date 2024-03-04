@@ -29,14 +29,13 @@ type SysRoleVo struct {
 }
 
 type SysRoleDML struct {
-	RoleId        int64    `json:"RoleId,string" db:"role_id"`
-	RoleName      string   `json:"roleName" db:"role_name"`
-	RoleKey       string   `json:"roleKey" db:"role_key"`
-	RoleSort      int      `json:"roleSort" db:"role_sort"`
-	Status        string   `json:"status" db:"status"`
-	Remake        string   `json:"remark" db:"remark "`
-	PermissionIds []string `json:"PermissionIds"`
-	DeptIds       []string `json:"deptIds"`
+	RoleId   int64    `json:"RoleId,string" db:"role_id"`
+	RoleName string   `json:"roleName" db:"role_name"`
+	RoleKey  string   `json:"roleKey" db:"role_key"`
+	RoleSort int      `json:"roleSort" db:"role_sort"`
+	Status   string   `json:"status" db:"status"`
+	Remake   string   `json:"remake" db:"remake"`
+	MenuIds  []string `json:"menuIds"`
 	baize.BaseEntity
 }
 
