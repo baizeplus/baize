@@ -60,8 +60,7 @@ stages:
         hostGroupID:
           ID: baizeService
           hostID:
-            - f714b580-0d03-4d6a-8061-b19ec5d4b525
-            - 606dd717-ade5-4de5-a54a-81d54b871cc1
+            - 0576fd91-d8a3-4645-96bb-21e59eceb99b
         deployArtifact:
           - source: build
             name: output
