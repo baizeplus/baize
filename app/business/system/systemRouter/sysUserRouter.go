@@ -16,10 +16,10 @@ func InitSysUserRouter(router *gin.RouterGroup, user *systemController.User) {
 	systemUser.POST("", middlewares.HasPermission("system:user:add"), user.UserAdd)
 	systemUser.GET("/dataScope/:userId", middlewares.HasPermission("system:user:query"), user.SelectUserDataScope)
 	systemUser.PUT("/dataScope", middlewares.HasPermission("system:user:edit"), user.UpdateUserDataScope)
-
+	systemUser.PUT("", middlewares.HasPermission("system:user:edit"), user.UserEdit)
 	systemUser.PUT("/resetPwd", middlewares.HasPermission("system:user:edit"), user.ResetPwd)
 	systemUser.PUT("/changeStatus", middlewares.HasPermission("system:user:edit"), user.ChangeStatus)
-	systemUser.DELETE("", middlewares.HasPermission("system:user:remove"), user.UserRemove)
+	systemUser.DELETE("/:userIds", middlewares.HasPermission("system:user:remove"), user.UserRemove)
 	systemUser.POST("/importData", middlewares.HasPermission("system:user:import"), user.UserImportData)
 	systemUser.POST("/importTemplate", middlewares.HasPermission("system:user:add"), user.ImportTemplate)
 	systemUser.POST("/export", middlewares.HasPermission("system:user:export"), user.UserExport)
