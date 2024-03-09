@@ -17,10 +17,11 @@ type Login struct {
 	ls systemService.ILoginService
 	us systemService.IUserService
 	ms systemService.IMenuService
+	cs systemService.IConfigService
 }
 
-func NewLogin(ls *systemServiceImpl.LoginService, us *systemServiceImpl.UserService, ms *systemServiceImpl.MenuService) *Login {
-	return &Login{ls: ls, us: us, ms: ms}
+func NewLogin(ls *systemServiceImpl.LoginService, us *systemServiceImpl.UserService, ms *systemServiceImpl.MenuService, cs *systemServiceImpl.ConfigService) *Login {
+	return &Login{ls: ls, us: us, ms: ms, cs: cs}
 }
 
 // Login 用户登录
@@ -43,14 +44,15 @@ func (lc *Login) Login(c *gin.Context) {
 	}
 	logininfor := new(monitorModels.Logininfor)
 	logininfor.UserName = login.Username
-
 	baizeContext.SetUserAgent(c, logininfor)
-	captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
-	if !captcha {
-		logininfor.Status = 1
-		logininfor.Msg = "验证码错误"
-
-		return
+	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") == "true" {
+		captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
+		if !captcha {
+			logininfor.Status = 1
+			logininfor.Msg = "验证码错误"
+			baizeContext.Waring(c, "验证码错误")
+			return
+		}
 	}
 	user := lc.us.SelectUserByUserName(c, login.Username)
 	if user == nil {
@@ -76,6 +78,29 @@ func (lc *Login) Login(c *gin.Context) {
 	}
 
 	baizeContext.SuccessData(c, lc.ls.Login(c, user, logininfor))
+}
+
+func (lc *Login) Register(c *gin.Context) {
+	login := new(systemModels.LoginBody)
+	if err := c.ShouldBindJSON(login); err != nil {
+		zap.L().Debug("参数错误", zap.Error(err))
+		baizeContext.ParameterError(c)
+		return
+	}
+	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") == "true" {
+		captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
+		if !captcha {
+			baizeContext.Waring(c, "验证码错误")
+			return
+		}
+	}
+	if lc.us.CheckUserNameUnique(c, login.Username) {
+		baizeContext.Waring(c, "登录账号已存在")
+		return
+	}
+	lc.ls.Register(c, login)
+	baizeContext.Success(c)
+
 }
 
 // GetInfo 获取用户个人信息

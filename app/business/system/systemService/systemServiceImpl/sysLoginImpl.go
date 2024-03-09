@@ -7,6 +7,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
 	"baize/app/utils/ipUtils"
 
 	"baize/app/constant/sessionStatus"
@@ -31,10 +32,11 @@ type LoginService struct {
 	loginforDao monitorDao.ILogininforDao
 	driver      *base64Captcha.DriverMath
 	store       base64Captcha.Store
+	cs          systemService.IConfigService
 }
 
-func NewLoginService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, md *systemDaoImpl.SysMenuDao, rd *systemDaoImpl.SysRoleDao, ld *monitorDaoImpl.LogininforDao) *LoginService {
-	return &LoginService{data: data, userDao: ud, menuDao: md, roleDao: rd, loginforDao: ld,
+func NewLoginService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, md *systemDaoImpl.SysMenuDao, rd *systemDaoImpl.SysRoleDao, ld *monitorDaoImpl.LogininforDao, cs *ConfigService) *LoginService {
+	return &LoginService{data: data, userDao: ud, menuDao: md, roleDao: rd, loginforDao: ld, cs: cs,
 		driver: base64Captcha.NewDriverMath(38, 106, 0, 0, &color.RGBA{0, 0, 0, 0}, nil, []string{"wqy-microhei.ttc"}),
 		store:  base64Captcha.DefaultMemStore,
 	}
@@ -65,6 +67,10 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	return session.Id()
 }
 
+func (loginService *LoginService) Register(c *gin.Context, user *systemModels.LoginBody) {
+
+}
+
 func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *monitorModels.Logininfor) {
 	go func() {
 		defer func() {
@@ -81,29 +87,30 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 func (loginService *LoginService) getPermissionPermission(c *gin.Context, userId int64) []string {
 	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
-		//perms = append(perms, "*:*:*")
 		perms = loginService.menuDao.SelectMenuPermsAll(c, loginService.data)
 	} else {
 		perms = loginService.menuDao.SelectMenuPermsByUserId(c, loginService.data, userId)
-
-		//for _, perm := range mysqlPerms {
-		//	if len(perm) != 0 {
-		//		perms = append(perms, perm)
-		//	}
-		//}
 	}
 	return perms
 }
 
 func (loginService *LoginService) GenerateCode(c *gin.Context) (m *systemModels.CaptchaVo) {
-	captcha := base64Captcha.NewCaptcha(loginService.driver, loginService.store)
-	id, b64s, _, err := captcha.Generate()
-	if err != nil {
-		panic(err)
-	}
 	m = new(systemModels.CaptchaVo)
-	m.Id = id
-	m.Img = b64s
+	key := loginService.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled")
+	if key != "false" {
+		captcha := base64Captcha.NewCaptcha(loginService.driver, loginService.store)
+		id, b64s, _, err := captcha.Generate()
+		if err != nil {
+			panic(err)
+		}
+		m.Id = id
+		m.Img = b64s
+		m.CaptchaEnabled = true
+	}
+	key = loginService.cs.SelectConfigValueByKey(c, "sys.account.registerUser")
+	if key == "true" {
+		m.RegisterEnabled = true
+	}
 	return m
 }
 

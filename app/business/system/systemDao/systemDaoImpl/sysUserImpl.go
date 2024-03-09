@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/baizeplus/sqly"
@@ -129,9 +130,7 @@ func (userDao *SysUserDao) SelectUserByUserName(ctx context.Context, db sqly.Sql
 
 	loginUser = new(systemModels.User)
 	err := db.GetContext(ctx, loginUser, sqlStr, userName)
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return

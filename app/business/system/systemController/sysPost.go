@@ -108,7 +108,7 @@ func (pc *Post) PostEdit(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /system/post [delete]
+// @Router /system/post/{postIds}  [delete]
 func (pc *Post) PostRemove(c *gin.Context) {
 	pc.ps.DeletePostByIds(c, baizeContext.ParamInt64Array(c, "postIds"))
 	baizeContext.Success(c)

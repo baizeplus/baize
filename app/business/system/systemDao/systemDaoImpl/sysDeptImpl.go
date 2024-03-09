@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/baizeplus/sqly"
 )
@@ -42,7 +43,7 @@ func (sysDeptDao *SysDeptDao) SelectDeptById(ctx context.Context, db sqly.SqlyCo
 	whereSql := ` where d.dept_id = ?`
 	dept = new(systemModels.SysDeptVo)
 	err := db.GetContext(ctx, dept, sysDeptDao.deptSql+whereSql, deptId)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return dept
@@ -128,7 +129,7 @@ func (sysDeptDao *SysDeptDao) DeleteDeptById(ctx context.Context, db sqly.SqlyCo
 func (sysDeptDao *SysDeptDao) CheckDeptNameUnique(ctx context.Context, db sqly.SqlyContext, deptName string, parentId int64) int64 {
 	var roleId int64 = 0
 	err := db.GetContext(ctx, &roleId, "select dept_id from sys_dept where dept_name=? and parent_id = ?", deptName, parentId)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return roleId

@@ -178,7 +178,6 @@ func (uc *User) UserAdd(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysUserVo}}  "成功"
 // @Router /system/user  [get]
 func (uc *User) UserList(c *gin.Context) {
-
 	user := new(systemModels.SysUserDQL)
 	_ = c.ShouldBind(user)
 	user.DataScope = baizeContext.GetDataScope(c, "d")

@@ -3,6 +3,9 @@ package systemDaoImpl
 import (
 	"baize/app/business/system/systemModels"
 	"context"
+	"database/sql"
+	"errors"
+	"fmt"
 	"github.com/baizeplus/sqly"
 )
 
@@ -10,33 +13,113 @@ type SysConfigDao struct {
 	configSql string
 }
 
-func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext, Config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total *int64) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext, ConfigId int64) (Config *systemModels.SysConfigVo) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *SysConfigDao) InsertConfig(ctx context.Context, db sqly.SqlyContext, Config *systemModels.SysConfigVo) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *SysConfigDao) UpdateConfig(ctx context.Context, db sqly.SqlyContext, Config *systemModels.SysConfigVo) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *SysConfigDao) DeleteConfigById(ctx context.Context, db sqly.SqlyContext, ConfigId int64) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewSysConfigDao() *SysConfigDao {
 	return &SysConfigDao{
-		configSql: `select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time from sys_dept d`,
+		configSql: `select config_id,config_name,config_key,config_value,config_type,create_by,create_time,update_by,update_time,remark from sys_config`,
 	}
+}
+
+func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (list []*systemModels.SysConfigVo, total *int64) {
+	whereSql := ``
+	if config.ConfigName != "" {
+		whereSql += " AND config_name like concat('%', :config_name, '%')"
+	}
+	if config.ConfigType != "" {
+		whereSql += " AND  config_type = :config_type"
+	}
+	if config.ConfigKey != "" {
+		whereSql += " AND post_name like concat('%', :config_key, '%')"
+	}
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*systemModels.SysConfigVo, 0)
+	total = new(int64)
+	err := db.NamedSelectPageContext(ctx, &list, total, s.configSql+whereSql, config, config.ToPage())
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext, configId int64) (config *systemModels.SysConfigVo) {
+	whereSql := ` where config_id = ?`
+	config = new(systemModels.SysConfigVo)
+	err := db.GetContext(ctx, config, s.configSql+whereSql, configId)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		panic(err)
+	}
+	return config
+}
+
+func (s *SysConfigDao) InsertConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo) {
+	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,create_by,create_time,update_by,update_time %s)
+					values (:config_id,:config_name,:config_key,:config_value,:config_type,:create_by,now(),:update_by,now() %s)`
+	key := ""
+	value := ""
+	if config.Remark != "" {
+		key += ",remark"
+		value += ",:remark"
+	}
+
+	insertStr := fmt.Sprintf(insertSQL, key, value)
+	_, err := db.NamedExecContext(ctx, insertStr, config)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (s *SysConfigDao) UpdateConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo) {
+	updateSQL := `update sys_config set  update_time = now() , update_by = :update_by `
+
+	if config.ConfigName != "" {
+		updateSQL += ",config_name = :config_name"
+	}
+	if config.ConfigKey != "" {
+		updateSQL += ",config_key = :config_key"
+	}
+	if config.ConfigValue != "" {
+		updateSQL += ",config_value = :config_value"
+	}
+	if config.ConfigType != "" {
+		updateSQL += ",config_type = :config_type"
+	}
+	if config.Remark != "" {
+		updateSQL += ",remark = :remark"
+	}
+	updateSQL += " where config_id = :config_id"
+
+	_, err := db.NamedExecContext(ctx, updateSQL, config)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (s *SysConfigDao) DeleteConfigById(ctx context.Context, db sqly.SqlyContext, configId int64) {
+	_, err := db.ExecContext(ctx, "delete from sys_config  where config_id = ?", configId)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (s *SysConfigDao) SelectConfigIdByConfigKey(ctx context.Context, db sqly.SqlyContext, configKey string) int64 {
+	var configId int64 = 0
+	err := db.GetContext(ctx, &configId, "select config_id from sys_config where config_key = ?", configKey)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		panic(err)
+	}
+	return configId
+}
+
+func (s *SysConfigDao) SelectConfigValueByConfigKey(ctx context.Context, db sqly.SqlyContext, configKey string) string {
+	var configValue = ""
+	err := db.GetContext(ctx, &configValue, "select config_value from sys_config where config_key = ?", configKey)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		panic(err)
+	}
+	return configValue
 }

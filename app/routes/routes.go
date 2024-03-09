@@ -36,6 +36,7 @@ func NewGinEngine(
 	role *systemController.Role,
 	post *systemController.Post,
 	profile *systemController.Profile,
+	config *systemController.Config,
 	server *monitorController.InfoServer,
 	userOnline *monitorController.UserOnline,
 	logfor *monitorController.Logininfor,
@@ -74,6 +75,7 @@ func NewGinEngine(
 		systemRoutes.InitSysMenuRouter(group, menu)         //菜单相关
 		systemRoutes.InitSysRoleRouter(group, role)         //角色相关
 		systemRoutes.InitSysPostRouter(group, post)         //岗位属性
+		systemRoutes.InitSysConfigRouter(group, config)     //配置文件
 		monitorRouter.InitServerRouter(group, server)
 		monitorRouter.InitSysUserOnlineRouter(group, userOnline) //在线用户监控
 		monitorRouter.InitSysLogininforRouter(group, logfor)
