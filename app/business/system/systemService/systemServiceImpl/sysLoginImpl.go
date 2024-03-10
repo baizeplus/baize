@@ -8,6 +8,8 @@ import (
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
+	"baize/app/constant/dataScopeAspect"
+	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/ipUtils"
 
 	"baize/app/constant/sessionStatus"
@@ -68,7 +70,16 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 }
 
 func (loginService *LoginService) Register(c *gin.Context, user *systemModels.LoginBody) {
-
+	u := new(systemModels.SysUserDML)
+	u.Password = bCryptPasswordEncoder.HashPassword(user.Password)
+	u.DataScope = dataScopeAspect.NoDataScope
+	u.UserId = snowflake.GenID()
+	u.NickName = user.Username
+	u.UserName = user.Username
+	u.Status = "0"
+	u.DeptId = 100
+	u.SetCreateBy(u.UserId)
+	loginService.userDao.InsertUser(c, loginService.data, u)
 }
 
 func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *monitorModels.Logininfor) {
