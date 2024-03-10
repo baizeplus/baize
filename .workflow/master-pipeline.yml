@@ -94,7 +94,6 @@ stages:
           - ''
           - nohup ./baize >nohup.out &
           - ''
-          - rm -r output.tar.gz
           - rm -rf output/
         notify: []
         strategy:
