@@ -81,7 +81,7 @@ stages:
           - cd output
           - mv baize ..
           - cd ..
-          - PID=$(ps -ef | grep app | grep -v grep | awk '{print $2}')
+          - PID=$(ps -ef | grep baize | grep -v grep | awk '{print $2}')
           - '# 检查是否存在该进程'
           - if [ -z "$PID" ]
           - then
@@ -95,6 +95,7 @@ stages:
           - nohup ./baize >nohup.out &
           - ''
           - rm -rf output/
+          - rm -r output.tar.gz
         notify: []
         strategy:
           retry: '0'
