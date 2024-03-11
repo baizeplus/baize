@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/baizeplus/sqly"
@@ -61,9 +62,7 @@ func (rd *SysRoleDao) SelectRoleById(ctx context.Context, db sqly.SqlyContext, r
 	whereSql := ` where r.role_id = ?`
 	role = new(systemModels.SysRoleVo)
 	err := db.GetContext(ctx, role, rd.selectSql+whereSql, roleId)
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return

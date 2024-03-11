@@ -53,7 +53,7 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
 	session.Set(c, sessionStatus.Role, loginRoles)
 	session.Set(c, sessionStatus.RolePerms, byRoles)
-	permission := loginService.getPermissionPermission(c, user.UserId)
+	permission := loginService.getPermission(c, user.UserId)
 	session.Set(c, sessionStatus.Permission, permission)
 	session.Set(c, sessionStatus.IpAddr, c.ClientIP())
 	session.Set(c, sessionStatus.LoginTime, time.Now().Unix())
@@ -95,7 +95,7 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 
 }
 
-func (loginService *LoginService) getPermissionPermission(c *gin.Context, userId int64) []string {
+func (loginService *LoginService) getPermission(c *gin.Context, userId int64) []string {
 	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
 		perms = loginService.menuDao.SelectMenuPermsAll(c, loginService.data)

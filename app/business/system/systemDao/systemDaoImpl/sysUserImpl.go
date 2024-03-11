@@ -20,9 +20,7 @@ func NewSysUserDao() *SysUserDao {
 func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "select count(*) from sys_user where user_name = ?", userName)
-	if err == sql.ErrNoRows {
-		return 0
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return count
@@ -30,9 +28,7 @@ func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.Sqly
 func (userDao *SysUserDao) CheckPhoneUnique(ctx context.Context, db sqly.SqlyContext, phonenumber string) int64 {
 	var userId int64 = 0
 	err := db.GetContext(ctx, &userId, "select user_id from sys_user where phonenumber = ?", phonenumber)
-	if err == sql.ErrNoRows {
-		return 0
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return userId
@@ -41,9 +37,7 @@ func (userDao *SysUserDao) CheckPhoneUnique(ctx context.Context, db sqly.SqlyCon
 func (userDao *SysUserDao) CheckEmailUnique(ctx context.Context, db sqly.SqlyContext, email string) int64 {
 	var userId int64 = 0
 	err := db.GetContext(ctx, &userId, "select user_id from sys_user where email = ?", email)
-	if err == sql.ErrNoRows {
-		return 0
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return userId
@@ -146,9 +140,7 @@ func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyConte
 
 	sysUser = new(systemModels.SysUserVo)
 	err := db.GetContext(ctx, sysUser, sqlStr, userId)
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return

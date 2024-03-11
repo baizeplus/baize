@@ -63,7 +63,10 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 	userOnline := monitorController.NewUserOnline(userOnlineService)
 	logininforService := monitorServiceImpl.NewLogininforService(db, logininforDao)
 	logininfor := monitorController.NewLogininfor(logininforService)
-	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile, config, infoServer, userOnline, logininfor)
+	operLogDao := monitorDaoImpl.NewOperLog()
+	operLogService := monitorServiceImpl.NewOperLog(db, operLogDao)
+	operLog := monitorController.NewOperLog(operLogService)
+	engine := routes.NewGinEngine(login, user, dept, dictType, dictData, menu, role, post, profile, config, infoServer, userOnline, logininfor, operLog)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/baizeplus/sqly"
@@ -59,9 +60,7 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataById(ctx context.Context, db
 
 	dictData = new(systemModels.SysDictDataVo)
 	err := db.GetContext(ctx, dictData, sysDictDataDao.dictDataSql+" where dict_code = ?", dictCode)
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return

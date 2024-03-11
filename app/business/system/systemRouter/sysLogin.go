@@ -8,6 +8,7 @@ import (
 func InitLoginRouter(router *gin.RouterGroup, login *systemController.Login) {
 	router.GET("/captchaImage", login.GetCode) //获取验证码
 	router.POST("/login", login.Login)         //登录
+	router.POST("/register", login.Register)   //登录
 	router.POST("/logout", login.Logout)
 }
 func InitGetUser(router *gin.RouterGroup, login *systemController.Login) {

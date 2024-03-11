@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/baizeplus/sqly"
 )
@@ -22,9 +23,7 @@ func (sysMenuDao *SysMenuDao) SelectMenuById(ctx context.Context, db sqly.SqlyCo
 	whereSql := ` where menu_id = ?`
 	menu = new(systemModels.SysMenuVo)
 	err := db.GetContext(ctx, menu, sysMenuDao.selectMenuSql+whereSql, menuId)
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return
