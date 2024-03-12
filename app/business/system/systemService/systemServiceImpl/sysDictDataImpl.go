@@ -29,7 +29,7 @@ func NewDictDataService(data *sqly.DB, ddd *systemDaoImpl.SysDictDataDao) *DictD
 func (dictDataService *DictDataService) SelectDictDataByType(c *gin.Context, dictType string) (sysDictDataList []*systemModels.SysDictDataVo) {
 
 	sysDictDataList = dictDataService.getDictCache(c, dictType)
-	if sysDictDataList != nil {
+	if sysDictDataList != nil && len(sysDictDataList) != 0 {
 		return
 	}
 	sysDictDataList = dictDataService.dictDataDao.SelectDictDataByType(c, dictDataService.data, dictType)

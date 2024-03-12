@@ -31,7 +31,7 @@ func (s *s3IOFile) PublicUploadFile(ctx context.Context, file multipart.File, ke
 	return s.domainName + "/" + keyName, nil
 }
 
-func (s *s3IOFile) privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+func (s *s3IOFile) PrivateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
 	ct := GetFileContentType(file)
 	obj := &s3.PutObjectInput{
 		Bucket:      aws.String(s.privateBucket),

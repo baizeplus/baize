@@ -17,7 +17,7 @@ const (
 
 type IOFile interface {
 	PublicUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error)
-	privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error)
+	PrivateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error)
 }
 
 var ioFile IOFile

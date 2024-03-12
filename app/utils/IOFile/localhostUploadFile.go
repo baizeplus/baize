@@ -31,7 +31,7 @@ func (l *localHostIOFile) PublicUploadFile(ctx context.Context, file multipart.F
 	return l.domainName + ResourcePrefix + "/" + keyName, nil
 }
 
-func (l *localHostIOFile) privateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
+func (l *localHostIOFile) PrivateUploadFile(ctx context.Context, file multipart.File, keyName string) (string, error) {
 	if err := os.MkdirAll(filepath.Dir(l.privatePath+keyName), 0750); err != nil {
 		return "", err
 	}

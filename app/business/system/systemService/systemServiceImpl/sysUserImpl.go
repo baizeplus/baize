@@ -264,18 +264,16 @@ func (userService *UserService) UpdateLoginInformation(c *gin.Context, userId in
 func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart.FileHeader) string {
 	userId := baizeContext.GetUserId(c)
 	open, err := file.Open()
+	defer open.Close()
 	if err != nil {
 		panic(err)
 	}
-
 	name := IOFile.GetTenantRandomName(userId, filepath.Ext(file.Filename))
-
 	avatar, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
 	}
 	userService.userDao.UpdateUserAvatar(c, userService.data, userId, avatar)
-
 	baizeContext.GetSession(c).Set(c, sessionStatus.Avatar, avatar)
 	return avatar
 }
