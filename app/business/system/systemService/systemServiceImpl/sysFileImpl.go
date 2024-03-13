@@ -20,7 +20,7 @@ func NewFileService() *FileService {
 func (fs *FileService) UploadFileRandomName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetTenantRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
 	url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
@@ -44,7 +44,7 @@ func (fs *FileService) UploadFilesRandomName(c *gin.Context, files []*multipart.
 			if err != nil {
 				panic(err)
 			}
-			name := IOFile.GetTenantRandomName(baizeContext.GetUserId(c), filepath.Ext(f.Filename))
+			name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(f.Filename))
 			url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 			if err != nil {
 				panic(err)
@@ -61,7 +61,7 @@ func (fs *FileService) UploadFilesRandomName(c *gin.Context, files []*multipart.
 func (fs *FileService) UploadFileOriginalName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetTenantRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	name := IOFile.GetRandomPath(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
 	url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
@@ -72,7 +72,7 @@ func (fs *FileService) UploadFileOriginalName(c *gin.Context, file *multipart.Fi
 func (fs *FileService) UploadPrivateFileOriginalName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetTenantRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
 	url, err := IOFile.GetConfig().PrivateUploadFile(c, open, name)
 	if err != nil {
 		panic(err)

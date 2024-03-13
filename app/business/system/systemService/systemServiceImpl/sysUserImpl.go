@@ -268,7 +268,7 @@ func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart
 	if err != nil {
 		panic(err)
 	}
-	name := IOFile.GetTenantRandomName(userId, filepath.Ext(file.Filename))
+	name := IOFile.GetRandomName(userId, filepath.Ext(file.Filename))
 	avatar, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)

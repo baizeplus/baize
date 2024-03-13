@@ -5,8 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-
 	"github.com/baizeplus/sqly"
 )
 
@@ -109,22 +107,9 @@ func (rd *SysRoleDao) SelectRoleListByUserId(ctx context.Context, db sqly.SqlyCo
 }
 
 func (rd *SysRoleDao) InsertRole(ctx context.Context, db sqly.SqlyContext, sysRole *systemModels.SysRoleDML) {
-	insertSQL := `insert into sys_role(role_id,role_name,role_key,role_sort,create_by,create_time,update_by,update_time %s)
-					values(:role_id,:role_name,:role_key,:role_sort,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
-
-	if sysRole.Status != "" {
-		key += ",status"
-		value += ",:status"
-	}
-	if sysRole.Remake != "" {
-		key += ",remake"
-		value += ",:remake"
-	}
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-
-	_, err := db.NamedExecContext(ctx, insertStr, sysRole)
+	insertSQL := `insert into sys_role(role_id,role_name,role_key,role_sort,status,remark,create_by,create_time,update_by,update_time )
+					values(:role_id,:role_name,:role_key,:role_sort,:status,:remark,:create_by,now(),:update_by,now())`
+	_, err := db.NamedExecContext(ctx, insertSQL, sysRole)
 	if err != nil {
 		panic(err)
 	}
@@ -145,7 +130,7 @@ func (rd *SysRoleDao) UpdateRole(ctx context.Context, db sqly.SqlyContext, sysRo
 	}
 
 	if sysRole.Remake != "" {
-		updateSQL += ",remake = :remake"
+		updateSQL += ",remark = :remark"
 	}
 	if sysRole.Status != "" {
 		updateSQL += ",status = :status"

@@ -1,22 +1,57 @@
 definitions:
-  models.Accredit:
+  response.ResCode:
+    enum:
+    - 200
+    - 401
+    - 403
+    - 412
+    - 500
+    - 600
+    type: integer
+    x-enum-comments:
+      Error: 系统异常
+      Forbidden: 没有权限
+      Parameter: 参数错误
+      Success: 成功
+      Unauthorized: token失效
+      Waring: 详情看msg
+    x-enum-varnames:
+    - Success
+    - Unauthorized
+    - Forbidden
+    - Parameter
+    - Error
+    - Waring
+  response.ResponseData:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/response.ResCode'
+        description: 相应状态码
+      data:
+        description: 数据
+      msg:
+        description: 提示信息
+        type: string
+    type: object
+  systemModels.Accredit:
     properties:
       posts:
         description: 岗位
         items:
-          $ref: '#/definitions/models.SysPostVo'
+          $ref: '#/definitions/systemModels.SysPostVo'
         type: array
       roles:
         description: 角色
         items:
-          $ref: '#/definitions/models.SysRoleVo'
+          $ref: '#/definitions/systemModels.SysRoleVo'
         type: array
     type: object
-  models.EditUserStatus:
+  systemModels.EditUserStatus:
     properties:
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
@@ -25,7 +60,7 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
@@ -37,7 +72,7 @@ definitions:
     - status
     - userId
     type: object
-  models.GetInfo:
+  systemModels.GetInfo:
     properties:
       permissions:
         items:
@@ -48,9 +83,9 @@ definitions:
           type: string
         type: array
       user:
-        $ref: '#/definitions/models.User'
+        $ref: '#/definitions/systemModels.User'
     type: object
-  models.LoginBody:
+  systemModels.LoginBody:
     properties:
       code:
         description: 验证码
@@ -65,12 +100,10 @@ definitions:
         description: uuid
         type: string
     required:
-    - code
     - password
     - username
-    - uuid
     type: object
-  models.ResetPwd:
+  systemModels.ResetPwd:
     properties:
       password:
         description: 新密码
@@ -83,7 +116,7 @@ definitions:
     - password
     - userId
     type: object
-  models.RoleDeptTree:
+  systemModels.RoleDeptTree:
     properties:
       checkedKeys:
         description: keys
@@ -93,17 +126,51 @@ definitions:
       depts:
         description: 部门
         items:
-          $ref: '#/definitions/models.SysDeptVo'
+          $ref: '#/definitions/systemModels.SysDeptVo'
         type: array
     type: object
-  models.SysDeptVo:
+  systemModels.SysConfigVo:
+    properties:
+      configId:
+        description: 参数主键
+        example: "0"
+        type: string
+      configKey:
+        description: 参数键名
+        type: string
+      configName:
+        description: 参数名称
+        type: string
+      configType:
+        description: 系统内置（Y是 N否）
+        type: string
+      configValue:
+        description: 参数键值
+        type: string
+      createBy:
+        description: 创建人
+        type: integer
+      createTime:
+        description: 创建时间
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+    type: object
+  systemModels.SysDeptVo:
     properties:
       ancestors:
         description: 祖级列表
         type: string
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
@@ -125,7 +192,7 @@ definitions:
         type: string
       orderNum:
         description: 排序
-        type: string
+        type: integer
       parentId:
         description: 上级id
         example: "0"
@@ -138,16 +205,16 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
     type: object
-  models.SysDictDataVo:
+  systemModels.SysDictDataVo:
     properties:
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
@@ -174,16 +241,16 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
     type: object
-  models.SysPostVo:
+  systemModels.SysPostVo:
     properties:
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
@@ -202,38 +269,21 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
     type: object
-  models.SysRole:
-    properties:
-      dataScope:
-        type: string
-      roleId:
-        type: integer
-      roleKey:
-        type: string
-      roleName:
-        type: string
-    type: object
-  models.SysRoleVo:
+  systemModels.SysRoleVo:
     properties:
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
-      dataScope:
-        type: string
       delFlag:
         type: string
-      deptCheckStrictly:
-        type: boolean
-      permissionCheckStrictly:
-        type: boolean
       remark:
         type: string
       roleId:
@@ -249,22 +299,25 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
     type: object
-  models.SysUserDML:
+  systemModels.SysUserDML:
     properties:
       avatar:
         description: 头像
         type: string
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
+      dataScope:
+        description: 权限范围
+        type: string
       deptId:
         description: 部门ID
         example: "0"
@@ -302,7 +355,7 @@ definitions:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
@@ -316,16 +369,36 @@ definitions:
     - sex
     - userName
     type: object
-  models.SysUserVo:
+  systemModels.SysUserDataScope:
+    properties:
+      dataScope:
+        description: 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限,无任何）权限
+        type: string
+      deptIds:
+        description: 如果是自定义就是部门ID 其他不填
+        items:
+          type: string
+        type: array
+      userId:
+        description: 用户ID
+        example: "0"
+        type: string
+    required:
+    - dataScope
+    - userId
+    type: object
+  systemModels.SysUserVo:
     properties:
       avatar:
         type: string
       createBy:
         description: 创建人
-        type: string
+        type: integer
       createTime:
         description: 创建时间
         type: integer
+      dataScope:
+        type: string
       delFlag:
         type: string
       deptId:
@@ -345,17 +418,13 @@ definitions:
         type: string
       roleId:
         type: integer
-      roles:
-        items:
-          $ref: '#/definitions/models.SysRole'
-        type: array
       sex:
         type: string
       status:
         type: string
       updateBy:
         description: 修改人
-        type: string
+        type: integer
       updateTime:
         description: 修改时间
         type: integer
@@ -365,14 +434,11 @@ definitions:
       userName:
         type: string
     type: object
-  models.User:
+  systemModels.User:
     properties:
       avatar:
-        description: |-
-          NickName    string        `json:"nickName" db:"nick_name"`
-          Email       string        `json:"email" db:"email"`
-          Phonenumber string        `json:"phonenumber" db:"phonenumber"`
-          Sex         string        `json:"sex" db:"sex"`
+        type: string
+      dataScope:
         type: string
       userId:
         example: "0"
@@ -380,7 +446,7 @@ definitions:
       userName:
         type: string
     type: object
-  models.UserAndAccredit:
+  systemModels.UserAndAccredit:
     properties:
       postIds:
         description: 选择的岗位Id
@@ -390,7 +456,7 @@ definitions:
       posts:
         description: 岗位
         items:
-          $ref: '#/definitions/models.SysPostVo'
+          $ref: '#/definitions/systemModels.SysPostVo'
         type: array
       roleIds:
         description: 选择的角色Id
@@ -400,47 +466,12 @@ definitions:
       roles:
         description: 角色
         items:
-          $ref: '#/definitions/models.SysRoleVo'
+          $ref: '#/definitions/systemModels.SysRoleVo'
         type: array
       user:
         allOf:
-        - $ref: '#/definitions/models.SysUserVo'
+        - $ref: '#/definitions/systemModels.SysUserVo'
         description: user
-    type: object
-  response.ResCode:
-    enum:
-    - 200
-    - 401
-    - 403
-    - 412
-    - 500
-    - 600
-    type: integer
-    x-enum-comments:
-      Error: 系统异常
-      Forbidden: 没有权限
-      Parameter: 参数错误
-      Success: 成功
-      Unauthorized: token失效
-      Waring: 详情看msg
-    x-enum-varnames:
-    - Success
-    - Unauthorized
-    - Forbidden
-    - Parameter
-    - Error
-    - Waring
-  response.ResponseData:
-    properties:
-      code:
-        allOf:
-        - $ref: '#/definitions/response.ResCode'
-        description: 相应状态码
-      data:
-        description: 数据
-      msg:
-        description: 提示信息
-        type: string
     type: object
 info:
   contact:
@@ -450,7 +481,348 @@ info:
   title: baize
   version: 2.0.x
 paths:
-  /bzSystem/dept:
+  /captchaImage:
+    get:
+      description: 获取验证码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 获取验证码
+      tags:
+      - 登录
+  /file/downloadPrivateFile:
+    get:
+      description: 租户下载私有文件
+      parameters:
+      - description: key
+        in: query
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+      security:
+      - BearerAuth: []
+      summary: 租户下载私有文件
+      tags:
+      - 租户上传文件
+  /file/uploadFileOriginalName:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传文件原始文件名
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 上传文件原始文件名
+      tags:
+      - 租户上传文件
+  /file/uploadFileRandomName:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传文件随即文件名
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 上传文件随即文件名
+      tags:
+      - 租户上传文件
+  /file/uploadFiles:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传多个文件随即文件名
+      parameters:
+      - description: files
+        in: formData
+        name: files
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 上传多个文件随即文件名
+      tags:
+      - 租户上传文件
+  /file/uploadPrivateFileOriginalName:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传私有文件原始文件名
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 上传私有文件原始文件名
+      tags:
+      - 租户上传文件
+  /getInfo:
+    get:
+      description: 获取用户个人信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.GetInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 获取用户个人信息
+      tags:
+      - 登录
+  /login:
+    post:
+      description: 用户登录
+      parameters:
+      - description: 登录信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.LoginBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登录成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+        "412":
+          description: 参数错误
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+        "500":
+          description: 服务器错误
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+        "600":
+          description: 用户名密码错误
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      summary: 用户登录
+      tags:
+      - 登录
+  /logout:
+    post:
+      description: 退出
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 退出成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 退出
+      tags:
+      - 登录
+  /system/Config:
+    post:
+      description: 添加配置
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysConfigVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 添加配置
+      tags:
+      - 配置相关
+    put:
+      description: 修改配置
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysConfigVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改配置
+      tags:
+      - 配置相关
+  /system/Config/{configId}:
+    delete:
+      description: 删除配置
+      parameters:
+      - description: configId
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 删除配置
+      tags:
+      - 配置相关
+  /system/config/{configId}:
+    get:
+      description: 根据配置ID获取配置信息
+      parameters:
+      - description: ConfigId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysConfigVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据配置ID获取配置信息
+      tags:
+      - 配置相关
+  /system/config/list:
+    get:
+      description: 查询配置列表查询
+      parameters:
+      - description: 参数键名
+        in: query
+        name: configKey
+        type: string
+      - description: 参数名称
+        in: query
+        name: configName
+        type: string
+      - description: 系统内置（Y是 N否）
+        in: query
+        name: configType
+        type: string
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ResponseData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysConfigVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询配置列表查询
+      tags:
+      - 配置相关
+  /system/dept:
     get:
       description: 查询部门列表查询
       parameters:
@@ -458,6 +830,24 @@ paths:
         in: query
         name: deptName
         type: string
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
       - description: 上级id
         in: query
         name: parentId
@@ -481,7 +871,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysDeptVo'
+                          $ref: '#/definitions/systemModels.SysDeptVo'
                         type: array
                     type: object
               type: object
@@ -498,7 +888,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDeptVo'
+          $ref: '#/definitions/systemModels.SysDeptVo'
       produces:
       - application/json
       responses:
@@ -519,7 +909,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDeptVo'
+          $ref: '#/definitions/systemModels.SysDeptVo'
       produces:
       - application/json
       responses:
@@ -532,7 +922,7 @@ paths:
       summary: 修改部门
       tags:
       - 部门相关
-  /bzSystem/dept/{deptId}:
+  /system/dept/{deptId}:
     delete:
       description: 删除部门
       parameters:
@@ -571,14 +961,14 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysDeptVo'
+                  $ref: '#/definitions/systemModels.SysDeptVo'
               type: object
       security:
       - BearerAuth: []
       summary: 根据部门ID获取部门信息
       tags:
       - 部门相关
-  /bzSystem/dept/roleDeptTreeSelect/{roleId}:
+  /system/dept/roleDeptTreeSelect/{roleId}:
     get:
       description: 获取角色部门
       parameters:
@@ -597,14 +987,14 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.RoleDeptTree'
+                  $ref: '#/definitions/systemModels.RoleDeptTree'
               type: object
       security:
       - BearerAuth: []
       summary: 获取角色部门
       tags:
       - 部门相关
-  /bzSystem/dict/clearCache:
+  /system/dict/clearCache:
     put:
       description: 更新字典缓存
       parameters:
@@ -626,42 +1016,14 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysDictDataVo'
+                  $ref: '#/definitions/systemModels.SysDictDataVo'
               type: object
       security:
       - BearerAuth: []
       summary: 更新字典缓存
       tags:
       - 字典相关
-  /bzSystem/dict/data:
-    delete:
-      description: 根据dictCode获取字典信息
-      parameters:
-      - description: 字典
-        in: body
-        name: object
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseData'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.SysDictDataVo'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: 根据dictCode获取字典信息
-      tags:
-      - 字典相关
+  /system/dict/data:
     post:
       description: 添加字典数据
       parameters:
@@ -670,7 +1032,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDictDataVo'
+          $ref: '#/definitions/systemModels.SysDictDataVo'
       produces:
       - application/json
       responses:
@@ -691,7 +1053,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDictDataVo'
+          $ref: '#/definitions/systemModels.SysDictDataVo'
       produces:
       - application/json
       responses:
@@ -704,7 +1066,7 @@ paths:
       summary: 修改字典数据
       tags:
       - 字典相关
-  /bzSystem/dict/data/{dictCode}:
+  /system/dict/data/{dictCode}:
     get:
       description: 根据dictCode获取字典信息
       parameters:
@@ -723,14 +1085,43 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysDictDataVo'
+                  $ref: '#/definitions/systemModels.SysDictDataVo'
               type: object
       security:
       - BearerAuth: []
       summary: 根据dictCode获取字典信息
       tags:
       - 字典相关
-  /bzSystem/dict/data/list:
+  /system/dict/data/{dictCodes}:
+    delete:
+      description: 根据dictCode获取字典信息
+      parameters:
+      - collectionFormat: csv
+        description: dictCodes
+        in: path
+        items:
+          type: integer
+        name: dictCodes
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysDictDataVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据dictCode获取字典信息
+      tags:
+      - 字典相关
+  /system/dict/data/list:
     get:
       description: 查询字典列表
       parameters:
@@ -751,12 +1142,12 @@ paths:
       - default: 1
         description: 第几页
         in: query
-        name: page
+        name: pageNum
         type: integer
       - default: 10
         description: 数量
         in: query
-        name: size
+        name: pageSize
         type: integer
       - in: query
         name: status
@@ -776,7 +1167,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysDictDataVo'
+                          $ref: '#/definitions/systemModels.SysDictDataVo'
                         type: array
                     type: object
               type: object
@@ -785,7 +1176,7 @@ paths:
       summary: 查询字典列表
       tags:
       - 字典相关
-  /bzSystem/dict/data/type/{dictType}:
+  /system/dict/data/type/{dictType}:
     get:
       description: 查询字典列表
       parameters:
@@ -809,7 +1200,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysDictDataVo'
+                          $ref: '#/definitions/systemModels.SysDictDataVo'
                         type: array
                     type: object
               type: object
@@ -818,7 +1209,7 @@ paths:
       summary: 查询字典列表
       tags:
       - 字典相关
-  /bzSystem/dict/type:
+  /system/dict/type:
     delete:
       description: 根据dictCode获取字典类型信息
       parameters:
@@ -850,7 +1241,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDictDataVo'
+          $ref: '#/definitions/systemModels.SysDictDataVo'
       produces:
       - application/json
       responses:
@@ -871,7 +1262,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysDictDataVo'
+          $ref: '#/definitions/systemModels.SysDictDataVo'
       produces:
       - application/json
       responses:
@@ -884,7 +1275,7 @@ paths:
       summary: 修改字典类型数据
       tags:
       - 字典相关
-  /bzSystem/dict/type/{dictCode}:
+  /system/dict/type/{dictCode}:
     get:
       description: 根据dictCode获取字典类型信息
       parameters:
@@ -903,14 +1294,14 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysDictDataVo'
+                  $ref: '#/definitions/systemModels.SysDictDataVo'
               type: object
       security:
       - BearerAuth: []
       summary: 根据dictCode获取字典类型信息
       tags:
       - 字典相关
-  /bzSystem/dict/type/list:
+  /system/dict/type/list:
     get:
       description: 查询字典类型列表
       parameters:
@@ -931,12 +1322,12 @@ paths:
       - default: 1
         description: 第几页
         in: query
-        name: page
+        name: pageNum
         type: integer
       - default: 10
         description: 数量
         in: query
-        name: size
+        name: pageSize
         type: integer
       - in: query
         name: status
@@ -956,7 +1347,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysDictDataVo'
+                          $ref: '#/definitions/systemModels.SysDictDataVo'
                         type: array
                     type: object
               type: object
@@ -965,7 +1356,76 @@ paths:
       summary: 查询字典类型列表
       tags:
       - 字典相关
-  /bzSystem/post:
+  /system/post:
+    post:
+      description: 添加岗位
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysPostVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 添加岗位
+      tags:
+      - 岗位相关
+    put:
+      description: 修改岗位
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysPostVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改岗位
+      tags:
+      - 岗位相关
+  /system/post/{postId}:
+    get:
+      description: 根据岗位ID获取岗位信息
+      parameters:
+      - description: PostId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysPostVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据岗位ID获取岗位信息
+      tags:
+      - 岗位相关
+  /system/post/{postIds}:
     delete:
       description: 删除岗位
       parameters:
@@ -989,75 +1449,7 @@ paths:
       summary: 删除岗位
       tags:
       - 岗位相关
-    post:
-      description: 添加岗位
-      parameters:
-      - description: 公司信息
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/models.SysPostVo'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
-      summary: 添加岗位
-      tags:
-      - 岗位相关
-    put:
-      description: 修改岗位
-      parameters:
-      - description: 公司信息
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/models.SysPostVo'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
-      summary: 修改岗位
-      tags:
-      - 岗位相关
-  /bzSystem/post/{postId}:
-    get:
-      description: 根据岗位ID获取岗位信息
-      parameters:
-      - description: PostId
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseData'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.SysPostVo'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: 根据岗位ID获取岗位信息
-      tags:
-      - 岗位相关
-  /bzSystem/post/list:
+  /system/post/list:
     get:
       description: 查询岗位列表查询
       parameters:
@@ -1072,7 +1464,12 @@ paths:
       - default: 1
         description: 第几页
         in: query
-        name: page
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
         type: integer
       - in: query
         name: postCode
@@ -1080,11 +1477,6 @@ paths:
       - in: query
         name: postName
         type: string
-      - default: 10
-        description: 数量
-        in: query
-        name: size
-        type: integer
       - in: query
         name: status
         type: string
@@ -1103,7 +1495,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysPostVo'
+                          $ref: '#/definitions/systemModels.SysPostVo'
                         type: array
                     type: object
               type: object
@@ -1112,88 +1504,6 @@ paths:
       summary: 查询岗位列表查询
       tags:
       - 岗位相关
-  /captchaImage:
-    get:
-      description: 获取验证码
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
-      summary: 获取验证码
-      tags:
-      - 登录
-  /getInfo:
-    get:
-      description: 获取用户个人信息
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseData'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.GetInfo'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: 获取用户个人信息
-      tags:
-      - 登录
-  /login:
-    post:
-      description: 用户登录
-      parameters:
-      - description: 登录信息
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/models.LoginBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 登录成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-        "412":
-          description: 参数错误
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-        "500":
-          description: 服务器错误
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-        "600":
-          description: 用户名密码错误
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      summary: 用户登录
-      tags:
-      - 登录
-  /logout:
-    post:
-      description: 退出
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 退出成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
-      summary: 退出
-      tags:
-      - 登录
   /system/user:
     get:
       description: 查询用户列表
@@ -1221,17 +1531,17 @@ paths:
       - default: 1
         description: 第几页
         in: query
-        name: page
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
         type: integer
       - description: 电话
         in: query
         name: phonenumber
         type: string
-      - default: 10
-        description: 数量
-        in: query
-        name: size
-        type: integer
       - description: 状态
         in: query
         name: status
@@ -1255,7 +1565,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysUserVo'
+                          $ref: '#/definitions/systemModels.SysUserVo'
                         type: array
                     type: object
               type: object
@@ -1272,7 +1582,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysUserDML'
+          $ref: '#/definitions/systemModels.SysUserDML'
       produces:
       - application/json
       responses:
@@ -1293,7 +1603,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.SysUserDML'
+          $ref: '#/definitions/systemModels.SysUserDML'
       produces:
       - application/json
       responses:
@@ -1319,7 +1629,7 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Accredit'
+                  $ref: '#/definitions/systemModels.Accredit'
               type: object
       security:
       - BearerAuth: []
@@ -1369,7 +1679,7 @@ paths:
             - $ref: '#/definitions/response.ResponseData'
             - properties:
                 data:
-                  $ref: '#/definitions/models.UserAndAccredit'
+                  $ref: '#/definitions/systemModels.UserAndAccredit'
               type: object
       security:
       - BearerAuth: []
@@ -1405,7 +1715,7 @@ paths:
                   - properties:
                       Rows:
                         items:
-                          $ref: '#/definitions/models.SysUserVo'
+                          $ref: '#/definitions/systemModels.SysUserVo'
                         type: array
                     type: object
               type: object
@@ -1440,7 +1750,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.EditUserStatus'
+          $ref: '#/definitions/systemModels.EditUserStatus'
       produces:
       - application/json
       responses:
@@ -1451,6 +1761,49 @@ paths:
       security:
       - BearerAuth: []
       summary: 修改用户状态
+      tags:
+      - 用户相关
+  /system/user/dataScope:
+    put:
+      description: 修改数据权限
+      parameters:
+      - description: 用户权限信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysUserDataScope'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改数据权限
+      tags:
+      - 用户相关
+  /system/user/dataScope/{userId}:
+    get:
+      description: 查询用户数据权限
+      parameters:
+      - description: userId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 查询用户数据权限
       tags:
       - 用户相关
   /system/user/export:
@@ -1480,17 +1833,17 @@ paths:
       - default: 1
         description: 第几页
         in: query
-        name: page
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
         type: integer
       - description: 电话
         in: query
         name: phonenumber
         type: string
-      - default: 10
-        description: 数量
-        in: query
-        name: size
-        type: integer
       - description: 状态
         in: query
         name: status
@@ -1562,7 +1915,7 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/models.ResetPwd'
+          $ref: '#/definitions/systemModels.ResetPwd'
       produces:
       - application/json
       responses:

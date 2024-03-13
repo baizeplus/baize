@@ -25,11 +25,12 @@ func (rc *Role) RoleList(c *gin.Context) {
 }
 
 func (rc *Role) RoleExport(c *gin.Context) {
-	role := new(systemModels.SysRoleDQL)
-	_ = c.ShouldBind(role)
-	role.DataScope = baizeContext.GetDataScope(c, "d")
-	list, count := rc.rs.SelectRoleList(c, role)
-	baizeContext.SuccessListData(c, list, count)
+	//role := new(systemModels.SysRoleDQL)
+	//_ = c.ShouldBind(role)
+	//role.DataScope = baizeContext.GetDataScope(c, "d")
+	//list, count := rc.rs.SelectRoleList(c, role)
+	//baizeContext.SuccessListData(c, list, count)
+	panic("等待完成")
 }
 func (rc *Role) RoleGetInfo(c *gin.Context) {
 	roleId := baizeContext.ParamInt64(c, "roleId")

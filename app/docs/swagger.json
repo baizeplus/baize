@@ -10,1137 +10,6 @@
         "version": "2.0.x"
     },
     "paths": {
-        "/bzSystem/dept": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询部门列表查询",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "查询部门列表查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "部门名称",
-                        "name": "deptName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "上级id",
-                        "name": "parentId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "状态",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ResponseData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.SysDeptVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改部门",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "修改部门",
-                "parameters": [
-                    {
-                        "description": "公司信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDeptVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "添加部门",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "添加部门",
-                "parameters": [
-                    {
-                        "description": "公司信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDeptVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dept/roleDeptTreeSelect/{roleId}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取角色部门",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "获取角色部门",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "roleId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.RoleDeptTree"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dept/{deptId}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据部门ID获取部门信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "根据部门ID获取部门信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "deptId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysDeptVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除部门",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "部门相关"
-                ],
-                "summary": "删除部门",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "deptId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/clearCache": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "更新字典缓存",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "更新字典缓存",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/data": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改字典数据",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "修改字典数据",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "添加字典数据",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "添加字典数据",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据dictCode获取字典信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "根据dictCode获取字典信息",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/data/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询字典列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "查询字典列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "dictLabel",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dictType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序规则  降序desc   asc升序",
-                        "name": "isAsc",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "orderBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "第几页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "数量",
-                        "name": "size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ResponseData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/data/type/{dictType}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询字典列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "查询字典列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "dictType",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ResponseData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/data/{dictCode}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据dictCode获取字典信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "根据dictCode获取字典信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "dictCode",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/type": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改字典类型数据",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "修改字典类型数据",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "添加字典类型数据",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "添加字典类型数据",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysDictDataVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据dictCode获取字典类型信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "根据dictCode获取字典类型信息",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/type/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询字典类型列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "查询字典类型列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "dictLabel",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dictType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序规则  降序desc   asc升序",
-                        "name": "isAsc",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "orderBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "第几页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "数量",
-                        "name": "size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ResponseData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.SysDictDataVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/dict/type/{dictCode}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据dictCode获取字典类型信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "根据dictCode获取字典类型信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "dictCode",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysDictDataVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/post": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改岗位",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "岗位相关"
-                ],
-                "summary": "修改岗位",
-                "parameters": [
-                    {
-                        "description": "公司信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysPostVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "添加岗位",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "岗位相关"
-                ],
-                "summary": "添加岗位",
-                "parameters": [
-                    {
-                        "description": "公司信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SysPostVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除岗位",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "岗位相关"
-                ],
-                "summary": "删除岗位",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "postId",
-                        "name": "ids",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/post/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询岗位列表查询",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "岗位相关"
-                ],
-                "summary": "查询岗位列表查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "排序规则  降序desc   asc升序",
-                        "name": "isAsc",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "orderBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "第几页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "postCode",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "postName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "数量",
-                        "name": "size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ResponseData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.SysPostVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/bzSystem/post/{postId}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据岗位ID获取岗位信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "岗位相关"
-                ],
-                "summary": "根据岗位ID获取岗位信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "PostId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SysPostVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/captchaImage": {
             "get": {
                 "security": [
@@ -1159,6 +28,185 @@
                 "responses": {
                     "200": {
                         "description": "获取成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/downloadPrivateFile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "租户下载私有文件",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "租户上传文件"
+                ],
+                "summary": "租户下载私有文件",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "key",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/file/uploadFileOriginalName": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "上传文件原始文件名",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "租户上传文件"
+                ],
+                "summary": "上传文件原始文件名",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/uploadFileRandomName": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "上传文件随即文件名",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "租户上传文件"
+                ],
+                "summary": "上传文件随即文件名",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/uploadFiles": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "上传多个文件随即文件名",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "租户上传文件"
+                ],
+                "summary": "上传多个文件随即文件名",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "files",
+                        "name": "files",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/uploadPrivateFileOriginalName": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "上传私有文件原始文件名",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "租户上传文件"
+                ],
+                "summary": "上传私有文件原始文件名",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.ResponseData"
                         }
@@ -1193,7 +241,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.GetInfo"
+                                            "$ref": "#/definitions/systemModels.GetInfo"
                                         }
                                     }
                                 }
@@ -1220,7 +268,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginBody"
+                            "$ref": "#/definitions/systemModels.LoginBody"
                         }
                     }
                 ],
@@ -1277,6 +325,1414 @@
                 }
             }
         },
+        "/system/Config": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改配置",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置相关"
+                ],
+                "summary": "修改配置",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysConfigVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加配置",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置相关"
+                ],
+                "summary": "添加配置",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysConfigVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/Config/{configId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除配置",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置相关"
+                ],
+                "summary": "删除配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "configId",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/config/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询配置列表查询",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置相关"
+                ],
+                "summary": "查询配置列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "参数键名",
+                        "name": "configKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "参数名称",
+                        "name": "configName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "系统内置（Y是 N否）",
+                        "name": "configType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysConfigVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/config/{configId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据配置ID获取配置信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置相关"
+                ],
+                "summary": "根据配置ID获取配置信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ConfigId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysConfigVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dept": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询部门列表查询",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "查询部门列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门名称",
+                        "name": "deptName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "上级id",
+                        "name": "parentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysDeptVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改部门",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "修改部门",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDeptVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加部门",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "添加部门",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDeptVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dept/roleDeptTreeSelect/{roleId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取角色部门",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "获取角色部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "roleId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.RoleDeptTree"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dept/{deptId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据部门ID获取部门信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "根据部门ID获取部门信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "deptId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDeptVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除部门",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门相关"
+                ],
+                "summary": "删除部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "deptId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/clearCache": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "更新字典缓存",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "更新字典缓存",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/data": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改字典数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "修改字典数据",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加字典数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "添加字典数据",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/data/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询字典列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "查询字典列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "dictLabel",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dictType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/data/type/{dictType}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询字典列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "查询字典列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dictType",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/data/{dictCodes}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据dictCode获取字典信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "根据dictCode获取字典信息",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "dictCodes",
+                        "name": "dictCodes",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/data/{dictCode}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据dictCode获取字典信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "根据dictCode获取字典信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dictCode",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/type": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改字典类型数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "修改字典类型数据",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加字典类型数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "添加字典类型数据",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据dictCode获取字典类型信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "根据dictCode获取字典类型信息",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/type/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询字典类型列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "查询字典类型列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "dictLabel",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dictType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/type/{dictCode}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据dictCode获取字典类型信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "根据dictCode获取字典类型信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dictCode",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/post": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改岗位",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "修改岗位",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysPostVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加岗位",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "添加岗位",
+                "parameters": [
+                    {
+                        "description": "公司信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysPostVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/post/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询岗位列表查询",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "查询岗位列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "postCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "postName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ResponseData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/systemModels.SysPostVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/post/{postIds}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除岗位",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "删除岗位",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "postId",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/post/{postId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据岗位ID获取岗位信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "根据岗位ID获取岗位信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PostId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysPostVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/system/user": {
             "get": {
                 "security": [
@@ -1327,20 +1783,20 @@
                         "type": "integer",
                         "default": 1,
                         "description": "第几页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电话",
-                        "name": "phonenumber",
+                        "name": "pageNum",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "default": 10,
                         "description": "数量",
-                        "name": "size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电话",
+                        "name": "phonenumber",
                         "in": "query"
                     },
                     {
@@ -1378,7 +1834,7 @@
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysUserVo"
+                                                                "$ref": "#/definitions/systemModels.SysUserVo"
                                                             }
                                                         }
                                                     }
@@ -1413,7 +1869,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysUserDML"
+                            "$ref": "#/definitions/systemModels.SysUserDML"
                         }
                     }
                 ],
@@ -1447,7 +1903,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SysUserDML"
+                            "$ref": "#/definitions/systemModels.SysUserDML"
                         }
                     }
                 ],
@@ -1488,7 +1944,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Accredit"
+                                            "$ref": "#/definitions/systemModels.Accredit"
                                         }
                                     }
                                 }
@@ -1589,7 +2045,7 @@
                                                         "Rows": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.SysUserVo"
+                                                                "$ref": "#/definitions/systemModels.SysUserVo"
                                                             }
                                                         }
                                                     }
@@ -1653,8 +2109,78 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditUserStatus"
+                            "$ref": "#/definitions/systemModels.EditUserStatus"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/user/dataScope": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改数据权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "修改数据权限",
+                "parameters": [
+                    {
+                        "description": "用户权限信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysUserDataScope"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/user/dataScope/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询用户数据权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关"
+                ],
+                "summary": "查询用户数据权限",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1717,20 +2243,20 @@
                         "type": "integer",
                         "default": 1,
                         "description": "第几页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电话",
-                        "name": "phonenumber",
+                        "name": "pageNum",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "default": 10,
                         "description": "数量",
-                        "name": "size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电话",
+                        "name": "phonenumber",
                         "in": "query"
                     },
                     {
@@ -1846,7 +2372,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ResetPwd"
+                            "$ref": "#/definitions/systemModels.ResetPwd"
                         }
                     }
                 ],
@@ -1896,7 +2422,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.UserAndAccredit"
+                                            "$ref": "#/definitions/systemModels.UserAndAccredit"
                                         }
                                     }
                                 }
@@ -1908,26 +2434,73 @@
         }
     },
     "definitions": {
-        "models.Accredit": {
+        "response.ResCode": {
+            "type": "integer",
+            "enum": [
+                200,
+                401,
+                403,
+                412,
+                500,
+                600
+            ],
+            "x-enum-comments": {
+                "Error": "系统异常",
+                "Forbidden": "没有权限",
+                "Parameter": "参数错误",
+                "Success": "成功",
+                "Unauthorized": "token失效",
+                "Waring": "详情看msg"
+            },
+            "x-enum-varnames": [
+                "Success",
+                "Unauthorized",
+                "Forbidden",
+                "Parameter",
+                "Error",
+                "Waring"
+            ]
+        },
+        "response.ResponseData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "相应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/response.ResCode"
+                        }
+                    ]
+                },
+                "data": {
+                    "description": "数据"
+                },
+                "msg": {
+                    "description": "提示信息",
+                    "type": "string"
+                }
+            }
+        },
+        "systemModels.Accredit": {
             "type": "object",
             "properties": {
                 "posts": {
                     "description": "岗位",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysPostVo"
+                        "$ref": "#/definitions/systemModels.SysPostVo"
                     }
                 },
                 "roles": {
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleVo"
                     }
                 }
             }
         },
-        "models.EditUserStatus": {
+        "systemModels.EditUserStatus": {
             "type": "object",
             "required": [
                 "status",
@@ -1936,7 +2509,7 @@
             "properties": {
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
@@ -1948,7 +2521,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -1961,7 +2534,7 @@
                 }
             }
         },
-        "models.GetInfo": {
+        "systemModels.GetInfo": {
             "type": "object",
             "properties": {
                 "permissions": {
@@ -1977,17 +2550,15 @@
                     }
                 },
                 "user": {
-                    "$ref": "#/definitions/models.User"
+                    "$ref": "#/definitions/systemModels.User"
                 }
             }
         },
-        "models.LoginBody": {
+        "systemModels.LoginBody": {
             "type": "object",
             "required": [
-                "code",
                 "password",
-                "username",
-                "uuid"
+                "username"
             ],
             "properties": {
                 "code": {
@@ -2008,7 +2579,7 @@
                 }
             }
         },
-        "models.ResetPwd": {
+        "systemModels.ResetPwd": {
             "type": "object",
             "required": [
                 "password",
@@ -2026,7 +2597,7 @@
                 }
             }
         },
-        "models.RoleDeptTree": {
+        "systemModels.RoleDeptTree": {
             "type": "object",
             "properties": {
                 "checkedKeys": {
@@ -2040,12 +2611,58 @@
                     "description": "部门",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysDeptVo"
+                        "$ref": "#/definitions/systemModels.SysDeptVo"
                     }
                 }
             }
         },
-        "models.SysDeptVo": {
+        "systemModels.SysConfigVo": {
+            "type": "object",
+            "properties": {
+                "configId": {
+                    "description": "参数主键",
+                    "type": "string",
+                    "example": "0"
+                },
+                "configKey": {
+                    "description": "参数键名",
+                    "type": "string"
+                },
+                "configName": {
+                    "description": "参数名称",
+                    "type": "string"
+                },
+                "configType": {
+                    "description": "系统内置（Y是 N否）",
+                    "type": "string"
+                },
+                "configValue": {
+                    "description": "参数键值",
+                    "type": "string"
+                },
+                "createBy": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "systemModels.SysDeptVo": {
             "type": "object",
             "properties": {
                 "ancestors": {
@@ -2054,7 +2671,7 @@
                 },
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
@@ -2083,7 +2700,7 @@
                 },
                 "orderNum": {
                     "description": "排序",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "parentId": {
                     "description": "上级id",
@@ -2100,7 +2717,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2108,12 +2725,12 @@
                 }
             }
         },
-        "models.SysDictDataVo": {
+        "systemModels.SysDictDataVo": {
             "type": "object",
             "properties": {
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
@@ -2152,7 +2769,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2160,12 +2777,12 @@
                 }
             }
         },
-        "models.SysPostVo": {
+        "systemModels.SysPostVo": {
             "type": "object",
             "properties": {
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
@@ -2192,7 +2809,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2200,45 +2817,19 @@
                 }
             }
         },
-        "models.SysRole": {
-            "type": "object",
-            "properties": {
-                "dataScope": {
-                    "type": "string"
-                },
-                "roleId": {
-                    "type": "integer"
-                },
-                "roleKey": {
-                    "type": "string"
-                },
-                "roleName": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SysRoleVo": {
+        "systemModels.SysRoleVo": {
             "type": "object",
             "properties": {
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
                     "type": "integer"
                 },
-                "dataScope": {
-                    "type": "string"
-                },
                 "delFlag": {
                     "type": "string"
-                },
-                "deptCheckStrictly": {
-                    "type": "boolean"
-                },
-                "permissionCheckStrictly": {
-                    "type": "boolean"
                 },
                 "remark": {
                     "type": "string"
@@ -2261,7 +2852,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2269,7 +2860,7 @@
                 }
             }
         },
-        "models.SysUserDML": {
+        "systemModels.SysUserDML": {
             "type": "object",
             "required": [
                 "deptId",
@@ -2285,11 +2876,15 @@
                 },
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
                     "type": "integer"
+                },
+                "dataScope": {
+                    "description": "权限范围",
+                    "type": "string"
                 },
                 "deptId": {
                     "description": "部门ID",
@@ -2340,7 +2935,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2352,7 +2947,32 @@
                 }
             }
         },
-        "models.SysUserVo": {
+        "systemModels.SysUserDataScope": {
+            "type": "object",
+            "required": [
+                "dataScope",
+                "userId"
+            ],
+            "properties": {
+                "dataScope": {
+                    "description": "数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限,无任何）权限",
+                    "type": "string"
+                },
+                "deptIds": {
+                    "description": "如果是自定义就是部门ID 其他不填",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "userId": {
+                    "description": "用户ID",
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "systemModels.SysUserVo": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2360,11 +2980,14 @@
                 },
                 "createBy": {
                     "description": "创建人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "createTime": {
                     "description": "创建时间",
                     "type": "integer"
+                },
+                "dataScope": {
+                    "type": "string"
                 },
                 "delFlag": {
                     "type": "string"
@@ -2394,12 +3017,6 @@
                 "roleId": {
                     "type": "integer"
                 },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SysRole"
-                    }
-                },
                 "sex": {
                     "type": "string"
                 },
@@ -2408,7 +3025,7 @@
                 },
                 "updateBy": {
                     "description": "修改人",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "修改时间",
@@ -2423,11 +3040,13 @@
                 }
             }
         },
-        "models.User": {
+        "systemModels.User": {
             "type": "object",
             "properties": {
                 "avatar": {
-                    "description": "NickName    string        `json:\"nickName\" db:\"nick_name\"`\nEmail       string        `json:\"email\" db:\"email\"`\nPhonenumber string        `json:\"phonenumber\" db:\"phonenumber\"`\nSex         string        `json:\"sex\" db:\"sex\"`",
+                    "type": "string"
+                },
+                "dataScope": {
                     "type": "string"
                 },
                 "userId": {
@@ -2439,7 +3058,7 @@
                 }
             }
         },
-        "models.UserAndAccredit": {
+        "systemModels.UserAndAccredit": {
             "type": "object",
             "properties": {
                 "postIds": {
@@ -2453,7 +3072,7 @@
                     "description": "岗位",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysPostVo"
+                        "$ref": "#/definitions/systemModels.SysPostVo"
                     }
                 },
                 "roleIds": {
@@ -2467,63 +3086,16 @@
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleVo"
                     }
                 },
                 "user": {
                     "description": "user",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/models.SysUserVo"
+                            "$ref": "#/definitions/systemModels.SysUserVo"
                         }
                     ]
-                }
-            }
-        },
-        "response.ResCode": {
-            "type": "integer",
-            "enum": [
-                200,
-                401,
-                403,
-                412,
-                500,
-                600
-            ],
-            "x-enum-comments": {
-                "Error": "系统异常",
-                "Forbidden": "没有权限",
-                "Parameter": "参数错误",
-                "Success": "成功",
-                "Unauthorized": "token失效",
-                "Waring": "详情看msg"
-            },
-            "x-enum-varnames": [
-                "Success",
-                "Unauthorized",
-                "Forbidden",
-                "Parameter",
-                "Error",
-                "Waring"
-            ]
-        },
-        "response.ResponseData": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "相应状态码",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/response.ResCode"
-                        }
-                    ]
-                },
-                "data": {
-                    "description": "数据"
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string"
                 }
             }
         }

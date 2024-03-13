@@ -34,7 +34,7 @@ type SysRoleDML struct {
 	RoleKey  string   `json:"roleKey" db:"role_key"`
 	RoleSort int      `json:"roleSort" db:"role_sort"`
 	Status   string   `json:"status" db:"status"`
-	Remake   string   `json:"remake" db:"remake"`
+	Remake   string   `json:"remark" db:"remark"`
 	MenuIds  []string `json:"menuIds"`
 	baize.BaseEntity
 }

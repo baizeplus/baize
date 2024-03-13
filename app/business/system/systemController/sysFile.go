@@ -23,7 +23,7 @@ func NewFile(fs *systemServiceImpl.FileService) *File {
 // @Accept multipart/form-data
 // @Param file formData file true "file"
 // @Produce application/json
-// @Success 200 {object} commonModels.ResponseData
+// @Success 200 {object} response.ResponseData
 // @Router /file/uploadFileRandomName [post]
 func (fc *File) UploadFileRandomName(c *gin.Context) {
 	file, err := c.FormFile("file")
@@ -48,7 +48,7 @@ func (fc *File) UploadFileRandomName(c *gin.Context) {
 // @Accept multipart/form-data
 // @Param files formData file true "files"
 // @Produce application/json
-// @Success 200 {object} commonModels.ResponseData
+// @Success 200 {object} response.ResponseData
 // @Router /file/uploadFiles [post]
 func (fc *File) UploadFiles(c *gin.Context) {
 	form, err := c.MultipartForm()
@@ -70,7 +70,7 @@ func (fc *File) UploadFiles(c *gin.Context) {
 // @Accept multipart/form-data
 // @Param file formData file true "file"
 // @Produce application/json
-// @Success 200 {object} commonModels.ResponseData
+// @Success 200 {object} response.ResponseData
 // @Router /file/uploadFileOriginalName [post]
 func (fc *File) UploadFileOriginalName(c *gin.Context) {
 	file, err := c.FormFile("file")
@@ -95,7 +95,7 @@ func (fc *File) UploadFileOriginalName(c *gin.Context) {
 // @Accept multipart/form-data
 // @Param file formData file true "file"
 // @Produce application/json
-// @Success 200 {object} commonModels.ResponseData
+// @Success 200 {object} response.ResponseData
 // @Router /file/uploadPrivateFileOriginalName [post]
 func (fc *File) UploadPrivateFileOriginalName(c *gin.Context) {
 	file, err := c.FormFile("file")
