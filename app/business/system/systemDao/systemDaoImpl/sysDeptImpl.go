@@ -30,6 +30,9 @@ func (sysDeptDao *SysDeptDao) SelectDeptList(ctx context.Context, db sqly.SqlyCo
 	if dept.Status != "" {
 		whereSql += " AND status = :status"
 	}
+	if dept.DataScope != "" {
+		whereSql += " AND " + dept.DataScope
+	}
 	whereSql += " order by d.parent_id, d.order_num"
 	list = make([]*systemModels.SysDeptVo, 0, 16)
 	err := db.NamedSelectContext(ctx, &list, sysDeptDao.deptSql+whereSql, dept)

@@ -167,6 +167,9 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 	if user.DeptId != 0 {
 		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
 	}
+	if user.DataScope != "" {
+		sql += " AND " + user.DataScope
+	}
 	list = make([]*systemModels.SysUserVo, 0, 16)
 	total = new(int64)
 	err := db.NamedSelectPageContext(ctx, &list, total, sql, user, user.ToPage())

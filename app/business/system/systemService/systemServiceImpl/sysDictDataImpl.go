@@ -4,7 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
-	"baize/app/datasource"
+	"baize/app/utils/cache"
 	"baize/app/utils/snowflake"
 	"context"
 	"encoding/json"
@@ -56,24 +56,24 @@ func (dictDataService *DictDataService) SelectDictDataById(c *gin.Context, dictC
 func (dictDataService *DictDataService) InsertDictData(c *gin.Context, dictData *systemModels.SysDictDataVo) {
 	dictData.DictCode = snowflake.GenID()
 	dictDataService.dictDataDao.InsertDictData(c, dictDataService.data, dictData)
-	datasource.RedisDb.Del(c, dictDataService.dictKey+"*")
+	cache.GetCache().Del(c, dictDataService.dictKey+"*")
 }
 
 func (dictDataService *DictDataService) UpdateDictData(c *gin.Context, dictData *systemModels.SysDictDataVo) {
 	dictDataService.dictDataDao.UpdateDictData(c, dictDataService.data, dictData)
-	datasource.RedisDb.Del(c, dictDataService.dictKey+"*")
+	cache.GetCache().Del(c, dictDataService.dictKey+"*")
 }
 func (dictDataService *DictDataService) DeleteDictDataByIds(c *gin.Context, dictCodes []int64) {
 	dictDataService.dictDataDao.DeleteDictDataByIds(c, dictDataService.data, dictCodes)
-	datasource.RedisDb.Del(c, dictDataService.dictKey+"*")
+	cache.GetCache().Del(c, dictDataService.dictKey+"*")
 }
 func (dictDataService *DictDataService) CheckDictDataByTypes(c *gin.Context, dictType []string) bool {
 	return dictDataService.dictDataDao.CountDictDataByTypes(c, dictDataService.data, dictType) > 0
 
 }
 func (dictDataService *DictDataService) getDictCache(c context.Context, dictType string) (dictDataList []*systemModels.SysDictDataVo) {
-	getString := datasource.RedisDb.Get(c, dictDataService.dictKey+dictType).Val()
-	if getString != "" {
+	getString, err := cache.GetCache().Get(c, dictDataService.dictKey+dictType)
+	if err != nil {
 		dictDataList = make([]*systemModels.SysDictDataVo, 0)
 		_ = json.Unmarshal([]byte(getString), &dictDataList)
 	}
@@ -81,5 +81,6 @@ func (dictDataService *DictDataService) getDictCache(c context.Context, dictType
 }
 
 func (dictDataService *DictDataService) setDictCache(c context.Context, dictType string, dictDataList []*systemModels.SysDictDataVo) {
-	datasource.RedisDb.Set(c, dictDataService.dictKey+dictType, dictDataList, 0)
+	marshal, _ := json.Marshal(dictDataList)
+	cache.GetCache().Set(c, dictDataService.dictKey+dictType, string(marshal), 0)
 }

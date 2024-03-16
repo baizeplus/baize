@@ -29,7 +29,6 @@ func NewLogin(ls *systemServiceImpl.LoginService, us *systemServiceImpl.UserServ
 // @Description 用户登录
 // @Tags 登录
 // @Param  object body systemModels.LoginBody true "登录信息"
-// @Produce application/json
 // @Success 200 {object}  response.ResponseData "登录成功"
 // @Failure 412 {object}  response.ResponseData "参数错误"
 // @Failure 500 {object}  response.ResponseData "服务器错误"
@@ -45,7 +44,7 @@ func (lc *Login) Login(c *gin.Context) {
 	logininfor := new(monitorModels.Logininfor)
 	logininfor.UserName = login.Username
 	baizeContext.SetUserAgent(c, logininfor)
-	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") == "true" {
+	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") != "false" {
 		captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
 		if !captcha {
 			logininfor.Status = 1
@@ -80,6 +79,13 @@ func (lc *Login) Login(c *gin.Context) {
 	baizeContext.SuccessData(c, lc.ls.Login(c, user, logininfor))
 }
 
+// Register 用户登录
+// @Summary 用户登录
+// @Description 用户登录
+// @Tags 登录
+// @Param  object body systemModels.LoginBody true "登录信息"
+// @Success 200 {object}  response.ResponseData "注册成功"
+// @Router /register [post]
 func (lc *Login) Register(c *gin.Context) {
 	login := new(systemModels.LoginBody)
 	if err := c.ShouldBindJSON(login); err != nil {
@@ -87,7 +93,7 @@ func (lc *Login) Register(c *gin.Context) {
 		baizeContext.ParameterError(c)
 		return
 	}
-	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") == "true" {
+	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") != "false" {
 		captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
 		if !captcha {
 			baizeContext.Waring(c, "验证码错误")
@@ -121,7 +127,6 @@ func (lc *Login) GetInfo(c *gin.Context) {
 // @Summary 退出
 // @Description 退出
 // @Tags 登录
-// @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "退出成功"
 // @Router /logout [post]
@@ -135,17 +140,23 @@ func (lc *Login) Logout(c *gin.Context) {
 // @Summary 获取验证码
 // @Description 获取验证码
 // @Tags 登录
-// @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "获取成功"
 // @Router /captchaImage [get]
 func (lc *Login) GetCode(c *gin.Context) {
 	baizeContext.SuccessData(c, lc.ls.GenerateCode(c))
 }
+
+// GetRouters 获取路由
+// @Summary 获取路由
+// @Description 获取路由
+// @Tags 登录
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.RouterVo}} "获取成功"
+// @Router /getRouters [get]
 func (lc *Login) GetRouters(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)
 	menus := lc.ms.SelectMenuTreeByUserId(c, userId)
 	buildMenus := lc.ms.BuildMenus(c, menus)
 	baizeContext.SuccessData(c, buildMenus)
-
 }

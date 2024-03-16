@@ -4,7 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
-	"baize/app/datasource"
+	"baize/app/utils/cache"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -34,13 +34,13 @@ func (cs *ConfigService) InsertConfig(c *gin.Context, config *systemModels.SysCo
 
 func (cs *ConfigService) UpdateConfig(c *gin.Context, config *systemModels.SysConfigVo) {
 	cs.cd.UpdateConfig(c, cs.data, config)
-	datasource.RedisDb.Del(c, cs.getCacheKey(config.ConfigKey))
+	cache.GetCache().Del(c, cs.getCacheKey(config.ConfigKey))
 }
 
 func (cs *ConfigService) DeleteConfigById(c *gin.Context, configId int64) {
 	key := cs.cd.SelectConfigById(c, cs.data, configId).ConfigKey
 	cs.cd.DeleteConfigById(c, cs.data, configId)
-	datasource.RedisDb.Del(c, cs.getCacheKey(key))
+	cache.GetCache().Del(c, cs.getCacheKey(key))
 }
 
 func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, configKey string) bool {
@@ -52,13 +52,14 @@ func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, co
 }
 
 func (cs *ConfigService) SelectConfigValueByKey(c *gin.Context, configKey string) string {
-	value := datasource.RedisDb.Get(c, cs.getCacheKey(configKey)).Val()
-	if value != "" {
-		return value
+	v, err := cache.GetCache().Get(c, cs.getCacheKey(configKey))
+
+	if err != nil {
+		return v
 	}
-	value = cs.cd.SelectConfigValueByConfigKey(c, cs.data, configKey)
+	value := cs.cd.SelectConfigValueByConfigKey(c, cs.data, configKey)
 	if value != "" {
-		datasource.RedisDb.Set(c, cs.getCacheKey(configKey), value, -1)
+		cache.GetCache().Set(c, cs.getCacheKey(configKey), value, 0)
 	}
 	return value
 }

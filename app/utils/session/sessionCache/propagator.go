@@ -1,4 +1,4 @@
-package redis
+package sessionCache
 
 import (
 	"github.com/gin-gonic/gin"

@@ -8,7 +8,7 @@ const (
 	UserName        = "userName"
 	Role            = "role"
 	RolePerms       = "rolePerms"
-	Permission      = "Permission"
+	Permission      = "permission"
 	IpAddr          = "ipAddr"
 	LoginTime       = "loginTime"
 	Os              = "os"

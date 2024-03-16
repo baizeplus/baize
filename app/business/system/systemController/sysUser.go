@@ -103,13 +103,11 @@ func (uc *User) UserEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/dataScope  [put]
 func (uc *User) UpdateUserDataScope(c *gin.Context) {
-
 	uds := new(systemModels.SysUserDataScope)
 	if err := c.ShouldBindJSON(uds); err != nil {
 		baizeContext.ParameterError(c)
 		return
 	}
-
 	uc.us.UpdateUserDataScope(c, uds)
 	baizeContext.Success(c)
 }
@@ -124,13 +122,11 @@ func (uc *User) UpdateUserDataScope(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/dataScope/{userId}   [get]
 func (uc *User) SelectUserDataScope(c *gin.Context) {
-
 	userId := baizeContext.ParamInt64(c, "userId")
 	if userId == 0 {
 		baizeContext.ParameterError(c)
 		return
 	}
-
 	baizeContext.SuccessData(c, uc.us.SelectUserDataScope(c, userId))
 }
 
@@ -158,7 +154,6 @@ func (uc *User) UserAdd(c *gin.Context) {
 		baizeContext.Waring(c, "新增用户'"+sysUser.Phonenumber+"'失败，手机号码已存在")
 		return
 	}
-
 	if uc.us.CheckEmailUnique(c, sysUser.UserId, sysUser.Email) {
 		baizeContext.Waring(c, "新增用户'"+sysUser.Email+"'失败，邮箱账号已存在")
 		return

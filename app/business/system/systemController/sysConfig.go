@@ -30,15 +30,21 @@ func (cc *Config) ConfigList(c *gin.Context) {
 	_ = c.ShouldBind(config)
 	list, count := cc.cs.SelectConfigList(c, config)
 	baizeContext.SuccessListData(c, list, count)
-
 }
 
+// ConfigExport 导出配置
+// @Summary 导出配置
+// @Description 导出配置
+// @Tags 配置相关
+// @Param  object query systemModels.SysConfigDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/octet-stream
+// @Success 200 {object} []byte
+// @Router /system/config/export [post]
 func (cc *Config) ConfigExport(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//Config := new(systemModels.SysConfigDQL)
-	//_ = c.ShouldBind(Config)
-	//data := pc.ps.ConfigExport(Config)
-	//bzc.DataPackageExcel(data)
+	config := new(systemModels.SysConfigDQL)
+	_ = c.ShouldBind(config)
+	//data := cc.cs.ConfigExport(Config)
 }
 
 // ConfigGetInfo 根据配置ID获取配置信息

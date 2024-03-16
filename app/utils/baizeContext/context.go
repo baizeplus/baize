@@ -4,7 +4,7 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
-	"baize/app/utils/session/redis"
+	"baize/app/utils/session/sessionCache"
 	"baize/app/utils/snowflake"
 	"encoding/json"
 	"fmt"
@@ -48,10 +48,10 @@ func GetRolesPerms(c *gin.Context) []string {
 	return roles
 }
 
-func GetSession(c *gin.Context) *redis.Session {
+func GetSession(c *gin.Context) *sessionCache.Session {
 	val, ok := c.Get(sessionStatus.SessionKey)
 	if ok {
-		return val.(*redis.Session)
+		return val.(*sessionCache.Session)
 	}
 	panic("不应该出现")
 }
@@ -102,7 +102,7 @@ func GetDataScope(c *gin.Context, deptAlias string) string {
 		sqlString += fmt.Sprintf(" %s.dept_id = %d ", deptAlias, GetDeptId(c))
 	case dataScopeAspect.DataScopeDeptAndChild:
 		sqlString += fmt.Sprintf(" %s.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = %d or find_in_set( %d , ancestors ) ) ", deptAlias, GetDeptId(c), GetDeptId(c))
-	case dataScopeAspect.NoDataScope:
+	default:
 		sqlString += fmt.Sprintf(" 1=0")
 	}
 

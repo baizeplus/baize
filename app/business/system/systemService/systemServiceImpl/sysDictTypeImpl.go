@@ -60,7 +60,7 @@ func (dictTypeService *DictTypeService) CheckDictTypeUnique(c *gin.Context, id i
 	return true
 }
 func (dictTypeService *DictTypeService) DictTypeClearCache(c *gin.Context) {
-	//redis.Delete(constants.SysDictKey + "*")
+	//sessionCache.Delete(constants.SysDictKey + "*")
 }
 func (dictTypeService *DictTypeService) SelectDictTypeAll(c *gin.Context) (list []*systemModels.SysDictTypeVo) {
 	return dictTypeService.dictTypeDao.SelectDictTypeAll(c, dictTypeService.data)

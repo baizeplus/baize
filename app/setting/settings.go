@@ -36,7 +36,7 @@ type LogConfig struct {
 
 type Datasource struct {
 	Mysql *Mysql `mapstructure:"mysql"`
-	Redis *Redis `mapstructure:"redis"`
+	Redis *Redis `mapstructure:"sessionCache"`
 }
 type Mysql struct {
 	Host         string `mapstructure:"host"`

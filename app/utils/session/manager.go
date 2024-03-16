@@ -2,7 +2,7 @@ package session
 
 import (
 	"baize/app/constant/sessionStatus"
-	"baize/app/utils/session/redis"
+	"baize/app/utils/session/sessionCache"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,15 +13,15 @@ type Manager struct {
 
 func NewManger() *Manager {
 	return &Manager{
-		Propagator: redis.NewPropagator(),
-		Store:      redis.NewStore(),
+		Propagator: sessionCache.NewPropagator(),
+		Store:      sessionCache.NewStore(),
 	}
 }
 
 func (m *Manager) GetSession(ctx *gin.Context) (Session, error) {
 	val, ok := ctx.Get(sessionStatus.SessionKey)
 	if ok {
-		return val.(*redis.Session), nil
+		return val.(*sessionCache.Session), nil
 	}
 	sessId, err := m.Extract(ctx)
 	if err != nil {

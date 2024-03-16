@@ -1,8 +1,8 @@
-package redis
+package sessionCache
 
 import (
 	"baize/app/constant/sessionStatus"
-	"baize/app/datasource"
+	"baize/app/utils/cache"
 	"baize/app/utils/stringUtils"
 	"context"
 	"fmt"
@@ -15,13 +15,6 @@ import (
 var (
 	SessionKey         = `session_key`
 	ErrSessionNotFound = errors.New("session:id 对应的session不存在")
-	lua                = `if redis.call("exists", KEYS[1])
-							then 
-								return redis.call("hset", KEYS[1], ARGV[1],ARGV[2])
-							else
-								return -1
-							end
-							`
 )
 
 type Store struct {
@@ -36,7 +29,7 @@ func NewStore() *Store {
 
 func (s *Store) Generate(ctx context.Context, userId int64) (*Session, error) {
 	sId := sessionId(userId)
-	_, err := datasource.RedisDb.HSet(ctx, redisKey(sId), sessionStatus.UserId, userId).Result()
+	err := cache.GetCache().HSet(ctx, redisKey(sId), sessionStatus.UserId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +38,7 @@ func (s *Store) Generate(ctx context.Context, userId int64) (*Session, error) {
 }
 
 func (s *Store) Refresh(ctx context.Context, id string) error {
-	ok, err := datasource.RedisDb.Expire(ctx, redisKey(id), s.expiration).Result()
+	ok, err := cache.GetCache().Expire(ctx, redisKey(id), s.expiration)
 	if err != nil {
 		return err
 	}
@@ -56,13 +49,12 @@ func (s *Store) Refresh(ctx context.Context, id string) error {
 }
 
 func (s *Store) Remove(ctx context.Context, id string) error {
-	_, err := datasource.RedisDb.Del(ctx, redisKey(id)).Result()
-	return err
+	return cache.GetCache().Del(ctx, redisKey(id))
 
 }
 
 func (s *Store) Get(ctx context.Context, id string) (*Session, error) {
-	cnt, err := datasource.RedisDb.Exists(ctx, redisKey(id)).Result()
+	cnt, err := cache.GetCache().Exists(ctx, redisKey(id))
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +81,10 @@ func (s *Session) Get(ctx context.Context, key string) string {
 	if val != "" {
 		return val
 	}
-	result := datasource.RedisDb.HGet(ctx, redisKey(s.id), key).Val()
+	result, err := cache.GetCache().HGet(ctx, redisKey(s.id), key)
+	if err != nil {
+		return ""
+	}
 	s.values[key] = result
 	return result
 
@@ -98,7 +93,7 @@ func (s *Session) Get(ctx context.Context, key string) string {
 func (s *Session) Set(ctx context.Context, key string, val any) {
 	gs := gconv.String(val)
 	s.values[key] = gs
-	_, _ = datasource.RedisDb.Eval(ctx, lua, []string{redisKey(s.id)}, key, gs).Int()
+	_ = cache.GetCache().JudgmentAndHSet(ctx, redisKey(s.id), key, gs)
 }
 
 func (s *Session) Id() string {

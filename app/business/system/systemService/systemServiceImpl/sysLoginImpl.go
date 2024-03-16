@@ -11,6 +11,7 @@ import (
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/ipUtils"
+	"encoding/json"
 
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
@@ -51,8 +52,9 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	session, _ := manager.InitSession(c, user.UserId)
 	roles := loginService.roleDao.SelectBasicRolesByUserId(c, loginService.data, user.UserId)
 	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
+	rb, _ := json.Marshal(byRoles)
 	session.Set(c, sessionStatus.Role, loginRoles)
-	session.Set(c, sessionStatus.RolePerms, byRoles)
+	session.Set(c, sessionStatus.RolePerms, rb)
 	permission := loginService.getPermission(c, user.UserId)
 	session.Set(c, sessionStatus.Permission, permission)
 	session.Set(c, sessionStatus.IpAddr, c.ClientIP())
@@ -62,6 +64,7 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	session.Set(c, sessionStatus.UserName, user.UserName)
 	session.Set(c, sessionStatus.Avatar, user.Avatar)
 	session.Set(c, sessionStatus.DeptId, user.DeptId)
+	session.Set(c, sessionStatus.DataScopeAspect, user.DataScope)
 	go func() {
 		l.LoginLocation = ipUtils.GetRealAddressByIP(l.IpAddr)
 		loginService.loginforDao.InserLogininfor(context.Background(), loginService.data, l)
