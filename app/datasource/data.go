@@ -12,8 +12,6 @@ import (
 // ProviderSet is datasource providers.
 var ProviderSet = wire.NewSet(NewData)
 
-// Data .
-
 // NewData .
 func NewData(d *setting.Datasource) (*sqly.DB, func(), error) {
 	var err error
@@ -24,6 +22,5 @@ func NewData(d *setting.Datasource) (*sqly.DB, func(), error) {
 	}
 	db.SetMaxOpenConns(d.Mysql.MaxOpenConns)
 	db.SetMaxIdleConns(d.Mysql.MaxIdleConns)
-	NewRedis()
 	return db, nil, err
 }

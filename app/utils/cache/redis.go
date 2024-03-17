@@ -60,6 +60,9 @@ func (r *RedisCache) Exists(ctx context.Context, keys ...string) (int64, error) 
 func (r *RedisCache) HGet(ctx context.Context, key, field string) (string, error) {
 	return r.client.HGet(ctx, key, field).Result()
 }
+func (r *RedisCache) Scan(ctx context.Context, cursor uint64, match string, count int64) ([]string, uint64, error) {
+	return r.client.Scan(ctx, cursor, match, count).Result()
+}
 
 func (r *RedisCache) JudgmentAndHSet(ctx context.Context, ids, key string, gs any) error {
 	_, err := r.client.Eval(ctx, lua, []string{ids}, key, gs).Int()

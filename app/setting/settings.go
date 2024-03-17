@@ -36,7 +36,6 @@ type LogConfig struct {
 
 type Datasource struct {
 	Mysql *Mysql `mapstructure:"mysql"`
-	Redis *Redis `mapstructure:"sessionCache"`
 }
 type Mysql struct {
 	Host         string `mapstructure:"host"`
@@ -46,15 +45,6 @@ type Mysql struct {
 	Port         int    `mapstructure:"port"`
 	MaxOpenConns int    `mapstructure:"max_open_conns"`
 	MaxIdleConns int    `mapstructure:"max_idle_conns"`
-}
-
-type Redis struct {
-	Host         string `mapstructure:"host"`
-	Password     string `mapstructure:"password"`
-	Port         int    `mapstructure:"port"`
-	DB           int    `mapstructure:"db"`
-	PoolSize     int    `mapstructure:"pool_size"`
-	MinIdleConns int    `mapstructure:"min_idle_conns"`
 }
 
 func init() {

@@ -19,24 +19,23 @@ func NewUserOnlineService() *UserOnlineService {
 
 func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context) (list []*monitorModels.SysUserOnline, total *int64) {
 
-	//var cursor uint64 = 0
+	var cursor uint64 = 0
 	keyAll := make([]string, 0, 16)
 	for {
-		panic("等待完成")
-		//keys, newCursor, err := datasource.RedisDb.Scan(c, cursor, sessionCache.SessionKey+":*", 10).Result()
-		//if err != nil {
-		//	panic(err)
-		//}
-		//// 处理从Scan中返回的键值对集合
-		//for _, key := range keys {
-		//	keyAll = append(keyAll, key)
-		//}
-		//// 如果新游标为0，则意味着所有键都已经扫描完成
-		//if newCursor == 0 {
-		//	break
-		//}
-		//// 更新游标，继续下一轮扫描
-		//cursor = newCursor
+		keys, newCursor, err := cache.GetCache().Scan(c, cursor, sessionCache.SessionKey+":*", 10)
+		if err != nil {
+			panic(err)
+		}
+		// 处理从Scan中返回的键值对集合
+		for _, key := range keys {
+			keyAll = append(keyAll, key)
+		}
+		// 如果新游标为0，则意味着所有键都已经扫描完成
+		if newCursor == 0 {
+			break
+		}
+		// 更新游标，继续下一轮扫描
+		cursor = newCursor
 	}
 
 	list = make([]*monitorModels.SysUserOnline, 0, len(keyAll))

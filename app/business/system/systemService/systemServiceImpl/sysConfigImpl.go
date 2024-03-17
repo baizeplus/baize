@@ -52,9 +52,8 @@ func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, co
 }
 
 func (cs *ConfigService) SelectConfigValueByKey(c *gin.Context, configKey string) string {
-	v, err := cache.GetCache().Get(c, cs.getCacheKey(configKey))
-
-	if err != nil {
+	v, _ := cache.GetCache().Get(c, cs.getCacheKey(configKey))
+	if v != "" {
 		return v
 	}
 	value := cs.cd.SelectConfigValueByConfigKey(c, cs.data, configKey)
