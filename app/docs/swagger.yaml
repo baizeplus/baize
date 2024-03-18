@@ -103,6 +103,26 @@ definitions:
     - password
     - username
     type: object
+  systemModels.MenusAndKeys:
+    properties:
+      checkedKeys:
+        items:
+          type: string
+        type: array
+      menus:
+        items:
+          $ref: '#/definitions/systemModels.SysMenuVo'
+        type: array
+    type: object
+  systemModels.MetaVo:
+    properties:
+      icon:
+        type: string
+      noCache:
+        type: boolean
+      title:
+        type: string
+    type: object
   systemModels.ResetPwd:
     properties:
       password:
@@ -128,6 +148,31 @@ definitions:
         items:
           $ref: '#/definitions/systemModels.SysDeptVo'
         type: array
+    type: object
+  systemModels.RouterVo:
+    properties:
+      alwaysShow:
+        type: boolean
+      children:
+        items:
+          $ref: '#/definitions/systemModels.RouterVo'
+        type: array
+      component:
+        type: string
+      hidden:
+        description: 是否隐藏路由，当设置 true 的时候该路由不会再侧边栏出现
+        type: boolean
+      meta:
+        $ref: '#/definitions/systemModels.MetaVo'
+      name:
+        description: 路由名字
+        type: string
+      path:
+        description: 路由地址
+        type: string
+      redirect:
+        description: 重定向地址，当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
+        type: string
     type: object
   systemModels.SysConfigVo:
     properties:
@@ -245,6 +290,56 @@ definitions:
       updateTime:
         description: 修改时间
         type: integer
+    type: object
+  systemModels.SysMenuVo:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/systemModels.SysMenuVo'
+        type: array
+      component:
+        type: string
+      createBy:
+        description: 创建人
+        type: integer
+      createTime:
+        description: 创建时间
+        type: integer
+      icon:
+        type: string
+      isCache:
+        type: string
+      isFrame:
+        type: string
+      menuId:
+        example: "0"
+        type: string
+      menuName:
+        type: string
+      menuType:
+        type: string
+      orderNum:
+        type: integer
+      parentId:
+        type: integer
+      parentName:
+        type: string
+      path:
+        type: string
+      perms:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+      visible:
+        type: string
     type: object
   systemModels.SysPostVo:
     properties:
@@ -491,8 +586,6 @@ paths:
           description: 获取成功
           schema:
             $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
       summary: 获取验证码
       tags:
       - 登录
@@ -627,6 +720,31 @@ paths:
       summary: 获取用户个人信息
       tags:
       - 登录
+  /getRouters:
+    get:
+      description: 获取路由
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ResponseData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.RouterVo'
+                        type: array
+                    type: object
+              type: object
+      summary: 获取路由
+      tags:
+      - 登录
   /login:
     post:
       description: 用户登录
@@ -637,8 +755,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/systemModels.LoginBody'
-      produces:
-      - application/json
       responses:
         "200":
           description: 登录成功
@@ -669,9 +785,25 @@ paths:
           description: 退出成功
           schema:
             $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
       summary: 退出
+      tags:
+      - 登录
+  /register:
+    post:
+      description: 用户登录
+      parameters:
+      - description: 登录信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.LoginBody'
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      summary: 用户登录
       tags:
       - 登录
   /system/Config:
@@ -762,6 +894,54 @@ paths:
       security:
       - BearerAuth: []
       summary: 根据配置ID获取配置信息
+      tags:
+      - 配置相关
+  /system/config/export:
+    post:
+      description: 导出配置
+      parameters:
+      - description: 参数键名
+        in: query
+        name: configKey
+        type: string
+      - description: 参数名称
+        in: query
+        name: configName
+        type: string
+      - description: 系统内置（Y是 N否）
+        in: query
+        name: configType
+        type: string
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+      security:
+      - BearerAuth: []
+      summary: 导出配置
       tags:
       - 配置相关
   /system/config/list:
@@ -1356,6 +1536,153 @@ paths:
       summary: 查询字典类型列表
       tags:
       - 字典相关
+  /system/menu:
+    post:
+      description: 添加菜单
+      parameters:
+      - description: 菜单信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysMenuVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 添加菜单
+      tags:
+      - 菜单相关
+    put:
+      description: 修改菜单
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysMenuVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改菜单
+      tags:
+      - 菜单相关
+  /system/menu/{menuId}:
+    get:
+      description: 根据菜单ID获取菜单信息
+      parameters:
+      - description: menuId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysMenuVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据菜单ID获取菜单信息
+      tags:
+      - 菜单相关
+  /system/menu/list:
+    get:
+      description: 查询菜单列表查询
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - in: query
+        name: menuName
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: userId
+        type: integer
+      - in: query
+        name: visible
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ResponseData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysMenuVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询菜单列表查询
+      tags:
+      - 菜单相关
+  /system/menu/treeSelect:
+    get:
+      description: 根据菜单ID获取菜单信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysMenuVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据菜单ID获取菜单信息
+      tags:
+      - 菜单相关
   /system/post:
     post:
       description: 添加岗位
@@ -1399,6 +1726,27 @@ paths:
       summary: 修改岗位
       tags:
       - 岗位相关
+  /system/post/{menuId}:
+    delete:
+      description: 删除菜单
+      parameters:
+      - description: postId
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 删除菜单
+      tags:
+      - 菜单相关
   /system/post/{postId}:
     get:
       description: 根据岗位ID获取岗位信息
@@ -1504,6 +1852,32 @@ paths:
       summary: 查询岗位列表查询
       tags:
       - 岗位相关
+  /system/post/roleMenuTreeSelect/{roleId}:
+    get:
+      description: 删除菜单
+      parameters:
+      - description: postId
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.MenusAndKeys'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 删除菜单
+      tags:
+      - 菜单相关
   /system/user:
     get:
       description: 查询用户列表

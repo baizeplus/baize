@@ -42,6 +42,10 @@ func (uc *User) ChangeStatus(c *gin.Context) {
 		baizeContext.ParameterError(c)
 		return
 	}
+	if sysUser.UserId == baizeContext.GetUserId(c) {
+		baizeContext.Waring(c, "不能修改自己")
+		return
+	}
 	sysUser.SetUpdateBy(baizeContext.GetUserId(c))
 	uc.us.UpdateUserStatus(c, sysUser)
 	baizeContext.Success(c)
@@ -79,7 +83,10 @@ func (uc *User) UserEdit(c *gin.Context) {
 
 	sysUser := new(systemModels.SysUserDML)
 	_ = c.ShouldBindJSON(sysUser)
-
+	if sysUser.UserId == baizeContext.GetUserId(c) {
+		baizeContext.Waring(c, "不能修改自己")
+		return
+	}
 	if uc.us.CheckPhoneUnique(c, sysUser.UserId, sysUser.Phonenumber) {
 		baizeContext.Waring(c, "新增用户'"+sysUser.Phonenumber+"'失败，手机号码已存在")
 		return
@@ -106,6 +113,10 @@ func (uc *User) UpdateUserDataScope(c *gin.Context) {
 	uds := new(systemModels.SysUserDataScope)
 	if err := c.ShouldBindJSON(uds); err != nil {
 		baizeContext.ParameterError(c)
+		return
+	}
+	if uds.UserId == baizeContext.GetUserId(c) {
+		baizeContext.Waring(c, "不能修改自己")
 		return
 	}
 	uc.us.UpdateUserDataScope(c, uds)
@@ -240,7 +251,14 @@ func (uc *User) UserGetInfoById(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/:userIds [delete]
 func (uc *User) UserRemove(c *gin.Context) {
-	uc.us.DeleteUserByIds(c, baizeContext.ParamInt64Array(c, "userIds"))
+	array := baizeContext.ParamInt64Array(c, "userIds")
+	for _, i := range array {
+		if i == baizeContext.GetUserId(c) {
+			baizeContext.Waring(c, "不能修改自己")
+			return
+		}
+	}
+	uc.us.DeleteUserByIds(c, array)
 	baizeContext.Success(c)
 }
 
@@ -321,7 +339,12 @@ func (uc *User) ImportTemplate(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysUserVo}}  "成功"
 // @Router /system/user/authRole  [put]
 func (uc *User) InsertAuthRole(c *gin.Context) {
+	userId := baizeContext.QueryInt64(c, "userId")
+	if userId == baizeContext.GetUserId(c) {
+		baizeContext.Waring(c, "不能修改自己")
+		return
+	}
 	array := baizeContext.QueryInt64Array(c, "roleIds")
-	uc.us.InsertUserAuth(c, baizeContext.QueryInt64(c, "userId"), array)
+	uc.us.InsertUserAuth(c, userId, array)
 	baizeContext.Success(c)
 }

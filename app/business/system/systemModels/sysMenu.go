@@ -34,6 +34,11 @@ type SysMenuVo struct {
 	baize.BaseEntity
 }
 
+type MenusAndKeys struct {
+	CheckedKeys []string     `json:"checkedKeys"`
+	Menus       []*SysMenuVo `json:"menus"`
+}
+
 /**
  * 获取组件信息
  *
