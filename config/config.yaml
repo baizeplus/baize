@@ -12,10 +12,10 @@ host: http://localhost:8080
 #  max_backups: 7
 datasource:
   mysql:
-    host: knit-mysql-dev.cluster-cckvv5btxkk9.ap-southeast-1.rds.amazonaws.com
-    user: admin
-    password: 1q2w3e4r5tA
-    dbname: bztest
+    host: localhost
+    user: root
+    password: 123456
+    dbname: baize
     port: 3306
     max_open_conns: 200
     max_idle_conns: 50
