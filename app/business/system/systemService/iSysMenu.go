@@ -6,7 +6,7 @@ import (
 )
 
 type IMenuService interface {
-	SelectMenuList(c *gin.Context, menu *systemModels.SysMenuDQL, userId int64) (list []*systemModels.SysMenuVo)
+	SelectMenuList(c *gin.Context, menu *systemModels.SysMenuDQL) (list []*systemModels.SysMenuVo)
 	SelectMenuById(c *gin.Context, menuId int64) (menu *systemModels.SysMenuVo)
 	InsertMenu(c *gin.Context, menu *systemModels.SysMenuVo)
 	UpdateMenu(c *gin.Context, menu *systemModels.SysMenuVo)

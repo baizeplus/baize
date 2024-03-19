@@ -58,14 +58,16 @@ func (rd *SysRoleDao) SelectRoleAll(ctx context.Context, db sqly.SqlyContext, ro
 	if role.RoleKey != "" {
 		whereSql += " AND r.role_key like concat('%', :roleKey, '%')"
 	}
-
 	if role.BeginTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') &gt;= date_format(:begin_time,'%y%m%d')"
 	}
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
 	}
-	list = make([]*systemModels.SysRoleVo, 0, 16)
+	if role.CreateBy != 0 {
+		whereSql += " and r.create_by = :create_by"
+	}
+	list = make([]*systemModels.SysRoleVo, 0)
 	err := db.NamedSelectContext(ctx, &list, rd.selectSql+whereSql, struct{}{})
 	if err != nil {
 		panic(err)

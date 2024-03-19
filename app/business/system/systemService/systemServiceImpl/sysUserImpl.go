@@ -303,7 +303,11 @@ func (userService *UserService) InsertUserAuth(c *gin.Context, userId int64, rol
 func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *systemModels.UserAndRoles {
 	uar := new(systemModels.UserAndRoles)
 	uar.User = userService.userDao.SelectUserById(c, userService.data, userId)
-	uar.Roles = userService.roleDao.SelectRoleAll(c, userService.data, new(systemModels.SysRoleDQL))
+	s := new(systemModels.SysRoleDQL)
+	if !baizeContext.IsAdmin(c) {
+		s.CreateBy = baizeContext.GetUserId(c)
+	}
+	uar.Roles = userService.roleDao.SelectRoleAll(c, userService.data, s)
 	rIds := userService.roleDao.SelectRoleListByUserId(c, userService.data, userId)
 	uar.RoleIds = make([]string, 0, len(rIds))
 	for _, id := range rIds {

@@ -95,12 +95,16 @@ func (rc *Role) RoleAdd(c *gin.Context) {
 func (rc *Role) RoleEdit(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
+	if sysRole.RoleId == 1 {
+		baizeContext.Waring(c, "admin角色不能修改")
+		return
+	}
 	if rc.rs.CheckRoleNameUnique(c, sysRole.RoleId, sysRole.RoleName) {
-		baizeContext.Waring(c, "新增角色'"+sysRole.RoleName+"'失败，角色名称已存在")
+		baizeContext.Waring(c, "修改角色'"+sysRole.RoleName+"'失败，角色名称已存在")
 		return
 	}
 	if rc.rs.CheckRoleKeyUnique(c, sysRole.RoleId, sysRole.RoleKey) {
-		baizeContext.Waring(c, "新增角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
+		baizeContext.Waring(c, "修改角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
 		return
 	}
 	sysRole.SetUpdateBy(baizeContext.GetUserId(c))

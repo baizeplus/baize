@@ -7,7 +7,7 @@ import (
 )
 
 type SysMenuDQL struct {
-	UserId   int64  `db:"userId"`
+	UserId   int64  `db:"userId" swaggerignore:"true"`
 	MenuName string `form:"menuName" db:"menu_name"`
 	Visible  string `form:"visible" db:"visible"`
 	Status   string `form:"status" db:"status"`

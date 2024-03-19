@@ -29,11 +29,10 @@ func NewMenuService(data *sqly.DB, md *systemDaoImpl.SysMenuDao, rmd *systemDaoI
 	}
 }
 
-func (menuService *MenuService) SelectMenuList(c *gin.Context, menu *systemModels.SysMenuDQL, userId int64) (list []*systemModels.SysMenuVo) {
+func (menuService *MenuService) SelectMenuList(c *gin.Context, menu *systemModels.SysMenuDQL) (list []*systemModels.SysMenuVo) {
 	if baizeContext.IsAdmin(c) {
 		list = menuService.menuDao.SelectMenuList(c, menuService.data, menu)
 	} else {
-		menu.UserId = userId
 		list = menuService.menuDao.SelectMenuListByUserId(c, menuService.data, menu)
 	}
 	return
@@ -55,7 +54,6 @@ func (menuService *MenuService) DeleteMenuById(c *gin.Context, menuId int64) {
 }
 
 func (menuService *MenuService) SelectMenuTreeByUserId(c *gin.Context, userId int64) (sysMenu []*systemModels.SysMenuVo) {
-
 	if baizeContext.IsAdmin(c) {
 		sysMenu = menuService.menuDao.SelectMenuTreeAll(c, menuService.data)
 	} else {

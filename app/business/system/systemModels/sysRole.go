@@ -14,6 +14,7 @@ type SysRoleDQL struct {
 	RoleKey   string `form:"roleKey" db:"role_key"`
 	BeginTime string `form:"beginTime" db:"begin_time"`
 	EndTime   string `form:"endTime" db:"end_time"`
+	CreateBy  int64  `db:"create_by" swaggerignore:"true"` //创建人
 	baize.BaseEntityDQL
 }
 

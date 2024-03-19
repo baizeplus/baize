@@ -29,7 +29,8 @@ func NewMenu(ms *systemServiceImpl.MenuService) *Menu {
 func (mc *Menu) MenuList(c *gin.Context) {
 	menu := new(systemModels.SysMenuDQL)
 	_ = c.ShouldBind(menu)
-	list := mc.ms.SelectMenuList(c, menu, baizeContext.GetUserId(c))
+	menu.UserId = baizeContext.GetUserId(c)
+	list := mc.ms.SelectMenuList(c, menu)
 	baizeContext.SuccessData(c, list)
 }
 
@@ -63,7 +64,9 @@ func (mc *Menu) MenuGetInfo(c *gin.Context) {
 // @Router /system/menu/treeSelect  [get]
 func (mc *Menu) MenuTreeSelect(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)
-	baizeContext.SuccessData(c, mc.ms.SelectMenuList(c, new(systemModels.SysMenuDQL), userId))
+	menu := new(systemModels.SysMenuDQL)
+	menu.UserId = userId
+	baizeContext.SuccessData(c, mc.ms.SelectMenuList(c, menu))
 }
 
 // MenuAdd 添加菜单
@@ -154,6 +157,8 @@ func (mc *Menu) RoleMenuTreeSelect(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)
 	mak := new(systemModels.MenusAndKeys)
 	mak.CheckedKeys = mc.ms.SelectMenuListByRoleId(c, roleId)
-	mak.Menus = mc.ms.SelectMenuList(c, new(systemModels.SysMenuDQL), userId)
+	s := new(systemModels.SysMenuDQL)
+	s.UserId = userId
+	mak.Menus = mc.ms.SelectMenuList(c, s)
 	baizeContext.SuccessData(c, mak)
 }

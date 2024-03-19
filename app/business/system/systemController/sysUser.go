@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/constant/dataScopeAspect"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -113,6 +114,10 @@ func (uc *User) UpdateUserDataScope(c *gin.Context) {
 	uds := new(systemModels.SysUserDataScope)
 	if err := c.ShouldBindJSON(uds); err != nil {
 		baizeContext.ParameterError(c)
+		return
+	}
+	if uds.DataScope == dataScopeAspect.DataScopeAll && baizeContext.GetDataScopeAspect(c) != dataScopeAspect.DataScopeAll {
+		baizeContext.Waring(c, "数据权限范围不能大于自己")
 		return
 	}
 	if uds.UserId == baizeContext.GetUserId(c) {
