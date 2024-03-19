@@ -3,7 +3,6 @@ package datasource
 import (
 	"baize/app/setting"
 	"fmt"
-
 	"github.com/baizeplus/sqly"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/wire"

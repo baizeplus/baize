@@ -35,7 +35,7 @@ type BaseEntityDQL struct {
 
 func (b *BaseEntityDQL) GetOrder() string {
 	if b.OrderBy != "" {
-		return " order by " + stringUtils.ToUnderScoreCase(b.OrderBy) + " " + b.IsAsc
+		return " " + stringUtils.ToUnderScoreCase(b.OrderBy) + " " + b.IsAsc
 	}
 	return ""
 }

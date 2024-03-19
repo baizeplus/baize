@@ -38,7 +38,8 @@ func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyC
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	logininfor.OrderBy = " info_id DESC"
+	logininfor.OrderBy = "info_id"
+	logininfor.IsAsc = "desc"
 	list = make([]*monitorModels.Logininfor, 0)
 	total = new(int64)
 	err := db.NamedSelectPageContext(ctx, &list, total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
