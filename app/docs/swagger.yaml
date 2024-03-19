@@ -520,6 +520,15 @@ definitions:
     - dataScope
     - userId
     type: object
+  systemModels.SysUserRole:
+    properties:
+      roleId:
+        example: "0"
+        type: string
+      userId:
+        example: "0"
+        type: string
+    type: object
   systemModels.SysUserVo:
     properties:
       avatar:
@@ -2022,7 +2031,198 @@ paths:
       summary: 删除角色
       tags:
       - 角色相关
+  /system/role/authUser/cancel:
+    put:
+      description: 取消用户角色
+      parameters:
+      - description: 用户id角色id
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysUserRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 取消用户角色
+      tags:
+      - 角色相关
+  /system/role/authUser/cancelAll:
+    put:
+      description: 取消角色授权用户
+      parameters:
+      - description: 角色Id
+        in: query
+        name: roleId
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: 用户Ids
+        in: query
+        items:
+          type: string
+        name: userIds
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 取消角色授权用户
+      tags:
+      - 角色相关
+  /system/role/authUser/selectAll:
+    put:
+      description: 角色授权用户
+      parameters:
+      - description: 角色Id
+        in: query
+        name: roleId
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: 用户Ids
+        in: query
+        items:
+          type: string
+        name: userIds
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 角色授权用户
+      tags:
+      - 角色相关
+  /system/role/authUser/unallocatedList:
+    put:
+      description: 查询角色未授权用户列表查询
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: phonenumber
+        type: string
+      - in: query
+        name: roleId
+        required: true
+        type: string
+      - in: query
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysUserVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询角色未授权用户列表查询
+      tags:
+      - 角色相关
   /system/role/changeStatus:
+    get:
+      description: 查询角色授权用户列表查询
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: phonenumber
+        type: string
+      - in: query
+        name: roleId
+        required: true
+        type: string
+      - in: query
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysUserVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询角色授权用户列表查询
+      tags:
+      - 角色相关
     put:
       description: 修改角色状态
       parameters:

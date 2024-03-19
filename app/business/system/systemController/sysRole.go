@@ -28,18 +28,14 @@ func NewRole(rs *systemServiceImpl.RoleService) *Role {
 func (rc *Role) RoleList(c *gin.Context) {
 	role := new(systemModels.SysRoleDQL)
 	_ = c.ShouldBind(role)
-	role.DataScope = baizeContext.GetDataScope(c, "d")
 	list, count := rc.rs.SelectRoleList(c, role)
 	baizeContext.SuccessListData(c, list, count)
 }
 
 func (rc *Role) RoleExport(c *gin.Context) {
-	//role := new(systemModels.SysRoleDQL)
-	//_ = c.ShouldBind(role)
-	//role.DataScope = baizeContext.GetDataScope(c, "d")
-	//list, count := rc.rs.SelectRoleList(c, role)
-	//baizeContext.SuccessListData(c, list, count)
-	panic("等待完成")
+	role := new(systemModels.SysRoleDQL)
+	_ = c.ShouldBind(role)
+	baizeContext.DataPackageExcel(c, rc.rs.RoleExport(c, role))
 }
 
 // RoleGetInfo 根据角色ID获取角色信息
@@ -148,6 +144,15 @@ func (rc *Role) RoleRemove(c *gin.Context) {
 	baizeContext.Success(c)
 }
 
+// AllocatedList 查询角色授权用户列表查询
+// @Summary 查询角色授权用户列表查询
+// @Description 查询角色授权用户列表查询
+// @Tags 角色相关
+// @Param  object query systemModels.SysRoleAndUserDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
+// @Router /system/role/changeStatus  [get]
 func (rc *Role) AllocatedList(c *gin.Context) {
 	user := new(systemModels.SysRoleAndUserDQL)
 	if err := c.ShouldBind(user); err != nil {
@@ -159,6 +164,16 @@ func (rc *Role) AllocatedList(c *gin.Context) {
 	baizeContext.SuccessListData(c, list, count)
 
 }
+
+// UnallocatedList 查询角色未授权用户列表查询
+// @Summary 查询角色未授权用户列表查询
+// @Description 查询角色未授权用户列表查询
+// @Tags 角色相关
+// @Param  object query systemModels.SysRoleAndUserDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
+// @Router /system/role/authUser/unallocatedList  [put]
 func (rc *Role) UnallocatedList(c *gin.Context) {
 	user := new(systemModels.SysRoleAndUserDQL)
 	if err := c.ShouldBind(user); err != nil {
@@ -169,10 +184,31 @@ func (rc *Role) UnallocatedList(c *gin.Context) {
 	list, count := rc.rs.SelectUnallocatedList(c, user)
 	baizeContext.SuccessListData(c, list, count)
 }
+
+// InsertAuthUser 角色授权用户
+// @Summary 角色授权用户
+// @Description 角色授权用户
+// @Tags 角色相关
+// @Param  roleId query string true "角色Id"
+// @Param  userIds query []string true "用户Ids"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role/authUser/selectAll  [put]
 func (rc *Role) InsertAuthUser(c *gin.Context) {
 	rc.rs.InsertAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
 	baizeContext.Success(c)
 }
+
+// CancelAuthUser 取消用户角色
+// @Summary 取消用户角色
+// @Description 取消用户角色
+// @Tags 角色相关
+// @Param  object body systemModels.SysUserRole  true  "用户id角色id"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role/authUser/cancel  [put]
 func (rc *Role) CancelAuthUser(c *gin.Context) {
 	userRole := new(systemModels.SysUserRole)
 	if err := c.ShouldBindJSON(userRole); err != nil {
@@ -182,6 +218,17 @@ func (rc *Role) CancelAuthUser(c *gin.Context) {
 	rc.rs.DeleteAuthUserRole(c, userRole)
 	baizeContext.Success(c)
 }
+
+// CancelAuthUserAll 取消角色授权用户
+// @Summary 取消角色授权用户
+// @Description 取消角色授权用户
+// @Tags 角色相关
+// @Param  roleId query string true "角色Id"
+// @Param  userIds query []string true "用户Ids"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role/authUser/cancelAll  [put]
 func (rc *Role) CancelAuthUserAll(c *gin.Context) {
 	rc.rs.DeleteAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
 	baizeContext.Success(c)

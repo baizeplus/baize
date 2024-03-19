@@ -76,7 +76,7 @@ func (userService *UserService) UserExport(c *gin.Context, user *systemModels.Sy
 func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit) {
 	uaa := new(systemModels.UserAndAccredit)
 	uaa.User = userService.userDao.SelectUserById(c, userService.data, userId)
-	uaa.Roles = userService.roleDao.SelectRoleAll(c, userService.data)
+	uaa.Roles = userService.roleDao.SelectRoleAll(c, userService.data, new(systemModels.SysRoleDQL))
 	uaa.Posts = userService.postDao.SelectPostAll(c, userService.data)
 	rIds := userService.roleDao.SelectRoleListByUserId(c, userService.data, userId)
 	pIds := userService.postDao.SelectPostListByUserId(c, userService.data, userId)
@@ -92,7 +92,7 @@ func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId
 }
 func (userService *UserService) SelectAccredit(c *gin.Context) (sysUser *systemModels.Accredit) {
 	ua := new(systemModels.Accredit)
-	ua.Roles = userService.roleDao.SelectRoleAll(c, userService.data)
+	ua.Roles = userService.roleDao.SelectRoleAll(c, userService.data, new(systemModels.SysRoleDQL))
 	ua.Posts = userService.postDao.SelectPostAll(c, userService.data)
 	return ua
 }
@@ -303,7 +303,7 @@ func (userService *UserService) InsertUserAuth(c *gin.Context, userId int64, rol
 func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *systemModels.UserAndRoles {
 	uar := new(systemModels.UserAndRoles)
 	uar.User = userService.userDao.SelectUserById(c, userService.data, userId)
-	uar.Roles = userService.roleDao.SelectRoleAll(c, userService.data)
+	uar.Roles = userService.roleDao.SelectRoleAll(c, userService.data, new(systemModels.SysRoleDQL))
 	rIds := userService.roleDao.SelectRoleListByUserId(c, userService.data, userId)
 	uar.RoleIds = make([]string, 0, len(rIds))
 	for _, id := range rIds {

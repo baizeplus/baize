@@ -47,8 +47,24 @@ func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, r
 	}
 	return
 }
-func (rd *SysRoleDao) SelectRoleAll(ctx context.Context, db sqly.SqlyContext) (list []*systemModels.SysRoleVo) {
+func (rd *SysRoleDao) SelectRoleAll(ctx context.Context, db sqly.SqlyContext, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo) {
 	whereSql := " where r.del_flag = '0'"
+	if role.RoleName != "" {
+		whereSql += " AND r.role_name like concat('%', :role_name, '%')"
+	}
+	if role.Status != "" {
+		whereSql += " AND r.status = :status"
+	}
+	if role.RoleKey != "" {
+		whereSql += " AND r.role_key like concat('%', :roleKey, '%')"
+	}
+
+	if role.BeginTime != "" {
+		whereSql += " and date_format(r.create_time,'%y%m%d') &gt;= date_format(:begin_time,'%y%m%d')"
+	}
+	if role.EndTime != "" {
+		whereSql += " and date_format(r.create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
+	}
 	list = make([]*systemModels.SysRoleVo, 0, 16)
 	err := db.NamedSelectContext(ctx, &list, rd.selectSql+whereSql, struct{}{})
 	if err != nil {

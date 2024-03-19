@@ -33,12 +33,20 @@ func (pc *Post) PostList(c *gin.Context) {
 
 }
 
+// PostExport 导出岗位
+// @Summary 导出岗位
+// @Description 导出岗位
+// @Tags 岗位相关
+// @Param  object query systemModels.SysPostDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/octet-stream
+// @Success 200 {object} []byte
+// @Router /system/post/export [post]
 func (pc *Post) PostExport(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//post := new(systemModels.SysPostDQL)
-	//_ = c.ShouldBind(post)
-	//data := pc.ps.PostExport(post)
-	//bzc.DataPackageExcel(data)
+	post := new(systemModels.SysPostDQL)
+	_ = c.ShouldBind(post)
+	data := pc.ps.PostExport(c, post)
+	baizeContext.DataPackageExcel(c, data)
 }
 
 // PostGetInfo 根据岗位ID获取岗位信息

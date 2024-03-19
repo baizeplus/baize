@@ -34,6 +34,15 @@ func (ddc *DictData) DictDataList(c *gin.Context) {
 	baizeContext.SuccessListData(c, list, count)
 }
 
+// DictDataExport 导出配置
+// @Summary 导出配置
+// @Description 导出配置
+// @Tags 配置相关
+// @Param  object query systemModels.SysConfigDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/octet-stream
+// @Success 200 {object} []byte
+// @Router /system/config/export [post]
 func (ddc *DictData) DictDataExport(c *gin.Context) {
 	//bzc := baizeContext.NewBaiZeContext(c)
 	//dictData := new(systemModels.SysDictDataDQL)

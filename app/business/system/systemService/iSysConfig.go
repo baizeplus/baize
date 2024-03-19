@@ -7,6 +7,7 @@ import (
 
 type IConfigService interface {
 	SelectConfigList(c *gin.Context, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total *int64)
+	ConfigExport(c *gin.Context, config *systemModels.SysConfigDQL) (data []byte)
 	SelectConfigById(c *gin.Context, configId int64) (Config *systemModels.SysConfigVo)
 	InsertConfig(c *gin.Context, config *systemModels.SysConfigVo)
 	UpdateConfig(c *gin.Context, config *systemModels.SysConfigVo)

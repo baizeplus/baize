@@ -8,6 +8,7 @@ import (
 
 type IConfigDao interface {
 	SelectConfigList(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total *int64)
+	SelectConfigListAll(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (list []*systemModels.SysConfigVo)
 	SelectConfigById(ctx context.Context, db sqly.SqlyContext, configId int64) (Config *systemModels.SysConfigVo)
 	InsertConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo)
 	UpdateConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo)

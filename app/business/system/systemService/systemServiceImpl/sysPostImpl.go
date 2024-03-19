@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -26,10 +27,16 @@ func (postService *PostService) SelectPostList(c *gin.Context, post *systemModel
 
 }
 func (postService *PostService) PostExport(c *gin.Context, post *systemModels.SysPostDQL) (data []byte) {
-	//list, _ := postService.postDao.SelectPostList(c,postService.data, post)
-	//rows := systemModels.SysPostListToRows(list)
-	//return exceLize.SetRows(rows)
-	return nil
+	list := postService.postDao.SelectPostListAll(c, postService.data, post)
+	toExcel, err := excel.SliceToExcel(list)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
 }
 
 func (postService *PostService) SelectPostById(c *gin.Context, postId int64) (Post *systemModels.SysPostVo) {

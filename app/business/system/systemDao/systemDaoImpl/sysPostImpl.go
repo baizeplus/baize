@@ -64,6 +64,28 @@ func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyConte
 	}
 	return
 }
+func (postDao *SysPostDao) SelectPostListAll(ctx context.Context, db sqly.SqlyContext, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo) {
+	whereSql := ``
+	if post.PostCode != "" {
+		whereSql += " AND post_code like concat('%', :post_code, '%')"
+	}
+	if post.Status != "" {
+		whereSql += " AND  status = :status"
+	}
+	if post.PostName != "" {
+		whereSql += " AND post_name like concat('%', :post_name, '%')"
+	}
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*systemModels.SysPostVo, 0, 16)
+	err := db.NamedSelectContext(ctx, &list, postDao.postSql+whereSql, post)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
 
 func (postDao *SysPostDao) SelectPostById(ctx context.Context, db sqly.SqlyContext, postId int64) (dictData *systemModels.SysPostVo) {
 

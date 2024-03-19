@@ -38,11 +38,19 @@ func (dtc *DictType) DictTypeList(c *gin.Context) {
 
 }
 
+// DictTypeExport 导出字典类型
+// @Summary 导出字典类型
+// @Description 导出字典类型
+// @Tags 字典相关
+// @Param  object query systemModels.SysDictDataDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/octet-stream
+// @Success 200 {object} []byte
+// @Router /system/config/export [post]
 func (dtc *DictType) DictTypeExport(c *gin.Context) {
-	//bzc := baizeContext.NewBaiZeContext(c)
-	//dictType := new(systemModels.SysDictTypeDQL)
-	//c.ShouldBind(dictType)
-	//bzc.DataPackageExcel(dtc.dts.ExportDictType(dictType))
+	dictType := new(systemModels.SysDictTypeDQL)
+	_ = c.ShouldBind(dictType)
+	baizeContext.DataPackageExcel(c, dtc.dts.ExportDictType(c, dictType))
 }
 
 // DictTypeGetInfo 根据dictCode获取字典类型类型
@@ -135,13 +143,21 @@ func (dtc *DictType) DictTypeRemove(c *gin.Context) {
 // @Param  object body []string true "字典"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=systemModels.SysDictDataVo}  "成功"
-// @Router /system/dict/clearCache  [put]
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/dict/type/clearCache  [put]
 func (dtc *DictType) DictTypeClearCache(c *gin.Context) {
 	dtc.dts.DictTypeClearCache(c)
 	baizeContext.Success(c)
 }
 
+// DictTypeOptionSelect 查询字典列表
+// @Summary 查询字典列表
+// @Description 查询字典列表
+// @Tags 字典相关
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=systemModels.SysDictDataVo}  "成功"
+// @Router /system/dict/type/optionSelect  [put]
 func (dtc *DictType) DictTypeOptionSelect(c *gin.Context) {
 	baizeContext.SuccessData(c, dtc.dts.SelectDictTypeAll(c))
 }

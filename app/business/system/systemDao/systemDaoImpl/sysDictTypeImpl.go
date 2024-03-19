@@ -43,10 +43,23 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeAll(ctx context.Context, db sqly.SqlyContext) (list []*systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeAll(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo) {
+	whereSql := ``
+	if dictType.DictName != "" {
+		whereSql += " AND dict_name like concat('%', :dictName, '%')"
+	}
+	if dictType.Status != "" {
+		whereSql += " AND  status = :status"
+	}
+	if dictType.DictType != "" {
+		whereSql += " AND dict_type like concat('%', :dictType, '%')"
+	}
 
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
 	list = make([]*systemModels.SysDictTypeVo, 0)
-	err := db.SelectContext(ctx, &list, sysDictTypeDao.dictTypeSql)
+	err := db.SelectContext(ctx, &list, sysDictTypeDao.dictTypeSql+whereSql)
 	if err != nil {
 		panic(err)
 	}
@@ -126,7 +139,7 @@ func (sysDictTypeDao *SysDictTypeDao) UpdateDictType(ctx context.Context, db sql
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, db sqly.SqlyContext, dictIds []int64) (err error) {
+func (sysDictTypeDao *SysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, db sqly.SqlyContext, dictIds []int64) {
 	query, i, err := sqly.In("delete from sys_dict_type where dict_id in (?)", dictIds)
 	if err != nil {
 		panic(err)

@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/utils/excel"
 
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
@@ -32,10 +33,17 @@ func (roleService *RoleService) SelectRoleList(c *gin.Context, role *systemModel
 
 }
 func (roleService *RoleService) RoleExport(c *gin.Context, role *systemModels.SysRoleDQL) (data []byte) {
-	//list, _ := roleService.roleDao.SelectRoleList(roleService.data.GetSlaveDb(), role)
-	//rows := systemModels.SysRoleListToRows(list)
-	//return exceLize.SetRows(rows)
-	return nil
+
+	list := roleService.roleDao.SelectRoleAll(c, roleService.data, role)
+	toExcel, err := excel.SliceToExcel(list)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
 }
 
 func (roleService *RoleService) SelectRoleById(c *gin.Context, roseId int64) (role *systemModels.SysRoleVo) {

@@ -5,6 +5,7 @@ import (
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
 	"baize/app/utils/cache"
+	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,18 @@ func NewConfigService(data *sqly.DB, cd *systemDaoImpl.SysConfigDao) *ConfigServ
 
 func (cs *ConfigService) SelectConfigList(c *gin.Context, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total *int64) {
 	return cs.cd.SelectConfigList(c, cs.data, config)
+}
+func (cs *ConfigService) ConfigExport(c *gin.Context, config *systemModels.SysConfigDQL) (data []byte) {
+	list := cs.cd.SelectConfigListAll(c, cs.data, config)
+	toExcel, err := excel.SliceToExcel(list)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
 }
 
 func (cs *ConfigService) SelectConfigById(c *gin.Context, configId int64) (Config *systemModels.SysConfigVo) {

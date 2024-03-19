@@ -42,6 +42,28 @@ func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext
 	}
 	return
 }
+func (s *SysConfigDao) SelectConfigListAll(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (list []*systemModels.SysConfigVo) {
+	whereSql := ``
+	if config.ConfigName != "" {
+		whereSql += " AND config_name like concat('%', :config_name, '%')"
+	}
+	if config.ConfigType != "" {
+		whereSql += " AND  config_type = :config_type"
+	}
+	if config.ConfigKey != "" {
+		whereSql += " AND post_name like concat('%', :config_key, '%')"
+	}
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*systemModels.SysConfigVo, 0)
+	err := db.NamedSelectContext(ctx, &list, s.configSql+whereSql, config)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
 
 func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext, configId int64) (config *systemModels.SysConfigVo) {
 	whereSql := ` where config_id = ?`

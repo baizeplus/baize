@@ -44,7 +44,7 @@ func (cc *Config) ConfigList(c *gin.Context) {
 func (cc *Config) ConfigExport(c *gin.Context) {
 	config := new(systemModels.SysConfigDQL)
 	_ = c.ShouldBind(config)
-	//data := cc.cs.ConfigExport(Config)
+	baizeContext.DataPackageExcel(c, cc.cs.ConfigExport(c, config))
 }
 
 // ConfigGetInfo 根据配置ID获取配置信息

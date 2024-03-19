@@ -8,7 +8,7 @@ import (
 
 type IRoleDao interface {
 	SelectRoleList(ctx context.Context, db sqly.SqlyContext, role *systemModels.SysRoleDQL) (roleList []*systemModels.SysRoleVo, total *int64)
-	SelectRoleAll(ctx context.Context, db sqly.SqlyContext) (list []*systemModels.SysRoleVo)
+	SelectRoleAll(ctx context.Context, db sqly.SqlyContext, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo)
 	SelectRoleById(ctx context.Context, db sqly.SqlyContext, roleId int64) (role *systemModels.SysRoleVo)
 	SelectBasicRolesByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []*systemModels.SysRole)
 	SelectRolePermissionByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) (roles []string)
