@@ -506,31 +506,23 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "导出配置",
+                "description": "导出字典类型",
                 "produces": [
                     "application/octet-stream"
                 ],
                 "tags": [
-                    "配置相关"
+                    "字典相关"
                 ],
-                "summary": "导出配置",
+                "summary": "导出字典类型",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "参数键名",
-                        "name": "configKey",
+                        "name": "dictLabel",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "参数名称",
-                        "name": "configName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "系统内置（Y是 N否）",
-                        "name": "configType",
+                        "name": "dictType",
                         "in": "query"
                     },
                     {
@@ -557,6 +549,11 @@ const docTemplate = `{
                         "default": 10,
                         "description": "数量",
                         "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -1007,57 +1004,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/dict/clearCache": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "更新字典缓存",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "字典相关"
-                ],
-                "summary": "更新字典缓存",
-                "parameters": [
-                    {
-                        "description": "字典",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/system/dict/data": {
             "put": {
                 "security": [
@@ -1487,6 +1433,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/dict/type/clearCache": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "更新字典缓存",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "更新字典缓存",
+                "parameters": [
+                    {
+                        "description": "字典",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/system/dict/type/list": {
             "get": {
                 "security": [
@@ -1573,6 +1558,43 @@ const docTemplate = `{
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/dict/type/optionSelect": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询字典列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "字典相关"
+                ],
+                "summary": "查询字典列表",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysDictDataVo"
                                         }
                                     }
                                 }
@@ -1946,6 +1968,77 @@ const docTemplate = `{
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/post/export": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "导出岗位",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "岗位相关"
+                ],
+                "summary": "导出岗位",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "postCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "postName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }

@@ -958,19 +958,13 @@ paths:
       - 配置相关
   /system/config/export:
     post:
-      description: 导出配置
+      description: 导出字典类型
       parameters:
-      - description: 参数键名
-        in: query
-        name: configKey
+      - in: query
+        name: dictLabel
         type: string
-      - description: 参数名称
-        in: query
-        name: configName
-        type: string
-      - description: 系统内置（Y是 N否）
-        in: query
-        name: configType
+      - in: query
+        name: dictType
         type: string
       - description: 排序规则  降序desc   asc升序
         in: query
@@ -990,6 +984,9 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - in: query
+        name: status
+        type: string
       produces:
       - application/octet-stream
       responses:
@@ -1001,9 +998,9 @@ paths:
             type: array
       security:
       - BearerAuth: []
-      summary: 导出配置
+      summary: 导出字典类型
       tags:
-      - 配置相关
+      - 字典相关
   /system/config/list:
     get:
       description: 查询配置列表查询
@@ -1234,35 +1231,6 @@ paths:
       summary: 获取角色部门
       tags:
       - 部门相关
-  /system/dict/clearCache:
-    put:
-      description: 更新字典缓存
-      parameters:
-      - description: 字典
-        in: body
-        name: object
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseData'
-            - properties:
-                data:
-                  $ref: '#/definitions/systemModels.SysDictDataVo'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: 更新字典缓存
-      tags:
-      - 字典相关
   /system/dict/data:
     post:
       description: 添加字典数据
@@ -1541,6 +1509,30 @@ paths:
       summary: 根据dictCode获取字典类型信息
       tags:
       - 字典相关
+  /system/dict/type/clearCache:
+    put:
+      description: 更新字典缓存
+      parameters:
+      - description: 字典
+        in: body
+        name: object
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 更新字典缓存
+      tags:
+      - 字典相关
   /system/dict/type/list:
     get:
       description: 查询字典类型列表
@@ -1594,6 +1586,26 @@ paths:
       security:
       - BearerAuth: []
       summary: 查询字典类型列表
+      tags:
+      - 字典相关
+  /system/dict/type/optionSelect:
+    put:
+      description: 查询字典列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysDictDataVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询字典列表
       tags:
       - 字典相关
   /system/menu:
@@ -1855,6 +1867,51 @@ paths:
       security:
       - BearerAuth: []
       summary: 删除岗位
+      tags:
+      - 岗位相关
+  /system/post/export:
+    post:
+      description: 导出岗位
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: postCode
+        type: string
+      - in: query
+        name: postName
+        type: string
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+      security:
+      - BearerAuth: []
+      summary: 导出岗位
       tags:
       - 岗位相关
   /system/post/list:
