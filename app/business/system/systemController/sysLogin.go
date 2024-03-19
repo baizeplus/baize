@@ -152,7 +152,7 @@ func (lc *Login) GetCode(c *gin.Context) {
 // @Description 获取路由
 // @Tags 登录
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.RouterVo}} "获取成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.RouterVo}} "获取成功"
 // @Router /getRouters [get]
 func (lc *Login) GetRouters(c *gin.Context) {
 	userId := baizeContext.GetUserId(c)

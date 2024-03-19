@@ -44,7 +44,7 @@ type SysUserVo struct {
 	DeptName    *string `json:"deptName" db:"dept_name" bze:"4,部门名称"`
 	Leader      string  `json:"leader" db:"leader"`
 	Email       string  `json:"email" db:"email"`
-	Phonenumber string  `json:"phonenumber"db:"phonenumber" bze:"5,电话""`
+	Phonenumber string  `json:"phonenumber"db:"phonenumber" bze:"5,电话"`
 	Avatar      string  `json:"avatar" db:"avatar"`
 	DataScope   string  `json:"dataScope" db:"data_scope"`
 	RoleId      *int64  `json:"roleId" db:"role_id"`

@@ -16,6 +16,15 @@ func NewRole(rs *systemServiceImpl.RoleService) *Role {
 	return &Role{rs: rs}
 }
 
+// RoleList 查询角色列表查询
+// @Summary 查询角色列表查询
+// @Description 查询角色列表查询
+// @Tags 角色相关
+// @Param  object query systemModels.SysRoleDQL true "查询信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysRoleVo}}  "成功"
+// @Router /system/role/list  [get]
 func (rc *Role) RoleList(c *gin.Context) {
 	role := new(systemModels.SysRoleDQL)
 	_ = c.ShouldBind(role)
@@ -32,6 +41,16 @@ func (rc *Role) RoleExport(c *gin.Context) {
 	//baizeContext.SuccessListData(c, list, count)
 	panic("等待完成")
 }
+
+// RoleGetInfo 根据角色ID获取角色信息
+// @Summary 根据角色ID获取角色信息
+// @Description 根据角色ID获取角色信息
+// @Tags 角色相关
+// @Param id path string true "roleId"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=systemModels.SysRoleVo}  "成功"
+// @Router /system/role/{roleId}  [get]
 func (rc *Role) RoleGetInfo(c *gin.Context) {
 	roleId := baizeContext.ParamInt64(c, "roleId")
 	if roleId == 0 {
@@ -41,6 +60,16 @@ func (rc *Role) RoleGetInfo(c *gin.Context) {
 	sysUser := rc.rs.SelectRoleById(c, roleId)
 	baizeContext.SuccessData(c, sysUser)
 }
+
+// RoleAdd 添加角色
+// @Summary 添加角色
+// @Description 添加角色
+// @Tags 角色相关
+// @Param  object body systemModels.SysRoleDML true "公司信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role  [post]
 func (rc *Role) RoleAdd(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
@@ -57,6 +86,16 @@ func (rc *Role) RoleAdd(c *gin.Context) {
 	baizeContext.Success(c)
 
 }
+
+// RoleEdit 修改角色
+// @Summary 修改角色
+// @Description 修改角色
+// @Tags 角色相关
+// @Param  object body systemModels.SysRoleDML true "公司信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role  [put]
 func (rc *Role) RoleEdit(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
@@ -73,6 +112,15 @@ func (rc *Role) RoleEdit(c *gin.Context) {
 	baizeContext.Success(c)
 }
 
+// RoleChangeStatus 修改角色状态
+// @Summary 修改角色状态
+// @Description 修改角色状态
+// @Tags 角色相关
+// @Param  object body systemModels.SysRoleDML true "公司信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role/changeStatus  [put]
 func (rc *Role) RoleChangeStatus(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
@@ -80,6 +128,16 @@ func (rc *Role) RoleChangeStatus(c *gin.Context) {
 	rc.rs.UpdateRoleStatus(c, sysRole)
 	baizeContext.Success(c)
 }
+
+// RoleRemove 删除角色
+// @Summary 删除角色
+// @Description 删除角色
+// @Tags 角色相关
+// @Param rolesIds path []string true "rolesIds"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /system/role/{rolesIds}  [delete]
 func (rc *Role) RoleRemove(c *gin.Context) {
 	ids := baizeContext.ParamInt64Array(c, "rolesIds")
 	if rc.rs.CountUserRoleByRoleId(c, ids) {
@@ -89,6 +147,7 @@ func (rc *Role) RoleRemove(c *gin.Context) {
 	rc.rs.DeleteRoleByIds(c, ids)
 	baizeContext.Success(c)
 }
+
 func (rc *Role) AllocatedList(c *gin.Context) {
 	user := new(systemModels.SysRoleAndUserDQL)
 	if err := c.ShouldBind(user); err != nil {

@@ -181,7 +181,7 @@ func (uc *User) UserAdd(c *gin.Context) {
 // @Param  object query systemModels.SysUserDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysUserVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
 // @Router /system/user  [get]
 func (uc *User) UserList(c *gin.Context) {
 	user := new(systemModels.SysUserDQL)
@@ -336,7 +336,7 @@ func (uc *User) ImportTemplate(c *gin.Context) {
 // @Param  string query string true "用户id"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysUserVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
 // @Router /system/user/authRole  [put]
 func (uc *User) InsertAuthRole(c *gin.Context) {
 	userId := baizeContext.QueryInt64(c, "userId")

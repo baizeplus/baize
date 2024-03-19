@@ -25,7 +25,7 @@ func NewDictData(dds *systemServiceImpl.DictDataService) *DictData {
 // @Param  object query systemModels.SysDictDataDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysDictDataVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysDictDataVo}}  "成功"
 // @Router /system/dict/data/list  [get]
 func (ddc *DictData) DictDataList(c *gin.Context) {
 	dictData := new(systemModels.SysDictDataDQL)
@@ -67,7 +67,7 @@ func (ddc *DictData) DictDataGetInfo(c *gin.Context) {
 // @Param id path string true "dictType"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysDictDataVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysDictDataVo}}  "成功"
 // @Router /system/dict/data/type/{dictType}  [get]
 func (ddc *DictData) DictDataType(c *gin.Context) {
 	sysDictDataList := ddc.dds.SelectDictDataByType(c, c.Param("dictType"))

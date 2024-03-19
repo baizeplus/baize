@@ -28,7 +28,7 @@ func NewDictType(dts *systemServiceImpl.DictTypeService, dds *systemServiceImpl.
 // @Param  object query systemModels.SysDictDataDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysDictDataVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysDictDataVo}}  "成功"
 // @Router /system/dict/type/list  [get]
 func (dtc *DictType) DictTypeList(c *gin.Context) {
 	dictType := new(systemModels.SysDictTypeDQL)

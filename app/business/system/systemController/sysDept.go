@@ -24,7 +24,7 @@ func NewDept(ds *systemServiceImpl.DeptService) *Dept {
 // @Param  object query systemModels.SysDeptDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysDeptVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysDeptVo}}  "成功"
 // @Router /system/dept  [get]
 func (dc *Dept) DeptList(c *gin.Context) {
 	dept := new(systemModels.SysDeptDQL)

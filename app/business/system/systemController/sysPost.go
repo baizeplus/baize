@@ -23,7 +23,7 @@ func NewPost(ps *systemServiceImpl.PostService) *Post {
 // @Param  object query systemModels.SysPostDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysPostVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysPostVo}}  "成功"
 // @Router /system/post/list  [get]
 func (pc *Post) PostList(c *gin.Context) {
 	post := new(systemModels.SysPostDQL)
@@ -97,7 +97,6 @@ func (pc *Post) PostEdit(c *gin.Context) {
 	post.SetUpdateBy(baizeContext.GetUserId(c))
 	pc.ps.UpdatePost(c, post)
 	baizeContext.Success(c)
-
 }
 
 // PostRemove 删除岗位

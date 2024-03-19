@@ -5,7 +5,7 @@ import (
 	"baize/app/business/monitor/monitorController"
 	"baize/app/business/monitor/monitorRouter"
 	"baize/app/business/system/systemController"
-	systemRoutes "baize/app/business/system/systemRouter"
+	"baize/app/business/system/systemRouter"
 	"time"
 
 	"baize/app/middlewares"

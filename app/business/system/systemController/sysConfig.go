@@ -23,7 +23,7 @@ func NewConfig(cs *systemServiceImpl.ConfigService) *Config {
 // @Param  object query systemModels.SysConfigDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysConfigVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysConfigVo}}  "成功"
 // @Router /system/config/list  [get]
 func (cc *Config) ConfigList(c *gin.Context) {
 	config := new(systemModels.SysConfigDQL)

@@ -82,6 +82,10 @@ func SliceToExcel(a any) (*excelize.File, error) {
 		}
 
 	}
+	return createExcel(position, width, title, format, vl, value)
+}
+
+func createExcel(position []int, width []float64, title, format []string, vl int, value reflect.Value) (*excelize.File, error) {
 	f := excelize.NewFile()
 	for i, i2 := range width {
 		if i2 != 0 {
@@ -117,8 +121,7 @@ func SliceToExcel(a any) (*excelize.File, error) {
 			return nil, err
 		}
 	}
-
-	return f, nil
+	return f, err
 }
 
 var mf map[string]func(value reflect.Value) string

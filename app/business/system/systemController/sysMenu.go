@@ -24,7 +24,7 @@ func NewMenu(ms *systemServiceImpl.MenuService) *Menu {
 // @Param  object query systemModels.SysMenuDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ResponseData{Rows=[]systemModels.SysMenuVo}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysMenuVo}}  "成功"
 // @Router /system/menu/list  [get]
 func (mc *Menu) MenuList(c *gin.Context) {
 	menu := new(systemModels.SysMenuDQL)

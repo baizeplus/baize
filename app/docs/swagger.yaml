@@ -1,4 +1,10 @@
 definitions:
+  response.ListData:
+    properties:
+      rows: {}
+      total:
+        type: integer
+    type: object
   response.ResCode:
     enum:
     - 200
@@ -369,6 +375,38 @@ definitions:
         description: 修改时间
         type: integer
     type: object
+  systemModels.SysRoleDML:
+    properties:
+      RoleId:
+        example: "0"
+        type: string
+      createBy:
+        description: 创建人
+        type: integer
+      createTime:
+        description: 创建时间
+        type: integer
+      menuIds:
+        items:
+          type: string
+        type: array
+      remark:
+        type: string
+      roleKey:
+        type: string
+      roleName:
+        type: string
+      roleSort:
+        type: integer
+      status:
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+    type: object
   systemModels.SysRoleVo:
     properties:
       createBy:
@@ -568,6 +606,19 @@ definitions:
         - $ref: '#/definitions/systemModels.SysUserVo'
         description: user
     type: object
+  systemModels.UserProfile:
+    properties:
+      postGroup:
+        description: 选择的角色Id
+        type: string
+      roleGroup:
+        description: 角色
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/systemModels.SysUserVo'
+        description: user
+    type: object
 info:
   contact:
     email: zhao_402295440@126.com
@@ -734,7 +785,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -989,7 +1040,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1047,7 +1098,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1343,7 +1394,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1376,7 +1427,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1523,7 +1574,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1650,7 +1701,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1839,7 +1890,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -1878,6 +1929,182 @@ paths:
       summary: 删除菜单
       tags:
       - 菜单相关
+  /system/role:
+    post:
+      description: 添加角色
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysRoleDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 添加角色
+      tags:
+      - 角色相关
+    put:
+      description: 修改角色
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysRoleDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改角色
+      tags:
+      - 角色相关
+  /system/role/{roleId}:
+    get:
+      description: 根据角色ID获取角色信息
+      parameters:
+      - description: roleId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysRoleVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据角色ID获取角色信息
+      tags:
+      - 角色相关
+  /system/role/{rolesIds}:
+    delete:
+      description: 删除角色
+      parameters:
+      - collectionFormat: csv
+        description: rolesIds
+        in: path
+        items:
+          type: string
+        name: rolesIds
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 删除角色
+      tags:
+      - 角色相关
+  /system/role/changeStatus:
+    put:
+      description: 修改角色状态
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysRoleDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改角色状态
+      tags:
+      - 角色相关
+  /system/role/list:
+    get:
+      description: 查询角色列表查询
+      parameters:
+      - in: query
+        name: beginTime
+        type: string
+      - in: query
+        name: endTime
+        type: string
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: roleKey
+        type: string
+      - in: query
+        name: roleName
+        type: string
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysRoleVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询角色列表查询
+      tags:
+      - 角色相关
   /system/user:
     get:
       description: 查询用户列表
@@ -1935,7 +2162,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -2085,7 +2312,7 @@ paths:
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.ResponseData'
+                  - $ref: '#/definitions/response.ListData'
                   - properties:
                       Rows:
                         items:
@@ -2280,6 +2507,96 @@ paths:
       summary: 导出用户
       tags:
       - 系统用户
+  /system/user/profile:
+    get:
+      description: 查看个人资料
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.UserProfile'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查看个人资料
+      tags:
+      - 个人资料
+    put:
+      description: 修改个人资料
+      parameters:
+      - description: 公司信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysUserDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改个人资料
+      tags:
+      - 个人资料
+  /system/user/profile/avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 修改头像
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改头像
+      tags:
+      - 个人资料
+  /system/user/profile/updatePwd:
+    put:
+      description: 修改密码
+      parameters:
+      - description: 旧密码
+        in: query
+        name: oldPassword
+        required: true
+        type: string
+      - description: 新密码
+        in: query
+        name: newPassword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改密码
+      tags:
+      - 个人资料
   /system/user/resetPwd:
     put:
       description: 重置密码
