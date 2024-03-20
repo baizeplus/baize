@@ -28,21 +28,8 @@ var ProviderSet = wire.NewSet(NewGinEngine)
 var noRefresh = baize.NewSet([]string{})
 
 func NewGinEngine(
-	login *systemController.Login,
-	user *systemController.User,
-	dept *systemController.Dept,
-	dictType *systemController.DictType,
-	dictData *systemController.DictData,
-	menu *systemController.Menu,
-	role *systemController.Role,
-	post *systemController.Post,
-	profile *systemController.Profile,
-	config *systemController.Config,
-	file *systemController.File,
-	server *monitorController.InfoServer,
-	userOnline *monitorController.UserOnline,
-	logfor *monitorController.Logininfor,
-	oper *monitorController.OperLog,
+	sc *systemController.System,
+	mc *monitorController.Monitor,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -63,27 +50,27 @@ func NewGinEngine(
 		if setting.Conf.UploadFile.Type == "localhost" {
 			group.Static(IOFile.ResourcePrefix, setting.Conf.UploadFile.Localhost.PublicPath)
 		}
-		systemRoutes.InitLoginRouter(group, login) //获取登录信息
+		systemRoutes.InitLoginRouter(group, sc.Login) //获取登录信息
 
 	}
 	//做鉴权的
 	group.Use(middlewares.SessionAuthMiddleware(noRefresh))
 	{
-		systemRoutes.InitSysProfileRouter(group, profile)   //个人信息
-		systemRoutes.InitGetUser(group, login)              //获取登录信息
-		systemRoutes.InitSysUserRouter(group, user)         //用户相关
-		systemRoutes.InitSysDeptRouter(group, dept)         //部门相关
-		systemRoutes.InitSysDictTypeRouter(group, dictType) //数据字典属性
-		systemRoutes.InitSysDictDataRouter(group, dictData) //数据字典信息
-		systemRoutes.InitSysMenuRouter(group, menu)         //菜单相关
-		systemRoutes.InitSysRoleRouter(group, role)         //角色相关
-		systemRoutes.InitSysPostRouter(group, post)         //岗位属性
-		systemRoutes.InitSysConfigRouter(group, config)     //配置文件
-		systemRoutes.InitFileRouter(group, file)            //配置文件
-		monitorRouter.InitServerRouter(group, server)
-		monitorRouter.InitSysOperLogRouter(group, oper)
-		monitorRouter.InitSysUserOnlineRouter(group, userOnline) //在线用户监控
-		monitorRouter.InitSysLogininforRouter(group, logfor)
+		systemRoutes.InitSysProfileRouter(group, sc.Profile)   //个人信息
+		systemRoutes.InitGetUser(group, sc.Login)              //获取登录信息
+		systemRoutes.InitSysUserRouter(group, sc.User)         //用户相关
+		systemRoutes.InitSysDeptRouter(group, sc.Dept)         //部门相关
+		systemRoutes.InitSysDictTypeRouter(group, sc.DictType) //数据字典属性
+		systemRoutes.InitSysDictDataRouter(group, sc.DictData) //数据字典信息
+		systemRoutes.InitSysMenuRouter(group, sc.Menu)         //菜单相关
+		systemRoutes.InitSysRoleRouter(group, sc.Role)         //角色相关
+		systemRoutes.InitSysPostRouter(group, sc.Post)         //岗位属性
+		systemRoutes.InitSysConfigRouter(group, sc.Config)     //配置文件
+		systemRoutes.InitFileRouter(group, sc.File)            //文件管理
+		monitorRouter.InitServerRouter(group, mc.Server)
+		monitorRouter.InitSysOperLogRouter(group, mc.Oper)
+		monitorRouter.InitSysUserOnlineRouter(group, mc.UserOnline) //在线用户监控
+		monitorRouter.InitSysLogininforRouter(group, mc.Logfor)
 	}
 
 	r.NoRoute(func(c *gin.Context) {
