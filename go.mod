@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.24.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.16
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.48.1
-	github.com/baizeplus/sqly v1.0.0
+	github.com/baizeplus/sqly v1.0.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/gin-contrib/cors v1.7.0
 	github.com/gin-gonic/gin v1.9.1
@@ -111,4 +111,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-//replace github.com/baizeplus/sqly v1.0.0 => D:\dannyCode\sqly
+//replace github.com/baizeplus/sqly v1.0.2 => D:\dannyCode\sqly

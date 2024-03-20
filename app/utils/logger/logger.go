@@ -18,6 +18,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+var sl *zap.SugaredLogger
+
 // Init 初始化lg
 func init() {
 	var core zapcore.Core
@@ -48,6 +50,7 @@ func init() {
 
 	logger := zap.New(core, zap.AddCaller())
 	zap.ReplaceGlobals(logger)
+	sl = zap.L().Sugar()
 	zap.L().Debug("init logger success")
 	return
 }
@@ -118,4 +121,11 @@ func GinRecovery() gin.HandlerFunc {
 		}()
 		c.Next()
 	}
+}
+
+type SqlyLog struct {
+}
+
+func (s *SqlyLog) Debug(cost time.Duration, sql string, args ...interface{}) {
+	sl.Debug(sql, args, "cost:"+cost.String())
 }

@@ -4,8 +4,8 @@ port: 8080
 version: 12.0.0
 start_time: "2022-08-08"  #此日期用于雪花算法
 host: http://localhost:8080
-#log:
-#  level: info
+log:
+  level: debug
 #  filename: /Volumes/disk01/baizelog/baizelog.log  #默认./log
 #  max_size: 200
 #  max_age: 30

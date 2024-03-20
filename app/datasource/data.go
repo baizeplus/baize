@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"baize/app/setting"
+	"baize/app/utils/logger"
 	"fmt"
 	"github.com/baizeplus/sqly"
 	_ "github.com/go-sql-driver/mysql"
@@ -21,5 +22,6 @@ func NewData(d *setting.Datasource) (*sqly.DB, func(), error) {
 	}
 	db.SetMaxOpenConns(d.Mysql.MaxOpenConns)
 	db.SetMaxIdleConns(d.Mysql.MaxIdleConns)
+	sqly.SetLog(new(logger.SqlyLog))
 	return db, nil, err
 }
