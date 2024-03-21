@@ -11,6 +11,7 @@ import (
 
 var (
 	ErrKeyNotFound = errors.New("key不存在")
+	ErrKeyType     = errors.New("key存储类型错误")
 )
 
 type BuildInMapCache struct {
@@ -106,7 +107,7 @@ func (b *BuildInMapCache) HSet(ctx context.Context, key string, values ...any) e
 	}
 	m, ok := res.val.(map[string]string)
 	if !ok {
-		return errors.New("key存储类型错误")
+		return ErrKeyType
 	}
 	m[gconv.String(values[0])] = gconv.String(values[1])
 	b.data[key] = item{
@@ -180,7 +181,7 @@ func (b *BuildInMapCache) HGet(ctx context.Context, key, field string) (string, 
 	}
 	m, ok := res.val.(map[string]string)
 	if !ok {
-		return "", errors.New("key存储类型错误")
+		return "", ErrKeyType
 	}
 	return m[field], nil
 }
@@ -218,7 +219,7 @@ func (b *BuildInMapCache) JudgmentAndHSet(ctx context.Context, rk, key string, g
 	}
 	m, ok := res.val.(map[string]string)
 	if !ok {
-		return errors.New("key存储类型错误")
+		return ErrKeyType
 	}
 	m[key] = gconv.String(gs)
 	b.data[rk] = item{

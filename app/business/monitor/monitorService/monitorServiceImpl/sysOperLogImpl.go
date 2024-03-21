@@ -4,6 +4,7 @@ import (
 	"baize/app/business/monitor/monitorDao"
 	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"context"
 	"github.com/baizeplus/sqly"
@@ -32,7 +33,16 @@ func (ols *OperLogService) SelectOperLogList(c *gin.Context, openLog *monitorMod
 
 }
 func (ols *OperLogService) ExportOperLog(c *gin.Context, openLog *monitorModels.SysOperLogDQL) (data []byte) {
-	return nil
+	list := ols.old.SelectOperLogListAll(c, ols.data, openLog)
+	toExcel, err := excel.SliceToExcel(list)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
 }
 
 func (ols *OperLogService) DeleteOperLogByIds(c *gin.Context, operIds []int64) {

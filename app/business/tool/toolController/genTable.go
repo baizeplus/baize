@@ -69,17 +69,19 @@ func (gc *GenTable) Preview(c *gin.Context) {
 	baizeContext.Success(c)
 }
 func (gc *GenTable) Download(c *gin.Context) {
-
+	panic("等待开发")
 }
 
 func (gc *GenTable) GenCode(c *gin.Context) {
-
+	panic("等待开发")
 }
 
 func (gc *GenTable) SynchDb(c *gin.Context) {
+	panic("等待开发")
 
 }
 
 func (gc *GenTable) BatchGenCode(c *gin.Context) {
+	panic("等待开发")
 
 }

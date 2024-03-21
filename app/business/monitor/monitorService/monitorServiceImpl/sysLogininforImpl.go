@@ -4,6 +4,7 @@ import (
 	"baize/app/business/monitor/monitorDao"
 	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -23,9 +24,16 @@ func (ls *LogininforService) SelectLogininforList(c *gin.Context, logininfor *mo
 
 }
 func (ls *LogininforService) ExportLogininfor(c *gin.Context, logininfor *monitorModels.LogininforDQL) (data []byte) {
-	//list, _ := ls.ld.SelectLogininforList(ls.data.GetSlaveDb(), logininfor)
-	//return exceLize.SetRows(systemModels.SysLogininforToRows(list))
-	return nil
+	list := ls.ld.SelectLogininforListAll(c, ls.data, logininfor)
+	toExcel, err := excel.SliceToExcel(list)
+	if err != nil {
+		panic(err)
+	}
+	buffer, err := toExcel.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
 }
 
 func (ls *LogininforService) InserLogininfor(c *gin.Context, loginUser *monitorModels.Logininfor) {

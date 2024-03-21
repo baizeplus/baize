@@ -61,22 +61,9 @@ func SliceToExcel(a any) (*excelize.File, error) {
 			title[atoi-1] = split[1]
 			position[atoi-1] = i
 			if len(split) > 2 {
-				for ii := 2; ii < len(split); ii++ {
-					sp := strings.Split(split[ii], "=")
-					if len(sp) != 2 {
-						return nil, errors.New("tag格式错误")
-					}
-					switch sp[0] {
-					case "width":
-						i2, err := strconv.ParseFloat(sp[1], 64)
-						if err != nil {
-							return nil, err
-						}
-						width[atoi-1] = i2
-					case "format":
-						format[atoi-1] = sp[1]
-					}
-
+				err = setExcelType(split, atoi, width, format)
+				if err != nil {
+					return nil, err
 				}
 			}
 		}
@@ -85,6 +72,25 @@ func SliceToExcel(a any) (*excelize.File, error) {
 	return createExcel(position, width, title, format, vl, value)
 }
 
+func setExcelType(split []string, atoi int, width []float64, format []string) error {
+	for ii := 2; ii < len(split); ii++ {
+		sp := strings.Split(split[ii], "=")
+		if len(sp) != 2 {
+			return errors.New("tag格式错误")
+		}
+		switch sp[0] {
+		case "width":
+			i2, err := strconv.ParseFloat(sp[1], 64)
+			if err != nil {
+				return err
+			}
+			width[atoi-1] = i2
+		case "format":
+			format[atoi-1] = sp[1]
+		}
+	}
+	return nil
+}
 func createExcel(position []int, width []float64, title, format []string, vl int, value reflect.Value) (*excelize.File, error) {
 	f := excelize.NewFile()
 	for i, i2 := range width {
@@ -95,33 +101,39 @@ func createExcel(position []int, width []float64, title, format []string, vl int
 				return nil, err
 			}
 		}
-
 	}
 	err := f.SetSheetRow("Sheet1", "A1", &title)
 	if err != nil {
 		return nil, err
 	}
+	ti := len(title)
 	for i := 0; i < vl; i++ {
 		item := value.Index(i)
-		// 如果元素类型为指针，使用Elem()获取指针指向的值
-		for item.Kind() == reflect.Ptr {
-			item = item.Elem()
-		}
-		s2 := make([]string, len(title))
-		for i2, i3 := range position {
-			index := item.Field(i3)
-			if format[i2] != "" {
-				s2[i2] = mf[format[i2]](index)
-			} else {
-				s2[i2] = fmt.Sprint(index)
-			}
-		}
-		err = f.SetSheetRow("Sheet1", "A"+strconv.Itoa(i+2), &s2)
+		ls := setExcelContent(item, position, ti, format)
+		err = f.SetSheetRow("Sheet1", "A"+strconv.Itoa(i+2), &ls)
 		if err != nil {
 			return nil, err
 		}
 	}
 	return f, err
+}
+
+func setExcelContent(item reflect.Value, position []int, lt int, format []string) []string {
+
+	// 如果元素类型为指针，使用Elem()获取指针指向的值
+	for item.Kind() == reflect.Ptr {
+		item = item.Elem()
+	}
+	s2 := make([]string, lt)
+	for i2, i3 := range position {
+		index := item.Field(i3)
+		if format[i2] != "" {
+			s2[i2] = mf[format[i2]](index)
+		} else {
+			s2[i2] = fmt.Sprint(index)
+		}
+	}
+	return s2
 }
 
 var mf map[string]func(value reflect.Value) string

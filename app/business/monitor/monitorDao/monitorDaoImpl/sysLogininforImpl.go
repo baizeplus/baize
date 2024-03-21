@@ -47,7 +47,30 @@ func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyC
 		panic(err)
 	}
 	return
+}
+func (ld *LogininforDao) SelectLogininforListAll(ctx context.Context, db sqly.SqlyContext, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor) {
+	whereSql := ``
+	if logininfor.IpAddr != "" {
+		whereSql += " AND ipaddr like concat('%', :ipaddr, '%')"
+	}
+	if logininfor.Status != "" {
+		whereSql += " AND  status = :status"
+	}
+	if logininfor.UserName != "" {
+		whereSql += " AND user_name like concat('%', :userName, '%')"
+	}
 
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	logininfor.OrderBy = "info_id"
+	logininfor.IsAsc = "desc"
+	list = make([]*monitorModels.Logininfor, 0)
+	err := db.NamedSelectContext(ctx, &list, ld.selectSql+whereSql, logininfor)
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 func (ld *LogininforDao) DeleteLogininforByIds(ctx context.Context, db sqly.SqlyContext, infoIds []int64) {
 	query, i, err := sqly.In("delete from sys_logininfor where info_id in (?)", infoIds)

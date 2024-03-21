@@ -60,6 +60,38 @@ func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.Sql
 	}
 	return
 }
+func (operLogDao *OperLogDao) SelectOperLogListAll(ctx context.Context, db sqly.SqlyContext, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog) {
+	whereSql := ``
+	if openLog.Title != "" {
+		whereSql += " AND title like concat('%', :title, '%')"
+	}
+	if openLog.BusinessType != nil {
+		whereSql += " AND business_type = :business_type"
+	}
+	if openLog.Status != nil {
+		whereSql += " AND status = :status"
+	}
+	if openLog.OperName != "" {
+		whereSql += " AND oper_name like concat('%', :oper_name, '%')"
+	}
+	if openLog.BeginTime != "" {
+		whereSql += " AND date_format(oper_time,'%y%m%d') >= :begin_time"
+	}
+	if openLog.EndTime != "" {
+		whereSql += " AND date_format(oper_time,'%y%m%d') >= :end_time"
+	}
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*monitorModels.SysOperLog, 0)
+	err := db.NamedSelectContext(ctx, &list, operLogDao.selectSql+whereSql, openLog)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
 func (operLogDao *OperLogDao) DeleteOperLogByIds(ctx context.Context, db sqly.SqlyContext, operIds []int64) {
 	query, i, err := sqly.In("delete from sys_oper_log where oper_id in (?)", operIds)
 	if err != nil {
