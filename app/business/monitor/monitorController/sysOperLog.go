@@ -18,13 +18,17 @@ func NewOperLog(ls *monitorServiceImpl.OperLogService) *OperLog {
 
 func (ol *OperLog) OperLogList(c *gin.Context) {
 	operLog := new(monitorModels.SysOperLogDQL)
-	c.ShouldBind(operLog)
+	_ = c.ShouldBind(operLog)
 	list, count := ol.ls.SelectOperLogList(c, operLog)
 	baizeContext.SuccessListData(c, list, count)
 
 }
 
 func (ol *OperLog) OperLogExport(c *gin.Context) {
+	operLog := new(monitorModels.SysOperLogDQL)
+	_ = c.ShouldBind(operLog)
+	data := ol.ls.ExportOperLog(c, operLog)
+	baizeContext.DataPackageExcel(c, data)
 }
 
 func (ol *OperLog) OperLogRemove(c *gin.Context) {

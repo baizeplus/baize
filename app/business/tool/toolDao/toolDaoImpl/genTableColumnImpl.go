@@ -27,22 +27,17 @@ func (genTableColumnDao *GenTableColumnDao) SelectDbTableColumnsByName(ctx conte
 func (genTableColumnDao *GenTableColumnDao) SelectGenTableColumnListByTableId(ctx context.Context, db sqly.SqlyContext, tableId int64) (list []*toolModels.GenTableColumnVo) {
 	list = make([]*toolModels.GenTableColumnVo, 0)
 	db.SelectContext(ctx, &list, `select column_id, table_id, column_name, column_comment, column_type, go_type, go_field,html_field, is_pk,  is_required, is_insert, is_edit, is_list, is_query, is_entity,query_type, html_type, dict_type, sort, create_by, create_time, update_by, update_time 
-	from gen_table_column
-       where table_id = ?
-        order by sort`, tableId)
-
+	from gen_table_column where table_id = ? order by sort`, tableId)
 	return
 }
 
 func (genTableColumnDao *GenTableColumnDao) BatchInsertGenTableColumn(ctx context.Context, db sqly.SqlyContext, genTables []*toolModels.GenTableColumnDML) {
-
 	_, err := db.NamedExecContext(ctx, `insert into gen_table_column(column_id,table_id,column_name,column_comment,column_type,go_type,go_field,html_field,is_pk,is_required,is_insert,is_edit,is_list, is_query,is_entity, query_type, html_type, dict_type, sort,create_by,create_time,update_by,update_time)
 							values(:column_id,:table_id,:column_name,:column_comment,:column_type,:go_type,:go_field,:html_field,:is_pk,:is_required,:is_insert,:is_edit,:is_list, :is_query, :is_entity, :query_type, :html_type, :dict_type, :sort,:create_by,now(),:update_by,now())`,
 		genTables)
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 func (genTableColumnDao *GenTableColumnDao) UpdateGenTableColumn(ctx context.Context, db sqly.SqlyContext, column *toolModels.GenTableColumnDML) {
@@ -53,7 +48,6 @@ func (genTableColumnDao *GenTableColumnDao) UpdateGenTableColumn(ctx context.Con
 }
 
 func (genTableColumnDao *GenTableColumnDao) DeleteGenTableColumnByIds(ctx context.Context, db sqly.SqlyContext, ids []int64) {
-
 	query, i, err := sqly.In("  delete from gen_table_column where table_id in (?)", ids)
 	if err != nil {
 		panic(err)

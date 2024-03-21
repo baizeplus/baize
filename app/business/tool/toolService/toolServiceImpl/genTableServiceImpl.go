@@ -68,7 +68,7 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 	genTable = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
 	genTable.Columns = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 	genTable.GenerateTime = time.Now()
-	s := genTabletService.loadTemplate("./template/vm/go/model/model.go.vm", genTable)
+	s := genTabletService.loadTemplate("./template/vm/go/model/model.tmpl", genTable)
 	fmt.Println(s)
 	return genTable, nil
 }

@@ -6,6 +6,7 @@ import (
 	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,7 +45,7 @@ func (uc *User) ChangeStatus(c *gin.Context) {
 		return
 	}
 	if sysUser.UserId == baizeContext.GetUserId(c) {
-		baizeContext.Waring(c, "不能修改自己")
+		baizeContext.Waring(c, response.ForbiddenOperation)
 		return
 	}
 	sysUser.SetUpdateBy(baizeContext.GetUserId(c))
@@ -85,7 +86,7 @@ func (uc *User) UserEdit(c *gin.Context) {
 	sysUser := new(systemModels.SysUserDML)
 	_ = c.ShouldBindJSON(sysUser)
 	if sysUser.UserId == baizeContext.GetUserId(c) {
-		baizeContext.Waring(c, "不能修改自己")
+		baizeContext.Waring(c, response.ForbiddenOperation)
 		return
 	}
 	if uc.us.CheckPhoneUnique(c, sysUser.UserId, sysUser.Phonenumber) {
@@ -121,7 +122,7 @@ func (uc *User) UpdateUserDataScope(c *gin.Context) {
 		return
 	}
 	if uds.UserId == baizeContext.GetUserId(c) {
-		baizeContext.Waring(c, "不能修改自己")
+		baizeContext.Waring(c, response.ForbiddenOperation)
 		return
 	}
 	uc.us.UpdateUserDataScope(c, uds)
@@ -259,7 +260,7 @@ func (uc *User) UserRemove(c *gin.Context) {
 	array := baizeContext.ParamInt64Array(c, "userIds")
 	for _, i := range array {
 		if i == baizeContext.GetUserId(c) {
-			baizeContext.Waring(c, "不能修改自己")
+			baizeContext.Waring(c, response.ForbiddenOperation)
 			return
 		}
 	}
@@ -346,7 +347,7 @@ func (uc *User) ImportTemplate(c *gin.Context) {
 func (uc *User) InsertAuthRole(c *gin.Context) {
 	userId := baizeContext.QueryInt64(c, "userId")
 	if userId == baizeContext.GetUserId(c) {
-		baizeContext.Waring(c, "不能修改自己")
+		baizeContext.Waring(c, response.ForbiddenOperation)
 		return
 	}
 	array := baizeContext.QueryInt64Array(c, "roleIds")

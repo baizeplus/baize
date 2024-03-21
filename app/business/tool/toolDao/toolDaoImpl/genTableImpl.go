@@ -15,8 +15,7 @@ func GetGenTableDao() *GenTableDao {
 }
 
 func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total *int64) {
-	var selectSql = `select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name,private_class_name, tpl_category, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark `
-	var fromSql = ` from gen_table`
+	var selectSql = `select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name,private_class_name, tpl_category, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark  from gen_table`
 	whereSql := ``
 	if table.TableName != "" {
 		whereSql += " AND lower(table_name) like lower(concat('%', :table_name, '%'))"
@@ -37,7 +36,7 @@ func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.
 
 	list = make([]*toolModels.GenTableVo, 0)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+fromSql+whereSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+whereSql, table, table.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -45,30 +44,27 @@ func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.
 
 }
 func (genTableDao *GenTableDao) SelectDbTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.DBTableVo, total *int64) {
-	var selectSql = `select table_name , table_comment, create_time, update_time `
-	var fromSql = ` from information_schema.tables`
-	whereSql := ` where table_schema = (select database())
-		AND table_name NOT LIKE 'qrtz_%' AND table_name NOT LIKE 'gen_%'
+	var selectSql = `select table_name , table_comment, create_time, update_time  from information_schema.tables where table_schema = (select database())
+		AND table_name NOT LIKE 'gen_%'
 		AND table_name NOT IN (select table_name from gen_table)`
 	if table.TableName != "" {
-		whereSql += " AND lower(table_name) like lower(concat('%', :table_name, '%'))"
+		selectSql += " AND lower(table_name) like lower(concat('%', :table_name, '%'))"
 	}
 	if table.TableComment != "" {
-		whereSql += " AND lower(table_comment) like lower(concat('%', :table_comment, '%'))"
+		selectSql += " AND lower(table_comment) like lower(concat('%', :table_comment, '%'))"
 	}
 	if table.BeginTime != "" {
-		whereSql += " AND date_format(create_time,'%y%m%d') &gt;= date_format(:begin_time,'%y%m%d')"
+		selectSql += " AND date_format(create_time,'%y%m%d') &gt;= date_format(:begin_time,'%y%m%d')"
 	}
 	if table.EndTime != "" {
-		whereSql += " date_format(create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
+		selectSql += " date_format(create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
 	}
 	list = make([]*toolModels.DBTableVo, 0)
 	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+fromSql+whereSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, total, selectSql, table, table.ToPage())
 	if err != nil {
 		panic(err)
 	}
-
 	return
 }
 
@@ -108,7 +104,7 @@ func (genTableDao *GenTableDao) SelectGenTableByName(ctx context.Context, db sql
 	return
 }
 func (genTableDao *GenTableDao) SelectGenTableAll(ctx context.Context, db sqly.SqlyContext) (list []*toolModels.GenTableVo) {
-	list = make([]*toolModels.GenTableVo, 0, 0)
+	list = make([]*toolModels.GenTableVo, 0)
 	err := db.SelectContext(ctx, &list, `SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.private_class_name,t.tpl_category, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.gen_type, t.gen_path, t.options, t.remark
 		FROM gen_table t`)
 	if err != nil {

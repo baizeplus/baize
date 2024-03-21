@@ -25,7 +25,10 @@ func (lc *Logininfor) LogininforList(c *gin.Context) {
 }
 
 func (lc *Logininfor) LogininforExport(c *gin.Context) {
-
+	loginfor := new(monitorModels.LogininforDQL)
+	_ = c.ShouldBind(loginfor)
+	data := lc.ls.ExportLogininfor(c, loginfor)
+	baizeContext.DataPackageExcel(c, data)
 }
 
 func (lc *Logininfor) LogininforRemove(c *gin.Context) {
