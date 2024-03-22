@@ -10,6 +10,9 @@ import (
 	"baize/app/business/system/systemController"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/business/tool/toolController"
+	"baize/app/business/tool/toolDao/toolDaoImpl"
+	"baize/app/business/tool/toolService/toolServiceImpl"
 	"baize/app/datasource"
 	"baize/app/routes"
 	"baize/app/setting"
@@ -19,6 +22,9 @@ import (
 
 func wireApp(*setting.Datasource) (*gin.Engine, func(), error) {
 	panic(wire.Build(
+		toolDaoImpl.ProviderSet,
+		toolServiceImpl.ProviderSet,
+		toolController.ProviderSet,
 		systemDaoImpl.ProviderSet,
 		systemServiceImpl.ProviderSet,
 		systemController.ProviderSet,

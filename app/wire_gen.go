@@ -13,6 +13,9 @@ import (
 	"baize/app/business/system/systemController"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/business/tool/toolController"
+	"baize/app/business/tool/toolDao/toolDaoImpl"
+	"baize/app/business/tool/toolService/toolServiceImpl"
 	"baize/app/datasource"
 	"baize/app/routes"
 	"baize/app/setting"
@@ -87,7 +90,14 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 		Logfor:     logininfor,
 		Oper:       operLog,
 	}
-	engine := routes.NewGinEngine(system, monitor)
+	genTableColumnDao := toolDaoImpl.NewGenTableColumnDao()
+	genTableDao := toolDaoImpl.GetGenTableDao()
+	genTabletService := toolServiceImpl.NewGenTabletService(db, genTableColumnDao, genTableDao)
+	genTable := toolController.NewGenTable(genTabletService)
+	tool := &toolController.Tool{
+		GenTable: genTable,
+	}
+	engine := routes.NewGinEngine(system, monitor, tool)
 	return engine, func() {
 		cleanup()
 	}, nil

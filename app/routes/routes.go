@@ -6,6 +6,8 @@ import (
 	"baize/app/business/monitor/monitorRouter"
 	"baize/app/business/system/systemController"
 	"baize/app/business/system/systemRouter"
+	"baize/app/business/tool/toolController"
+	"baize/app/business/tool/toolRouter"
 	"time"
 
 	"baize/app/middlewares"
@@ -30,6 +32,7 @@ var noRefresh = baize.NewSet([]string{})
 func NewGinEngine(
 	sc *systemController.System,
 	mc *monitorController.Monitor,
+	gc *toolController.Tool,
 ) *gin.Engine {
 
 	if setting.Conf.Mode == gin.ReleaseMode {
@@ -71,6 +74,7 @@ func NewGinEngine(
 		monitorRouter.InitSysOperLogRouter(group, mc.Oper)
 		monitorRouter.InitSysUserOnlineRouter(group, mc.UserOnline) //在线用户监控
 		monitorRouter.InitSysLogininforRouter(group, mc.Logfor)
+		toolRouter.InitGenTableRouter(group, gc.GenTable)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

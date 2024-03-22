@@ -1,4 +1,4 @@
-package genTableController
+package toolController
 
 import (
 	"baize/app/business/tool/toolModels"
@@ -13,8 +13,8 @@ type GenTable struct {
 	gt toolService.IGenTableService
 }
 
-func NewGenTable(ls *toolServiceImpl.GenTabletService) *GenTable {
-	return &GenTable{gt: ls}
+func NewGenTable(gt *toolServiceImpl.GenTabletService) *GenTable {
+	return &GenTable{gt: gt}
 }
 
 func (gc *GenTable) GenTableList(c *gin.Context) {

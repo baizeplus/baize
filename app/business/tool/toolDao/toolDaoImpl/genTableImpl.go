@@ -15,7 +15,7 @@ func GetGenTableDao() *GenTableDao {
 }
 
 func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total *int64) {
-	var selectSql = `select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name,private_class_name, tpl_category, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark  from gen_table`
+	var selectSql = `select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, struct_name, tpl_category, package_name, module_name, business_name, function_name, function_author, options, create_by, create_time, update_by, update_time, remark  from gen_table`
 	whereSql := ``
 	if table.TableName != "" {
 		whereSql += " AND lower(table_name) like lower(concat('%', :table_name, '%'))"
@@ -84,8 +84,8 @@ func (genTableDao *GenTableDao) SelectDbTableListByNames(ctx context.Context, db
 func (genTableDao *GenTableDao) SelectGenTableById(ctx context.Context, db sqly.SqlyContext, id int64) (genTable *toolModels.GenTableVo) {
 	genTable = new(toolModels.GenTableVo)
 	err := db.GetContext(ctx, genTable, `SELECT
-       table_id, table_name, table_comment, sub_table_name,sub_table_fk_name, class_name, private_class_name,
-      tpl_category, package_name,module_name, business_name,function_name, function_author,gen_type,gen_path, options, remark
+       table_id, table_name, table_comment, sub_table_name,sub_table_fk_name, struct_name, 
+      tpl_category, package_name,module_name, business_name,function_name, function_author, options, remark
 		FROM gen_table 
 		where table_id = ?`, id)
 	if err != nil {
@@ -95,7 +95,7 @@ func (genTableDao *GenTableDao) SelectGenTableById(ctx context.Context, db sqly.
 }
 func (genTableDao *GenTableDao) SelectGenTableByName(ctx context.Context, db sqly.SqlyContext, name string) (genTable *toolModels.GenTableVo) {
 	genTable = new(toolModels.GenTableVo)
-	err := db.GetContext(ctx, genTable, `SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.private_class_name,t.tpl_category, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.gen_type, t.gen_path, t.options, t.remark
+	err := db.GetContext(ctx, genTable, `SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.struct_name,t.tpl_category, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author,  t.options, t.remark
 		FROM gen_table t
 		where t.table_name = ? `, name)
 	if err != nil {
@@ -105,7 +105,7 @@ func (genTableDao *GenTableDao) SelectGenTableByName(ctx context.Context, db sql
 }
 func (genTableDao *GenTableDao) SelectGenTableAll(ctx context.Context, db sqly.SqlyContext) (list []*toolModels.GenTableVo) {
 	list = make([]*toolModels.GenTableVo, 0)
-	err := db.SelectContext(ctx, &list, `SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.private_class_name,t.tpl_category, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.gen_type, t.gen_path, t.options, t.remark
+	err := db.SelectContext(ctx, &list, `SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.struct_name,t.tpl_category, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.options, t.remark
 		FROM gen_table t`)
 	if err != nil {
 		panic(err)
@@ -115,8 +115,8 @@ func (genTableDao *GenTableDao) SelectGenTableAll(ctx context.Context, db sqly.S
 
 func (genTableDao *GenTableDao) BatchInsertGenTable(ctx context.Context, db sqly.SqlyContext, genTables []*toolModels.GenTableDML) {
 
-	_, err := db.NamedExecContext(ctx, `insert into gen_table(table_id,table_name,table_comment,class_name,private_class_name,tpl_category,package_name,module_name,business_name,function_name,function_author,gen_type,gen_path,create_by,create_time,update_by,update_time,remark)
-							values(:table_id,:table_name,:table_comment,:class_name,:private_class_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:gen_type,:gen_path,:create_by,now(),:update_by,now(),:remark)`,
+	_, err := db.NamedExecContext(ctx, `insert into gen_table(table_id,table_name,table_comment,struct_name,tpl_category,package_name,module_name,business_name,function_name,function_author,create_by,create_time,update_by,update_time,remark)
+							values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,now(),:update_by,now(),:remark)`,
 		genTables)
 	if err != nil {
 		panic(err)
@@ -125,8 +125,8 @@ func (genTableDao *GenTableDao) BatchInsertGenTable(ctx context.Context, db sqly
 }
 
 func (genTableDao *GenTableDao) InsertGenTable(ctx context.Context, db sqly.SqlyContext, genTable *toolModels.GenTableDML) {
-	insertSQL := `insert into gen_table(table_id,table_name,table_comment,class_name,private_class_name,tpl_category,package_name,module_name,business_name,function_name,function_author,gen_type,gen_path,create_by,create_time,update_by,update_time %s)
-					values(:table_id,:table_name,:table_comment,:class_name,:private_class_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:gen_type,:gen_path,:create_by,now(),:update_by,now() %s)`
+	insertSQL := `insert into gen_table(table_id,table_name,table_comment,struct_name,tpl_category,package_name,module_name,business_name,function_name,function_author,create_by,create_time,update_by,update_time %s)
+					values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,now(),:update_by,now() %s)`
 	key := ""
 	value := ""
 
@@ -157,20 +157,11 @@ func (genTableDao *GenTableDao) UpdateGenTable(ctx context.Context, db sqly.Sqly
 	if genTable.SubTableFkName != "" {
 		updateSQL += ",sub_table_fk_name = :sub_table_fk_name"
 	}
-	if genTable.ClassName != "" {
-		updateSQL += ",class_name = :class_name"
-	}
-	if genTable.PrivateClassName != "" {
-		updateSQL += ",private_class_name = :private_class_name"
+	if genTable.StructName != "" {
+		updateSQL += ",struct_name = :struct_name"
 	}
 	if genTable.FunctionAuthor != "" {
 		updateSQL += ",function_author = :function_author"
-	}
-	if genTable.GenType != "" {
-		updateSQL += ",gen_type = :gen_type"
-	}
-	if genTable.GenPath != "" {
-		updateSQL += ",gen_path = :gen_path"
 	}
 	if genTable.TplCategory != "" {
 		updateSQL += ",tpl_category = :tpl_category"

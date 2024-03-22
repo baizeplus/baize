@@ -2,7 +2,9 @@ package toolServiceImpl
 
 import (
 	"baize/app/business/tool/toolDao"
+	"baize/app/business/tool/toolDao/toolDaoImpl"
 	"baize/app/business/tool/toolModels"
+	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
 	"bytes"
 	"fmt"
@@ -19,8 +21,13 @@ type GenTabletService struct {
 	genTabletColumnDao toolDao.IGenTableColumn
 }
 
-func GetGenTabletService() *GenTabletService {
-	return &GenTabletService{}
+func NewGenTabletService(data *sqly.DB, gtc *toolDaoImpl.GenTableColumnDao, gt *toolDaoImpl.GenTableDao,
+) *GenTabletService {
+	return &GenTabletService{
+		data:               data,
+		genTabletDao:       gt,
+		genTabletColumnDao: gtc,
+	}
 }
 
 func (genTabletService *GenTabletService) SelectGenTableList(c *gin.Context, getTable *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total *int64) {
@@ -41,10 +48,10 @@ func (genTabletService *GenTabletService) ImportTableSave(c *gin.Context, table 
 	genTableColumnList := make([]*toolModels.GenTableColumnDML, 0, len(tableList)*2)
 	for _, genTable := range tableList {
 		tableId := snowflake.GenID()
-		genTableList = append(genTableList, toolModels.GetGenTableDML(genTable, tableId, userName))
+		genTableList = append(genTableList, toolModels.GetGenTableDML(genTable, tableId, baizeContext.GetUserId(c)))
 		list := genTabletService.genTabletColumnDao.SelectDbTableColumnsByName(c, genTabletService.data, genTable.TableName)
 		for _, column := range list {
-			genTableColumnList = append(genTableColumnList, toolModels.GetGenTableColumnDML(column, tableId, userName))
+			genTableColumnList = append(genTableColumnList, toolModels.GetGenTableColumnDML(column, tableId, baizeContext.GetUserId(c)))
 		}
 	}
 	genTabletService.genTabletDao.BatchInsertGenTable(c, genTabletService.data, genTableList)

@@ -29,7 +29,7 @@ type GenTableColumnDML struct {
 	HtmlType      string `json:"htmlType" db:"html_type"`
 	DictType      string `json:"dictType" db:"dict_type"`
 	Sort          int32  `json:"sort" db:"sort"`
-	baize.BaseEntityDQL
+	baize.BaseEntity
 }
 
 type GenTableColumnVo struct {
@@ -64,7 +64,7 @@ type InformationSchemaColumn struct {
 	Sort          int32  `db:"sort"`
 }
 
-func GetGenTableColumnDML(column *InformationSchemaColumn, tableId int64, userName string) *GenTableColumnDML {
+func GetGenTableColumnDML(column *InformationSchemaColumn, tableId int64, userId int64) *GenTableColumnDML {
 	genTableColumn := new(GenTableColumnDML)
 	dataType := column.ColumnType
 	columnName := column.ColumnName
@@ -75,8 +75,7 @@ func GetGenTableColumnDML(column *InformationSchemaColumn, tableId int64, userNa
 	genTableColumn.ColumnComment = column.ColumnComment
 	genTableColumn.ColumnType = column.ColumnType
 	genTableColumn.TableId = tableId
-	//genTableColumn.CreateBy = userName
-	//genTableColumn.UpdateBy = userName
+	genTableColumn.SetCreateBy(userId)
 	//设置字段名
 	genTableColumn.GoField = stringUtils.ConvertToBigCamelCase(columnName)
 	genTableColumn.HtmlField = stringUtils.ConvertToLittleCamelCase(columnName)
