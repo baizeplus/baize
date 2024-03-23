@@ -13,6 +13,6 @@ type IGenTableService interface {
 	ImportTableSave(c *gin.Context, table []string, userName string)
 	UpdateGenTable(c *gin.Context, genTable *toolModels.GenTableDML) (err error)
 	DeleteGenTableByIds(c *gin.Context, ids []int64) (err error)
-	PreviewCode(c *gin.Context, tableId int64) (genTable *toolModels.GenTableVo, err error)
+	PreviewCode(c *gin.Context, tableId int64) (m map[string]string)
 	SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo)
 }

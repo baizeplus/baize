@@ -71,13 +71,15 @@ func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, id
 	genTabletService.genTabletColumnDao.DeleteGenTableColumnByIds(c, genTabletService.data, ids)
 	return nil
 }
-func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId int64) (genTable *toolModels.GenTableVo, err error) {
-	genTable = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
+func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId int64) (m map[string]string) {
+	genTable := genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
 	genTable.Columns = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 	genTable.GenerateTime = time.Now()
-	s := genTabletService.loadTemplate("./template/vm/go/model/model.tmpl", genTable)
-	fmt.Println(s)
-	return genTable, nil
+	m = make(map[string]string)
+	m["model.tmpl"] = genTabletService.loadTemplate("./template/go/model/model.tmpl", genTable)
+	m["daoImpl.tmpl"] = genTabletService.loadTemplate("./template/go/dao/daoImpl/daoImpl.tmpl", genTable)
+	fmt.Println(m["daoImpl.tmpl"])
+	return m
 }
 func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo) {
 	return genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)

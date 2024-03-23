@@ -41,7 +41,7 @@ func GetGenTableDML(table *DBTableVo, tableId int64, userId int64) *GenTableDML 
 	gen.TableName = table.TableName
 	gen.TableComment = table.TableComment
 	gen.StructName = stringUtils.ConvertToBigCamelCase(genUtils.ConvertClassName(table.TableName))
-	gen.PackageName = "baize"
+	gen.PackageName = "baize/app/business/tool/"
 	gen.ModuleName = "module"
 	gen.BusinessName = genUtils.GetBusinessName(table.TableName)
 	gen.FunctionName = strings.ReplaceAll(table.TableComment, "表", "")

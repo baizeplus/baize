@@ -65,8 +65,8 @@ func (gc *GenTable) GenTableRemove(c *gin.Context) {
 	baizeContext.Success(c)
 }
 func (gc *GenTable) Preview(c *gin.Context) {
-	gc.gt.PreviewCode(c, baizeContext.ParamInt64(c, "tableId"))
-	baizeContext.Success(c)
+	s := gc.gt.PreviewCode(c, baizeContext.ParamInt64(c, "tableId"))
+	baizeContext.SuccessData(c, s)
 }
 func (gc *GenTable) Download(c *gin.Context) {
 	panic("等待开发")
