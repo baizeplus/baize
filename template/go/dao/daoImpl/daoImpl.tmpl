@@ -1,7 +1,7 @@
-package {{.table.PackageName}}Dao
+package {{.table.ModuleName}}DaoImpl
 
 import (
-    "{{.table.FunctionAuthor}}/{{.table.PackageName}}/{{.table.PackageName}}Models"
+    "{{.table.PackageName}}{{.table.ModuleName}}Models"
     "database/sql"
     "fmt"
     "github.com/jmoiron/sqlx"
@@ -15,25 +15,23 @@ import (
 
 
 type {{.table.StructName}}Dao struct {
-	{{.table.StructName}}Sql string
+	{{.table.BusinessName}}Sql string
 }
 
 func New{{.table.StructName}}Dao()*{{.table.StructName}}Dao {
 	return &{{.table.StructName}}Dao{
-		{{.table.StructName}}Sql: `select {{range $index, $column := .table.Columns}}{{if ne $index 0}},{{end}}{{$column.ColumnName}} {{end}} from {{.table.TableName }}`,
+		{{.table.BusinessName}}Sql: `select {{range $index, $column := .table.Columns}}{{if ne $index 0}},{{end}}{{$column.ColumnName}} {{end}} from {{.table.TableName }}`,
 	}
 }
 
 
 
-func ({{.table.BusinessName}} *{{.table.StructName}}Dao) Select{{.table.StructName}}ById({{range $index, $column := .table.Columns}}{{if eq $column.IsPk "1"}}{{$column.HtmlField}} {{$column.GoType}}{{end}}{{end}}) (vo *{{.table.PackageName}}Models.{{.table.StructName}}Vo) {
-
-	vo = new({{.table.PackageName}}Models.{{.table.ClassName}}Vo)
-	err := db.MysqlDb.Get({{.table.BusinessName}}, select{{.table.ClassName}}Sql+from{{.table.ClassName}}Sql+" where {{range $index, $column := .table.Columns}}{{if eq $column.IsPk "1"}}{{$column.ColumnName}} = ？", {{$column.HtmlField}}{{end}}{{end}})
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
+func ({{.table.BusinessName}}Dao *{{.table.StructName}}Dao) Select{{.table.StructName}}ById(ctx context.Context, db sqly.SqlyContext, id {{range $index, $column := .table.Columns}}{{if eq $column.IsPk "1"}}{{$column.HtmlField}} {{$column.GoType}}{{end}}{{end}}) ({{.table.BusinessName}} *{{.table.ModuleName}}Models.{{.table.StructName}}Vo) {
+	{{.table.BusinessName}} = new({{.table.ModuleName}}Models.{{.table.StructName}}Vo)
+	whereSql := ` where d.dept_id = ?`
+	err := db.GetContext(ctx,{{.table.BusinessName}} ,{{.table.BusinessName}}Dao.{{.table.BusinessName}}Sql+whereSql,id)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
-	return
+	return {{.table.BusinessName}}
 }

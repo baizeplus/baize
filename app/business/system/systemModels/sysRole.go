@@ -20,8 +20,8 @@ type SysRoleDQL struct {
 
 type SysRoleVo struct {
 	RoleId   int64  `json:"roleId,string" db:"role_id"`
-	RoleName string `json:"roleName" db:"role_name"`
-	RoleKey  string `json:"roleKey" db:"role_key"`
+	RoleName string `json:"roleName" db:"role_name" bze:"1,角色名称"`
+	RoleKey  string `json:"roleKey" db:"role_key" bze:"2,权限字符"`
 	RoleSort int    `json:"roleSort" db:"role_sort"`
 	Status   string `json:"status"  db:"status"`
 	DelFlag  string `json:"delFlag" db:"del_flag"`
