@@ -10,8 +10,9 @@ import (
 	"fmt"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
-	"html/template"
+	"go/format"
 	"os"
+	"text/template"
 	"time"
 )
 
@@ -72,20 +73,22 @@ func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, id
 	return nil
 }
 func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId int64) (m map[string]string) {
-	genTable := genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
-	genTable.Columns = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
-	genTable.GenerateTime = time.Now()
+	data := make(map[string]any)
+	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
+	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 	m = make(map[string]string)
-	m["model.tmpl"] = genTabletService.loadTemplate("./template/go/model/model.tmpl", genTable)
-	m["daoImpl.tmpl"] = genTabletService.loadTemplate("./template/go/dao/daoImpl/daoImpl.tmpl", genTable)
+	m["model.tmpl"] = genTabletService.loadTemplateGo("./template/go/model/model.tmpl", data)
+	m["daoImpl.tmpl"] = genTabletService.loadTemplateGo("./template/go/dao/daoImpl/daoImpl.tmpl", data)
 	fmt.Println(m["daoImpl.tmpl"])
 	return m
 }
+
 func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo) {
 	return genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 }
 
-func (genTabletService *GenTabletService) loadTemplate(templateName string, data interface{}) string {
+func (genTabletService *GenTabletService) loadTemplateGo(templateName string, data map[string]any) string {
+	genTabletService.setTemplateData(data)
 	b, err := os.ReadFile(templateName)
 	if err != nil {
 		panic(err)
@@ -96,9 +99,28 @@ func (genTabletService *GenTabletService) loadTemplate(templateName string, data
 		panic(err)
 	}
 	buffer := bytes.NewBufferString("")
-	err = tmpl.Execute(buffer, gin.H{"table": data}) //将string与模板合成，变量name的内容会替换掉{{.}}
+	err = tmpl.Execute(buffer, data) //将string与模板合成，变量name的内容会替换掉{{.}}
 	if err != nil {
 		print(err)
 	}
-	return buffer.String()
+	formattedCode, err := format.Source(buffer.Bytes())
+	return string(formattedCode)
+}
+func (genTabletService *GenTabletService) setTemplateData(data map[string]any) {
+	data["GenerateTime"] = time.Now()
+	column := data["Columns"].([]*toolModels.GenTableColumnVo)
+	for _, vo := range column {
+		if vo.IsPk == "1" {
+			data["IdField"] = vo.HtmlField
+			data["IdType"] = vo.GoType
+			data["IdColumnName"] = vo.ColumnName
+			break
+		}
+	}
+	for _, vo := range column {
+		if vo.IsRequired == "1" && vo.GoType == "Time" {
+			data["ContainsTimeType"] = true
+			break
+		}
+	}
 }

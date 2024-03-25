@@ -1,37 +1,107 @@
-package {{.table.ModuleName}}DaoImpl
+package {{.Table.ModuleName}}DaoImpl
 
 import (
-    "{{.table.PackageName}}{{.table.ModuleName}}Models"
+    "{{.Table.PackageName}}{{.Table.ModuleName}}Models"
     "database/sql"
     "fmt"
-    "github.com/jmoiron/sqlx"
+	"github.com/baizeplus/sqly"
 )
 
 // ==========================================================================
-// date：{{.table.GenerateTime.Format "2006-01-02 15:04:05" }}
-// author：{{.table.FunctionAuthor}}
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
 // version: v1.0
 // ==========================================================================
 
 
-type {{.table.StructName}}Dao struct {
-	{{.table.BusinessName}}Sql string
+type {{.Table.StructName}}Dao struct {
+	{{.Table.BusinessName}}Sql string
 }
 
-func New{{.table.StructName}}Dao()*{{.table.StructName}}Dao {
-	return &{{.table.StructName}}Dao{
-		{{.table.BusinessName}}Sql: `select {{range $index, $column := .table.Columns}}{{if ne $index 0}},{{end}}{{$column.ColumnName}} {{end}} from {{.table.TableName }}`,
+func New{{.Table.StructName}}Dao()*{{.Table.StructName}}Dao {
+	return &{{.Table.StructName}}Dao{
+		{{.Table.BusinessName}}Sql: `select {{range $index, $column := .Columns}}{{if ne $index 0}},{{end}}{{$column.ColumnName}} {{end}} from {{.Table.TableName }}`,
 	}
 }
 
-
-
-func ({{.table.BusinessName}}Dao *{{.table.StructName}}Dao) Select{{.table.StructName}}ById(ctx context.Context, db sqly.SqlyContext, id {{range $index, $column := .table.Columns}}{{if eq $column.IsPk "1"}}{{$column.HtmlField}} {{$column.GoType}}{{end}}{{end}}) ({{.table.BusinessName}} *{{.table.ModuleName}}Models.{{.table.StructName}}Vo) {
-	{{.table.BusinessName}} = new({{.table.ModuleName}}Models.{{.table.StructName}}Vo)
-	whereSql := ` where d.dept_id = ?`
-	err := db.GetContext(ctx,{{.table.BusinessName}} ,{{.table.BusinessName}}Dao.{{.table.BusinessName}}Sql+whereSql,id)
+func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao) Select{{.Table.StructName}}ById(ctx context.Context, db sqly.SqlyContext, {{.IdField}} {{.IdType}}  )({{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo) {
+	{{.Table.BusinessName}} = new({{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+	whereSql := ` where {{.IdColumnName}} = ?`
+	err := db.GetContext(ctx,{{.Table.BusinessName}} ,{{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql,{{.IdField}})
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
-	return {{.table.BusinessName}}
+	return {{.Table.BusinessName}}
+}
+
+
+func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Select{{.Table.StructName}}ListAndTotal(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64) {
+	whereSql := ``
+	{{range $index, $column := .Columns}}{{if eq $column.IsList "1"}}
+	if {{$.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
+		whereSql =" AND {{$column.ColumnName}} {{if eq $column.QueryType "EQ"}}={{else if eq $column.QueryType "NE"}}!={{else if eq $column.QueryType "GT"}}>{{else if eq $column.QueryType "GTE"}}>={{else if eq $column.QueryType "LT"}}<{{else if eq $column.QueryType "LTE"}}<={{else}}like{{end}} {{if ne $column.QueryType "LIKE"}}:{{$column.ColumnName}} {{else}}cosncat('%', :{{$column.ColumnName}}, '%') {{end}}"
+	}
+	{{end}}{{end}}
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, 0)
+	total = new(int64)
+	err := db.NamedSelectPageContext(ctx, &list, total, {{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql, {{.Table.BusinessName}} , {{.Table.BusinessName}}.ToPage())
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+
+func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Select{{.Table.StructName}}List(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo) {
+	whereSql := ``
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+	list = make([]*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, 0)
+	err := db.NamedSelectContext(ctx, &list, {{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql, {{.Table.BusinessName}})
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Insert{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo) {
+	insertSQL := `insert into {{.Table.TableName }}({{range $index, $column := .Columns}}{{if ne $index 0}},{{end}}{{$column.ColumnName}} {{end}} %s)
+	values({{range $index, $column := .Columns}}{{if ne $index 0}},{{end}}:{{$column.ColumnName}} {{end}} %s)`
+	key := ""
+	value := ""
+
+	insertStr := fmt.Sprintf(insertSQL, key, value)
+	_, err := db.NamedExecContext(ctx, insertStr, dept)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao) Update{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)  {
+	updateSQL := `update {{.Table.TableName }} set  update_time = :update_time , update_by = :update_by `
+
+	updateSQL += " where {{.IdColumnName}} = :{{.IdColumnName}}"
+	_, err := db.NamedExecContext(ctx, updateSQL, {{.Table.BusinessName}})
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Delete{{.Table.StructName}}ByIds(ctx context.Context, db sqly.SqlyContext, {{.IdField}}s []{{.IdType}} ) {
+	query, i, err := sqly.In("delete from {{.Table.TableName }} where  where {{.IdColumnName}} in(?)", {{.IdField}}s)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.ExecContext(ctx, query, i...)
+	if err != nil {
+		panic(err)
+	}
+	return
 }

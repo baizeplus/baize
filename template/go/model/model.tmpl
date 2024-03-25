@@ -1,24 +1,24 @@
-package {{.table.PackageName}}Model
+package {{.Table.PackageName}}Model
 
 import (
     "baize/app/baize"
-{{$containsTimeType:=false}}{{range $index, $column := .table.Columns}}{{if eq $column.IsEntity "0"}}{{if eq $column.GoType "Time"}}{{$containsTimeType = true}}{{end}}{{end}}{{end}}{{if $containsTimeType}}    "baize/app/common/baize/baizeUnix"{{end}}
+{{- if .ContainsTimeType}}    "baize/app/common/baize/baizeUnix"{{end}}
 )
 
 // ==========================================================================
-// date：{{.table.GenerateTime.Format "2006-01-02 15:04:05" }}
-// author：{{.table.FunctionAuthor}}
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
 // version: v1.0
 // ==========================================================================
 
-type {{.table.StructName}}Vo struct {
-{{range $index, $column := .table.Columns -}}{{if eq $column.IsRequired "1"}}   {{$column.GoField}}     {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}     `json:"{{$column.HtmlField}}{{if and (eq $column.GoType "int64") (eq $column.IsPk "1")}},string{{end}}" db:"{{$column.ColumnName}}"`      // {{$column.ColumnComment}}
+type {{.Table.StructName}}Vo struct {
+{{range $index, $column := .Columns -}}{{if eq $column.IsRequired "1"}}   {{$column.GoField}}     {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}     `json:"{{$column.HtmlField}}{{if and (eq $column.GoType "int64") (eq $column.IsPk "1")}},string{{end}}" db:"{{$column.ColumnName}}"`      // {{$column.ColumnComment}}
 {{end}}
 {{- end}}   baize.BaseEntity
 }
 
-type {{.table.StructName}}DQL struct {
-{{range $index, $column := .table.Columns -}}{{if eq $column.IsQuery "1"}}     {{$column.GoField}}    {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}    `form:"{{$column.HtmlField}}" db:"{{$column.ColumnName}}"`    // {{$column.ColumnComment}}
+type {{.Table.StructName}}DQL struct {
+{{range $index, $column := .Columns -}}{{if eq $column.IsQuery "1"}}     {{$column.GoField}}    {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}    `form:"{{$column.HtmlField}}" db:"{{$column.ColumnName}}"`    // {{$column.ColumnComment}}
 {{end}}{{- end}}    baize.BaseEntityDQL
 }
 

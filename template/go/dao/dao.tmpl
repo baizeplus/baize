@@ -1,0 +1,24 @@
+package {{.Table.ModuleName}}Dao
+
+import (
+    "{{.Table.PackageName}}{{.Table.ModuleName}}Models"
+    "context"
+    "github.com/baizeplus/sqly"
+)
+
+// ==========================================================================
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
+// version: v1.0
+// ==========================================================================
+
+
+
+type I{{.Table.StructName}}Dao interface {
+    Select{{.Table.StructName}}ById(ctx context.Context, db sqly.SqlyContext, {{.IdField}} {{.IdType}}  )({{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Select{{.Table.StructName}}ListAndTotal(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64)
+    Select{{.Table.StructName}}List(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Insert{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Update{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Delete{{.Table.StructName}}ByIds(ctx context.Context, db sqly.SqlyContext, {{.IdField}}s []{{.IdType}} )
+}

@@ -1,0 +1,23 @@
+package {{.Table.ModuleName}}Service
+
+import (
+    "{{.Table.PackageName}}{{.Table.ModuleName}}Models"
+    "github.com/gin-gonic/gin"
+)
+
+// ==========================================================================
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
+// version: v1.0
+// ==========================================================================
+
+
+
+type I{{.Table.StructName}}Service interface {
+    Select{{.Table.StructName}}ById(c *gin.Context, {{.IdField}} {{.IdType}}  )({{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Select{{.Table.StructName}}ListAndTotal(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64)
+    Export{{.Table.StructName}}Excel(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (data []byte)
+    Insert{{.Table.StructName}}(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Update{{.Table.StructName}}(c *gin.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Delete{{.Table.StructName}}ByIds(c *gin.Context,{{.IdField}}s []{{.IdType}} )
+}

@@ -88,7 +88,6 @@ func (sysDeptDao *SysDeptDao) InsertDept(ctx context.Context, db sqly.SqlyContex
 
 func (sysDeptDao *SysDeptDao) UpdateDept(ctx context.Context, db sqly.SqlyContext, dept *systemModels.SysDeptVo) {
 	updateSQL := `update sys_dept set order_num=:order_num , update_time = now() , update_by = :update_by `
-
 	if dept.ParentId != 0 {
 		updateSQL += ",parent_id = :parent_id"
 	}
@@ -114,7 +113,6 @@ func (sysDeptDao *SysDeptDao) UpdateDept(ctx context.Context, db sqly.SqlyContex
 	}
 
 	updateSQL += " where dept_id = :dept_id"
-
 	_, err := db.NamedExecContext(ctx, updateSQL, dept)
 	if err != nil {
 		panic(err)

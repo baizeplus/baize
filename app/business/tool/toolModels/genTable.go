@@ -5,7 +5,6 @@ import (
 	genUtils "baize/app/business/tool/utils"
 	"baize/app/utils/stringUtils"
 	"strings"
-	"time"
 )
 
 type GenTableDQL struct {
@@ -52,22 +51,20 @@ func GetGenTableDML(table *DBTableVo, tableId int64, userId int64) *GenTableDML 
 }
 
 type GenTableVo struct {
-	TableId        int64               `json:"tableId,string" db:"table_id"`
-	TableName      string              `json:"tableName" db:"table_name"`
-	TableComment   string              `json:"tableComment" db:"table_comment"`
-	SubTableName   *string             `json:"subTableName" db:"sub_table_name"`
-	SubTableFkName *string             `json:"subTableFkName" db:"sub_table_fk_name"`
-	StructName     string              `json:"structName" db:"struct_name"`
-	TplCategory    string              `json:"tplCategory" db:"tpl_category"`
-	PackageName    string              `json:"packageName" db:"package_name"`
-	ModuleName     string              `json:"moduleName" db:"module_name"`
-	BusinessName   string              `json:"businessName" db:"business_name"`
-	FunctionName   string              `json:"functionName" db:"function_name"`
-	FunctionAuthor string              `json:"functionAuthor" db:"function_author"`
-	Options        *string             `json:"options" db:"options"`
-	Remark         string              `json:"remark" db:"remark"`
-	Columns        []*GenTableColumnVo `json:"column"`
-	GenerateTime   time.Time
+	TableId        int64   `json:"tableId,string" db:"table_id"`
+	TableName      string  `json:"tableName" db:"table_name"`
+	TableComment   string  `json:"tableComment" db:"table_comment"`
+	SubTableName   *string `json:"subTableName" db:"sub_table_name"`
+	SubTableFkName *string `json:"subTableFkName" db:"sub_table_fk_name"`
+	StructName     string  `json:"structName" db:"struct_name"`
+	TplCategory    string  `json:"tplCategory" db:"tpl_category"`
+	PackageName    string  `json:"packageName" db:"package_name"`
+	ModuleName     string  `json:"moduleName" db:"module_name"`
+	BusinessName   string  `json:"businessName" db:"business_name"`
+	FunctionName   string  `json:"functionName" db:"function_name"`
+	FunctionAuthor string  `json:"functionAuthor" db:"function_author"`
+	Options        *string `json:"options" db:"options"`
+	Remark         string  `json:"remark" db:"remark"`
 	baize.BaseEntity
 }
 
