@@ -9,51 +9,50 @@ import (
 )
 
 type {{.Table.StructName}} struct {
-    {{.Table.BusinessName}}Controller {{.Table.ModuleName}}Controller.I{{.Table.StructName}}Controller
+    {{.Table.BusinessName}}Server {{.Table.ModuleName}}Server.I{{.Table.StructName}}Server
 }
 
-func NewPost(ps *systemServiceImpl.PostService) *Post {
-return &Post{ps: ps}
+func New{{.Table.StructName}}(ps *{{.Table.ModuleName}}ServerImpl.I{{.Table.StructName}}Server) *{{.Table.StructName}} {
+return &{{.Table.StructName}}{ {{.Table.BusinessName}}Server:{{.Table.BusinessName}}Server }
 }
 
-// PostList 查询岗位列表查询
-// @Summary 查询岗位列表查询
-// @Description 查询岗位列表查询
-// @Tags 岗位相关
-// @Param  object query systemModels.SysPostDQL true "查询信息"
+// {{.Table.StructName}}List 查询{{.Table.FunctionName}}列表查询
+// @Summary 查询{{.Table.FunctionName}}列表查询
+// @Description 查询{{.Table.FunctionName}}列表查询
+// @Tags {{.Table.FunctionName}}相关
+// @Param  object query {{.Table.ModuleName}}Models.{{.Table.StructName}}DQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysPostVo}}  "成功"
-// @Router /system/post/list  [get]
-func (pc *Post) PostList(c *gin.Context) {
-post := new(systemModels.SysPostDQL)
-_ = c.ShouldBind(post)
-list, count := pc.ps.SelectPostList(c, post)
-baizeContext.SuccessListData(c, list, count)
-
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo}}  "成功"
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/list  [get]
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}List(c *gin.Context) {
+    dql := new({{.Table.ModuleName}}Models.{{.Table.StructName}}DQL )
+    _ = c.ShouldBind(dql)
+    list, count := {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Select{{.Table.StructName}}List(c, dql)
+    baizeContext.SuccessListData(c, list, count)
 }
 
-// PostExport 导出岗位
-// @Summary 导出岗位
-// @Description 导出岗位
-// @Tags 岗位相关
-// @Param  object query systemModels.SysPostDQL true "查询信息"
+// PostExport 导出{{.Table.FunctionName}}
+// @Summary 导出{{.Table.FunctionName}}
+// @Description 导出{{.Table.FunctionName}}
+// @Tags {{.Table.FunctionName}}相关
+// @Param  object query {{.Table.ModuleName}}Models.{{.Table.StructName}}DQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/octet-stream
 // @Success 200 {object} []byte
-// @Router /system/post/export [post]
-func (pc *Post) PostExport(c *gin.Context) {
-post := new(systemModels.SysPostDQL)
-_ = c.ShouldBind(post)
-data := pc.ps.PostExport(c, post)
-baizeContext.DataPackageExcel(c, data)
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/export [post]
+func (pc *Post) {{.Table.StructName}}Export(c *gin.Context) {
+    dql := new({{.Table.ModuleName}}Models.{{.Table.StructName}}DQL )
+    _ = c.ShouldBind(dql)
+    data := {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.{{.Table.StructName}}Export(c, dql)
+    baizeContext.DataPackageExcel(c, data)
 }
 
-// PostGetInfo 根据岗位ID获取岗位信息
-// @Summary 根据岗位ID获取岗位信息
-// @Description 根据岗位ID获取岗位信息
-// @Tags 岗位相关
-// @Param id path string true "PostId"
+// PostGetInfo 根据ID获取{{.Table.FunctionName}}信息
+// @Summary 根据ID获取{{.Table.FunctionName}}信息
+// @Description 根据ID获取{{.Table.FunctionName}}信息
+// @Tags {{.Table.FunctionName}}相关
+// @Param {{.IdField}} path string true "{{.IdField}}"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysPostVo}  "成功"
