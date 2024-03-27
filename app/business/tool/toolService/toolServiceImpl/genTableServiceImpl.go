@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go/format"
 	"os"
+	"path/filepath"
 	"text/template"
 	"time"
 )
@@ -77,10 +78,29 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
 	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 	m = make(map[string]string)
-	m["model.tmpl"] = genTabletService.loadTemplateGo("./template/go/model/model.tmpl", data)
-	m["daoImpl.tmpl"] = genTabletService.loadTemplateGo("./template/go/dao/daoImpl/daoImpl.tmpl", data)
-	fmt.Println(m["daoImpl.tmpl"])
+	root := "./template/go/"
+	var files []string
+	err := filepath.Walk(root, visit(&files))
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		m[filepath.Base(file)] = genTabletService.loadTemplateGo("./"+file, data)
+	}
+
 	return m
+}
+func visit(files *[]string) filepath.WalkFunc {
+	return func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		if !info.IsDir() {
+			*files = append(*files, path)
+		}
+		return nil
+	}
 }
 
 func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo) {

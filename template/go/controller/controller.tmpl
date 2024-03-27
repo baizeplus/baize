@@ -56,7 +56,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Expor
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data={{.Table.ModuleName}}.{{.Table.BusinessName}}Vo}  "成功"
-// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/"{"{{.IdField}}}  [get]
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/{{ "{" }}{{.IdField}}}  [get]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}GetInfo(c *gin.Context) {
     {{.IdField}} := baizeContext.ParamInt64(c, "{{.IdField}}")
     if {{.IdField}} == 0 {
@@ -114,7 +114,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Edit(
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/"{"{{.IdField}}s}  [delete]
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/{{ "{" }}{{.IdField}}s}  [delete]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Remove(c *gin.Context) {
     {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Delete{{.Table.StructName}}ByIds(c, baizeContext.ParamInt64Array(c, "{{.IdField}}s"))
     baizeContext.Success(c)
