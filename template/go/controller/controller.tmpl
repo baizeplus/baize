@@ -32,7 +32,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}List(
     baizeContext.SuccessListData(c, list, count)
 }
 
-// PostExport 导出{{.Table.FunctionName}}
+// {{.Table.StructName}}Export 导出{{.Table.FunctionName}}
 // @Summary 导出{{.Table.FunctionName}}
 // @Description 导出{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
@@ -41,81 +41,81 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}List(
 // @Produce application/octet-stream
 // @Success 200 {object} []byte
 // @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/export [post]
-func (pc *Post) {{.Table.StructName}}Export(c *gin.Context) {
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Export(c *gin.Context) {
     dql := new({{.Table.ModuleName}}Models.{{.Table.StructName}}DQL )
     _ = c.ShouldBind(dql)
     data := {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.{{.Table.StructName}}Export(c, dql)
     baizeContext.DataPackageExcel(c, data)
 }
 
-// PostGetInfo 根据ID获取{{.Table.FunctionName}}信息
+// {{.Table.StructName}}GetInfo 根据ID获取{{.Table.FunctionName}}信息
 // @Summary 根据ID获取{{.Table.FunctionName}}信息
 // @Description 根据ID获取{{.Table.FunctionName}}信息
 // @Tags {{.Table.FunctionName}}相关
 // @Param {{.IdField}} path string true "{{.IdField}}"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=systemModels.SysPostVo}  "成功"
-// @Router /system/post/{postId}  [get]
-func (pc *Post) PostGetInfo(c *gin.Context) {
-postId := baizeContext.ParamInt64(c, "postId")
-if postId == 0 {
-baizeContext.ParameterError(c)
-return
-}
-baizeContext.SuccessData(c, pc.ps.SelectPostById(c, postId))
+// @Success 200 {object}  response.ResponseData{data={{.Table.ModuleName}}.{{.Table.BusinessName}}Vo}  "成功"
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/"{"{{.IdField}}}  [get]
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}GetInfo(c *gin.Context) {
+    {{.IdField}} := baizeContext.ParamInt64(c, "{{.IdField}}")
+    if {{.IdField}} == 0 {
+        baizeContext.ParameterError(c)
+        return
+    }
+    baizeContext.SuccessData(c, {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Select{{.Table.StructName}}ById(c, {{.IdField}}))
 }
 
-// PostAdd 添加岗位
-// @Summary 添加岗位
-// @Description 添加岗位
-// @Tags 岗位相关
-// @Param  object body systemModels.SysPostVo true "公司信息"
+// {{.Table.StructName}}Add 添加{{.Table.FunctionName}}
+// @Summary 添加{{.Table.FunctionName}}
+// @Description 添加{{.Table.FunctionName}}
+// @Tags {{.Table.FunctionName}}相关
+// @Param  object body {{.Table.ModuleName}}.{{.Table.BusinessName}}Vo true "公司信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /system/post  [post]
-func (pc *Post) PostAdd(c *gin.Context) {
-sysPost := new(systemModels.SysPostVo)
-if err := c.ShouldBindJSON(sysPost); err != nil {
-baizeContext.ParameterError(c)
-return
-}
-sysPost.SetCreateBy(baizeContext.GetUserId(c))
-pc.ps.InsertPost(c, sysPost)
-baizeContext.Success(c)
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}  [post]
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Add(c *gin.Context) {
+    vo := new({{.Table.ModuleName}}.{{.Table.BusinessName}}Vo)
+    if err := c.ShouldBindJSON(vo); err != nil {
+        baizeContext.ParameterError(c)
+        return
+    }
+    vo.SetCreateBy(baizeContext.GetUserId(c))
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Insert{{.Table.StructName}}(c, vo)
+    baizeContext.Success(c)
 }
 
-// PostEdit 修改岗位
-// @Summary 修改岗位
-// @Description 修改岗位
-// @Tags 岗位相关
-// @Param  object body systemModels.SysPostVo true "公司信息"
+// {{.Table.StructName}}Edit 修改{{.Table.FunctionName}}
+// @Summary 修改{{.Table.FunctionName}}
+// @Description 修改{{.Table.FunctionName}}
+// @Tags {{.Table.FunctionName}}相关
+// @Param  object body {{.Table.ModuleName}}.{{.Table.BusinessName}}Vo true "公司信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /system/post  [put]
-func (pc *Post) PostEdit(c *gin.Context) {
-post := new(systemModels.SysPostVo)
-if err := c.ShouldBindJSON(post); err != nil {
-baizeContext.ParameterError(c)
-return
-}
-post.SetUpdateBy(baizeContext.GetUserId(c))
-pc.ps.UpdatePost(c, post)
-baizeContext.Success(c)
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}  [put]
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Edit(c *gin.Context) {
+    vo := new({{.Table.ModuleName}}.{{.Table.BusinessName}}Vo)
+    if err := c.ShouldBindJSON(vo); err != nil {
+        baizeContext.ParameterError(c)
+    return
+    }
+    vo.SetUpdateBy(baizeContext.GetUserId(c))
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Update{{.Table.StructName}}(c, vo)
+    baizeContext.Success(c)
 }
 
-// PostRemove 删除岗位
-// @Summary 删除岗位
-// @Description 删除岗位
-// @Tags 岗位相关
-// @Param ids path []string true "postId"
+// {{.Table.StructName}}Remove 删除{{.Table.FunctionName}}
+// @Summary 删除{{.Table.FunctionName}}
+// @Description 删除{{.Table.FunctionName}}
+// @Tags {{.Table.FunctionName}}相关
+// @Param {{.IdField}} path []string true "{{.IdField}}"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /system/post/{postIds}  [delete]
-func (pc *Post) PostRemove(c *gin.Context) {
-pc.ps.DeletePostByIds(c, baizeContext.ParamInt64Array(c, "postIds"))
-baizeContext.Success(c)
+// @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/"{"{{.IdField}}s}  [delete]
+func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Remove(c *gin.Context) {
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Delete{{.Table.StructName}}ByIds(c, baizeContext.ParamInt64Array(c, "{{.IdField}}s"))
+    baizeContext.Success(c)
 }
