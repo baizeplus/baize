@@ -24,7 +24,7 @@ stages:
           - mkdir output
           - go mod tidy
           - cd app && GOOS=linux GOARCH=amd64 go build -o output/baize
-          - cp template output/template
+          - cp ./template output/template
         artifacts:
           - name: BUILD_ARTIFACT
             path:
