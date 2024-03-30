@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/baizeplus/sqly"
 )
 
@@ -76,17 +75,9 @@ func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext
 }
 
 func (s *SysConfigDao) InsertConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo) {
-	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,create_by,create_time,update_by,update_time %s)
-					values (:config_id,:config_name,:config_key,:config_value,:config_type,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
-	if config.Remark != "" {
-		key += ",remark"
-		value += ",:remark"
-	}
-
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, config)
+	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,remark,create_by,create_time,update_by,update_time %s)
+					values (:config_id,:config_name,:config_key,:config_value,:config_type,:remark,:create_by,now(),:update_by,now() %s)`
+	_, err := db.NamedExecContext(ctx, insertSQL, config)
 	if err != nil {
 		panic(err)
 	}
