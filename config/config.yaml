@@ -12,17 +12,17 @@ log:
 #  max_backups: 7
 datasource:
   mysql:
-    host: 192.168.28.158
+    host: 116.63.188.235
     user: root
-    password: 123456
+    password: 1q2w3e4r5tA
     dbname: baize
-    port: 3306
+    port: 33060
     max_open_conns: 200
     max_idle_conns: 50
 cache:
   type: redis
   redis:
-    host: 192.168.28.158
+    host: 116.63.188.235
     port: 6379
     password:
     db: 0

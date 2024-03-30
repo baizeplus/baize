@@ -1,4 +1,21 @@
 definitions:
+  monitorModels.SysUserOnline:
+    properties:
+      browser:
+        type: string
+      deptName:
+        type: string
+      ipaddr:
+        type: string
+      loginTime:
+        type: integer
+      os:
+        type: string
+      tokenId:
+        type: string
+      userName:
+        type: string
+    type: object
   response.ListData:
     properties:
       rows: {}
@@ -848,6 +865,61 @@ paths:
       summary: 退出
       tags:
       - 登录
+  /monitor/online/{tokenId}:
+    delete:
+      description: 强退在线用户列表
+      parameters:
+      - description: tokenId
+        in: path
+        name: tokenId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 强退在线用户列表
+      tags:
+      - 在线用户
+  /monitor/online/list:
+    get:
+      description: 查询在线用户列表查询
+      parameters:
+      - in: query
+        name: ipaddr
+        type: string
+      - in: query
+        name: userName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/monitorModels.SysUserOnline'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询在线用户列表查询
+      tags:
+      - 在线用户
   /register:
     post:
       description: 用户登录
@@ -1705,9 +1777,6 @@ paths:
       - in: query
         name: status
         type: string
-      - in: query
-        name: userId
-        type: integer
       - in: query
         name: visible
         type: string

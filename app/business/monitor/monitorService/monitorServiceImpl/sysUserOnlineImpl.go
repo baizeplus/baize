@@ -17,7 +17,7 @@ func NewUserOnlineService() *UserOnlineService {
 	return new(UserOnlineService)
 }
 
-func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context) (list []*monitorModels.SysUserOnline, total *int64) {
+func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context, ol *monitorModels.SysUserOnlineDQL) (list []*monitorModels.SysUserOnline, total *int64) {
 
 	var cursor uint64 = 0
 	keyAll := make([]string, 0, 16)
@@ -49,6 +49,12 @@ func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context)
 		oui.Ipaddr = newSession.Get(c, sessionStatus.IpAddr)
 		oui.Os = newSession.Get(c, sessionStatus.Os)
 		oui.LoginTime, _ = strconv.ParseInt(newSession.Get(c, sessionStatus.LoginTime), 10, 64)
+		if ol.UserName != "" && !strings.Contains(oui.UserName, ol.UserName) {
+			continue
+		}
+		if ol.Ipaddr != "" && !strings.Contains(oui.Ipaddr, ol.Ipaddr) {
+			continue
+		}
 		list = append(list, oui)
 	}
 

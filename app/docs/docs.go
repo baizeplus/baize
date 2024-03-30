@@ -367,6 +367,104 @@ const docTemplate = `{
                 }
             }
         },
+        "/monitor/online/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询在线用户列表查询",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "在线用户"
+                ],
+                "summary": "查询在线用户列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "ipaddr",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "userName",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ListData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitorModels.SysUserOnline"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/online/{tokenId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "强退在线用户列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "在线用户"
+                ],
+                "summary": "强退在线用户列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tokenId",
+                        "name": "tokenId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "用户登录",
@@ -1770,11 +1868,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "userId",
                         "in": "query"
                     },
                     {
@@ -3764,6 +3857,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "monitorModels.SysUserOnline": {
+            "type": "object",
+            "properties": {
+                "browser": {
+                    "type": "string"
+                },
+                "deptName": {
+                    "type": "string"
+                },
+                "ipaddr": {
+                    "type": "string"
+                },
+                "loginTime": {
+                    "type": "integer"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "tokenId": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ListData": {
             "type": "object",
             "properties": {

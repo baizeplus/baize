@@ -96,8 +96,8 @@ func (postDao *SysPostDao) SelectPostById(ctx context.Context, db sqly.SqlyConte
 }
 
 func (postDao *SysPostDao) InsertPost(ctx context.Context, db sqly.SqlyContext, post *systemModels.SysPostVo) {
-	insertSQL := `insert into sys_post(post_id,post_code,post_name,post_sort,status,remark,create_by,create_time,update_by,update_time %s)
-					values(:post_id,:post_code,:post_name,:post_sort,:status,:remark,:create_by,now(),:update_by,now() %s)`
+	insertSQL := `insert into sys_post(post_id,post_code,post_name,post_sort,status,remark,create_by,create_time,update_by,update_time )
+					values(:post_id,:post_code,:post_name,:post_sort,:status,:remark,:create_by,now(),:update_by,now() )`
 	_, err := db.NamedExecContext(ctx, insertSQL, post)
 	if err != nil {
 		panic(err)

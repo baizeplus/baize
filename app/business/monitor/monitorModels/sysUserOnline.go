@@ -9,3 +9,7 @@ type SysUserOnline struct {
 	LoginTime int64  `json:"loginTime"`
 	DeptName  string `json:"deptName"`
 }
+type SysUserOnlineDQL struct {
+	UserName string `form:"userName" db:"user_name"`
+	Ipaddr   string `form:"ipaddr" db:"ipaddr"`
+}

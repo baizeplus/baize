@@ -18,7 +18,7 @@ func NewLogininfor(ls *monitorServiceImpl.LogininforService) *Logininfor {
 
 func (lc *Logininfor) LogininforList(c *gin.Context) {
 	loginfor := new(monitorModels.LogininforDQL)
-	c.ShouldBind(loginfor)
+	_ = c.ShouldBind(loginfor)
 	list, count := lc.ls.SelectLogininforList(c, loginfor)
 	baizeContext.SuccessListData(c, list, count)
 
@@ -32,7 +32,6 @@ func (lc *Logininfor) LogininforExport(c *gin.Context) {
 }
 
 func (lc *Logininfor) LogininforRemove(c *gin.Context) {
-
 	lc.ls.DeleteLogininforByIds(c, baizeContext.ParamInt64Array(c, "infoIds"))
 	baizeContext.Success(c)
 }

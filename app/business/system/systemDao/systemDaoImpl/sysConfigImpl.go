@@ -75,8 +75,8 @@ func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext
 }
 
 func (s *SysConfigDao) InsertConfig(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigVo) {
-	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,remark,create_by,create_time,update_by,update_time %s)
-					values (:config_id,:config_name,:config_key,:config_value,:config_type,:remark,:create_by,now(),:update_by,now() %s)`
+	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,remark,create_by,create_time,update_by,update_time)
+					values (:config_id,:config_name,:config_key,:config_value,:config_type,:remark,:create_by,now(),:update_by,now())`
 	_, err := db.NamedExecContext(ctx, insertSQL, config)
 	if err != nil {
 		panic(err)
