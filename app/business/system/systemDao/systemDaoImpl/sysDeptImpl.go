@@ -25,7 +25,7 @@ func (sysDeptDao *SysDeptDao) SelectDeptList(ctx context.Context, db sqly.SqlyCo
 		whereSql += " AND parent_id = :parent_id"
 	}
 	if dept.DeptName != "" {
-		whereSql += " AND dept_name like cosncat('%', :dept_name, '%')"
+		whereSql += " AND dept_name like concat('%', :dept_name, '%')"
 	}
 	if dept.Status != "" {
 		whereSql += " AND status = :status"
@@ -121,7 +121,7 @@ func (sysDeptDao *SysDeptDao) UpdateDept(ctx context.Context, db sqly.SqlyContex
 }
 
 func (sysDeptDao *SysDeptDao) DeleteDeptById(ctx context.Context, db sqly.SqlyContext, deptId int64) {
-	_, err := db.ExecContext(ctx, "update sys_dept set del_flag = '2' where dept_id =?", deptId)
+	_, err := db.ExecContext(ctx, "update sys_dept set del_flag = '2',dept_name = concat(dept_name,'(删除)')  where dept_id =?", deptId)
 	if err != nil {
 		panic(err)
 	}

@@ -161,7 +161,7 @@ func (rd *SysRoleDao) UpdateRole(ctx context.Context, db sqly.SqlyContext, sysRo
 }
 
 func (rd *SysRoleDao) DeleteRoleByIds(ctx context.Context, db sqly.SqlyContext, ids []int64) {
-	query, i, err := sqly.In("update sys_role set del_flag = '2',role_name = concat(role_name,'(delete)')  where role_id in(?)", ids)
+	query, i, err := sqly.In("update sys_role set del_flag = '2',role_name = concat(role_name,'(删除)')  where role_id in(?)", ids)
 	if err != nil {
 		panic(err)
 	}

@@ -3,7 +3,6 @@ package systemDaoImpl
 import (
 	"baize/app/business/system/systemModels"
 	"context"
-	"fmt"
 	"github.com/baizeplus/sqly"
 )
 
@@ -97,27 +96,9 @@ func (postDao *SysPostDao) SelectPostById(ctx context.Context, db sqly.SqlyConte
 }
 
 func (postDao *SysPostDao) InsertPost(ctx context.Context, db sqly.SqlyContext, post *systemModels.SysPostVo) {
-	insertSQL := `insert into sys_post(post_id,post_code,post_name,create_by,create_time,update_by,update_time %s)
-					values(:post_id,:post_code,:post_name,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
-
-	if post.PostSort != 0 {
-		key += ",post_sort"
-		value += ",:post_sort"
-	}
-
-	if post.Status != "" {
-		key += ",status"
-		value += ",:status"
-	}
-	if post.Remark != "" {
-		key += ",remark"
-		value += ",:remark"
-	}
-
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, post)
+	insertSQL := `insert into sys_post(post_id,post_code,post_name,post_sort,status,remark,create_by,create_time,update_by,update_time %s)
+					values(:post_id,:post_code,:post_name,:post_sort,:status,:remark,:create_by,now(),:update_by,now() %s)`
+	_, err := db.NamedExecContext(ctx, insertSQL, post)
 	if err != nil {
 		panic(err)
 	}
