@@ -7,7 +7,7 @@ import (
 type LogininforDQL struct {
 	Status   string `form:"status" db:"status"`
 	UserName string `form:"userName" db:"user_name"`
-	IpAddr   string `form:"ipAddr" db:"ipaddr"`
+	IpAddr   string `form:"ipaddr" db:"ipaddr"`
 	baize.BaseEntityDQL
 }
 

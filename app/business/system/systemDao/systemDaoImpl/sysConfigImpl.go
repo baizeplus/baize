@@ -28,7 +28,7 @@ func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext
 		whereSql += " AND  config_type = :config_type"
 	}
 	if config.ConfigKey != "" {
-		whereSql += " AND post_name like concat('%', :config_key, '%')"
+		whereSql += " AND config_key like concat('%', :config_key, '%')"
 	}
 
 	if whereSql != "" {

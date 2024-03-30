@@ -26,13 +26,13 @@ func (ld *LogininforDao) InserLogininfor(ctx context.Context, db sqly.SqlyContex
 func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyContext, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total *int64) {
 	whereSql := ``
 	if logininfor.IpAddr != "" {
-		whereSql += " AND ipaddr like concat('%', :ipaddr, '%')"
+		whereSql += " AND ipaddr like concat(:ipaddr, '%')"
 	}
 	if logininfor.Status != "" {
 		whereSql += " AND  status = :status"
 	}
 	if logininfor.UserName != "" {
-		whereSql += " AND user_name like concat('%', :userName, '%')"
+		whereSql += " AND user_name like concat('%', :user_name, '%')"
 	}
 
 	if whereSql != "" {
