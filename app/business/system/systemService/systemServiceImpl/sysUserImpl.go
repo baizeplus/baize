@@ -15,6 +15,7 @@ import (
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/xuri/excelize/v2"
 	"mime/multipart"
 	"path/filepath"
 	"strconv"
@@ -64,14 +65,17 @@ func (userService *UserService) UserExport(c *gin.Context, user *systemModels.Sy
 	return buffer.Bytes()
 }
 
-//func (userService *UserService) ImportTemplate() (data []byte) {
-//f := excelize.NewFile()
-//template := systemModels.SysUserImportTemplate()
-//f.SetSheetRow("Sheet1", "A1", &template)
-//buffer, _ := f.WriteToBuffer()
-//return buffer.Bytes()
-//
-//}
+func (userService *UserService) ImportTemplate() (data []byte) {
+	f := excelize.NewFile()
+	f.SetSheetRow("Sheet1", "A1", &[]string{"登录名称", "用户名", "部门", "邮箱", "手机号", "性别", "状态"})
+
+	buffer, err := f.WriteToBuffer()
+	if err != nil {
+		panic(err)
+	}
+	return buffer.Bytes()
+
+}
 
 func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit) {
 	uaa := new(systemModels.UserAndAccredit)
@@ -222,8 +226,22 @@ func (userService *UserService) DeleteUserByIds(c *gin.Context, ids []int64) {
 
 }
 
-func (userService *UserService) UserImportData(c *gin.Context, rows [][]string, userId int64, deptId int64) (msg string, failureNum int) {
+func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multipart.FileHeader) (msg string, failureNum int) {
+	file, err := fileHeader.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	excelFile, err := excelize.OpenReader(file)
+	if err != nil {
+		panic(err)
+	}
+	rows, err := excelFile.GetRows("Sheet1")
+	if err != nil {
+		panic(err)
+	}
 	successNum := 0
+
 	list, failureMsg, failureNum := systemModels.RowsToSysUserDMLList(rows)
 	password := bCryptPasswordEncoder.HashPassword("123456")
 	tx, err := userService.data.Beginx()
@@ -241,7 +259,6 @@ func (userService *UserService) UserImportData(c *gin.Context, rows [][]string, 
 	for _, user := range list {
 		unique := userService.userDao.CheckUserNameUnique(c, tx, user.UserName)
 		if unique < 1 {
-			user.DeptId = deptId
 			user.Password = password
 			//user.SetCreateBy(userId)
 			userService.userDao.InsertUser(c, tx, user)

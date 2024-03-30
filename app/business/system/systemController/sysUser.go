@@ -279,27 +279,17 @@ func (uc *User) UserRemove(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/importData [post]
 func (uc *User) UserImportData(c *gin.Context) {
-	// bzc := baizeContext.NewBaiZeContext(c)
-	//
-	// fileHeader, err := c.FormFile("file")
-	//
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//
-	// file, _ := fileHeader.Open()
-	// defer file.Close()
-	// excelFile, _ := excelize.OpenReader(file)
-	// rows := excelFile.GetRows("Sheet1")
-	// loginUser := bzc.GetUser()
-	// data, num := uc.us.UserImportData(rows, loginUser.UserId, loginUser.DeptId)
-	//
-	//	if num > 0 {
-	//		bzc.Waring(data)
-	//		return
-	//	}
-	//
-	// bzc.SuccessMsg(data)
+	fileHeader, err := c.FormFile("file")
+	if err != nil {
+		baizeContext.ParameterError(c)
+	}
+	data, num := uc.us.UserImportData(c, fileHeader)
+
+	if num > 0 {
+		baizeContext.Waring(c, data)
+		return
+	}
+	baizeContext.SuccessMsg(c, data)
 }
 
 // UserExport 导出用户
@@ -328,10 +318,9 @@ func (uc *User) UserExport(c *gin.Context) {
 // @Success 200 {object} []byte
 // @Router /system/user/input [post]
 func (uc *User) ImportTemplate(c *gin.Context) {
-	// bzc := baizeContext.NewBaiZeContext(c)
-	// data := uc.us.ImportTemplate()
-	// bzc.DataPackageExcel(data)
-	// return
+	data := uc.us.ImportTemplate()
+	baizeContext.DataPackageExcel(c, data)
+	return
 }
 
 // InsertAuthRole 授权角色
