@@ -76,6 +76,15 @@ func (userDao *SysUserDao) InsertUser(ctx context.Context, db sqly.SqlyContext, 
 		panic(err)
 	}
 }
+func (userDao *SysUserDao) BatchInsertUser(ctx context.Context, db sqly.SqlyContext, sysUser []*systemModels.SysUserDML) {
+	insertSQL := `insert into sys_user(user_id,user_name,nick_name,email,phonenumber,sex,password,data_scope,status,dept_id,create_by,create_time,update_by,update_time)
+					values(:user_id,:user_name,:nick_name,:email,:phonenumber,:sex,:password,:data_scope,:status,:dept_id,:create_by,now(),:update_by,now())`
+	_, err := db.NamedExecContext(ctx, insertSQL, sysUser)
+
+	if err != nil {
+		panic(err)
+	}
+}
 
 func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, sysUser *systemModels.SysUserDML) {
 	updateSQL := `update sys_user set update_time = now() , update_by = :update_by`

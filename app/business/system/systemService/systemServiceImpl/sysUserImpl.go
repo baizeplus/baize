@@ -5,6 +5,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/IOFile"
@@ -32,9 +33,10 @@ type UserService struct {
 	postDao     systemDao.IPostDao
 	deptDao     systemDao.IDeptDao
 	uds         systemDao.IUserDeptScopeDao
+	cs          systemService.IConfigService
 }
 
-func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, dd *systemDaoImpl.SysDeptDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao, uds *systemDaoImpl.SysUserDeptScopeDao) *UserService {
+func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, dd *systemDaoImpl.SysDeptDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao, uds *systemDaoImpl.SysUserDeptScopeDao, cs *ConfigService) *UserService {
 	return &UserService{
 		data:        data,
 		userDao:     ud,
@@ -44,6 +46,7 @@ func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoI
 		postDao:     pd,
 		uds:         uds,
 		deptDao:     dd,
+		cs:          cs,
 	}
 }
 
@@ -278,7 +281,6 @@ func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multi
 	if err != nil {
 		panic(err)
 	}
-	successNum := 0
 
 	deptSet := make(map[string]int64)
 	userNameSet := baize.NewSet([]string{})
@@ -293,40 +295,24 @@ func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multi
 	}
 	dept := new(systemModels.SysDeptDQL)
 	dept.DataScope = baizeContext.GetDataScope(c, "d")
-	list := userService.deptDao.SelectDeptList(c, userService.data, dept)
-	ids := systemModels.GetParentNameAndIds(list)
-	list := systemModels.SysUserDML
-	list, msg, failureNum = systemModels.RowsToSysUserDMLList(rows, msg, failureNum, ids)
-	password := bCryptPasswordEncoder.HashPassword("123456")
-	tx, err := userService.data.Beginx()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p)
-		} else {
-			err = tx.Commit()
-		}
-	}()
+	dl := userService.deptDao.SelectDeptList(c, userService.data, dept)
+	ids := systemModels.GetParentNameAndIds(dl)
+	list := make([]*systemModels.SysUserDML, 0)
+	password := bCryptPasswordEncoder.HashPassword(userService.cs.SelectConfigValueByKey(c, "sys.account.initPassword"))
+	list, msg, failureNum = systemModels.RowsToSysUserDMLList(rows, msg, failureNum, ids, password, baizeContext.GetUserId(c))
 	for _, user := range list {
-		unique := userService.userDao.CheckUserNameUnique(c, tx, user.UserName)
-		if unique < 1 {
-			user.Password = password
-			//user.SetCreateBy(userId)
-			userService.userDao.InsertUser(c, tx, user)
-			successNum++
-		} else {
+		unique := userService.userDao.CheckUserNameUnique(c, userService.data, user.UserName)
+		if unique == 1 {
 			failureNum++
-			failureMsg += "<br/>账号 " + user.UserName + " 已存在"
+			msg += "<br/>账号 " + user.UserName + " 已存在"
 		}
 	}
 	if failureNum > 0 {
-		failureMsg = "很抱歉，导入失败！共 " + strconv.Itoa(failureNum) + " 条数据格式不正确，错误如下：" + failureMsg
-		return failureMsg, failureNum
+		msg = "很抱歉，导入失败！共 " + strconv.Itoa(failureNum) + " 条数据格式不正确，错误如下：" + msg
+		return msg, failureNum
 	}
-	return "恭喜您，数据已全部导入成功！共 " + strconv.Itoa(successNum) + " 条。", 0
+	userService.userDao.BatchInsertUser(c, userService.data, list)
+	return "恭喜您，数据已全部导入成功！共 " + strconv.Itoa(len(list)) + " 条。", 0
 }
 func (userService *UserService) UpdateLoginInformation(c *gin.Context, userId int64, ip string) {
 	userService.userDao.UpdateLoginInformation(c, userService.data, userId, ip)
