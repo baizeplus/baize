@@ -43,7 +43,7 @@ func SetLog(title string, businessTy BusinessType) func(c *gin.Context) {
 		ol.Title = title
 		ol.BusinessType = businessTy.Msg()
 		c.Next()
-		//ol.Status = business.Success.Msg()
+		//ol.Status = c..Success.Msg()
 		ol.OperIp = c.ClientIP()
 		ol.OperUrl = c.Request.URL.Path
 		ol.RequestMethod = c.Request.Method

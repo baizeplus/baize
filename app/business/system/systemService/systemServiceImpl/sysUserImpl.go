@@ -29,10 +29,11 @@ type UserService struct {
 	userRoleDao systemDao.IUserRoleDao
 	roleDao     systemDao.IRoleDao
 	postDao     systemDao.IPostDao
+	deptDao     systemDao.IDeptDao
 	uds         systemDao.IUserDeptScopeDao
 }
 
-func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao, uds *systemDaoImpl.SysUserDeptScopeDao) *UserService {
+func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoImpl.SysUserPostDao, urd *systemDaoImpl.SysUserRoleDao, dd *systemDaoImpl.SysDeptDao, rd *systemDaoImpl.SysRoleDao, pd *systemDaoImpl.SysPostDao, uds *systemDaoImpl.SysUserDeptScopeDao) *UserService {
 	return &UserService{
 		data:        data,
 		userDao:     ud,
@@ -41,6 +42,7 @@ func NewUserService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, upd *systemDaoI
 		roleDao:     rd,
 		postDao:     pd,
 		uds:         uds,
+		deptDao:     dd,
 	}
 }
 
@@ -65,9 +67,44 @@ func (userService *UserService) UserExport(c *gin.Context, user *systemModels.Sy
 	return buffer.Bytes()
 }
 
-func (userService *UserService) ImportTemplate() (data []byte) {
+func (userService *UserService) ImportTemplate(c *gin.Context) (data []byte) {
 	f := excelize.NewFile()
-	f.SetSheetRow("Sheet1", "A1", &[]string{"登录名称", "用户名", "部门", "邮箱", "手机号", "性别", "状态"})
+	dept := new(systemModels.SysDeptDQL)
+	dept.DataScope = baizeContext.GetDataScope(c, "d")
+	list := userService.deptDao.SelectDeptList(c, userService.data, dept)
+	all := systemModels.GetParentNameAll(list)
+	sqref := "C2:C100"
+	dvRange1 := excelize.NewDataValidation(true)
+	dvRange1.Sqref = sqref
+	dvRange1.SetDropList(all)
+	dvRange1.ShowInputMessage = true
+	dvRange1.ShowErrorMessage = true
+	f.AddDataValidation("Sheet1", dvRange1)
+
+	sqref2 := "F2:F100"
+	dvRange2 := excelize.NewDataValidation(true)
+	dvRange2.Sqref = sqref2
+	dvRange2.SetDropList([]string{"男", "女", "未知"})
+	dvRange2.ShowInputMessage = true
+	dvRange2.ShowErrorMessage = true
+	f.AddDataValidation("Sheet1", dvRange1)
+	f.SetSheetRow("Sheet1", "A1", &[]string{"登录名称", "用户名", "部门", "邮箱", "手机号", "性别"})
+	border := []excelize.Border{
+		{Type: "top", Style: 1, Color: "cccccc"},
+		{Type: "left", Style: 1, Color: "cccccc"},
+		{Type: "right", Style: 1, Color: "cccccc"},
+		{Type: "bottom", Style: 1, Color: "cccccc"},
+	}
+	// 定义标题行单元格样式
+	headerStyle, err := f.NewStyle(&excelize.Style{
+		Font: &excelize.Font{Bold: true, Color: "ffffff"},
+		Fill: excelize.Fill{
+			Type: "pattern", Color: []string{"515151"}, Pattern: 1},
+		Border: border},
+	)
+
+	// 为标题行设置样式
+	f.SetCellStyle("Sheet1", "A1", "F1", headerStyle)
 
 	buffer, err := f.WriteToBuffer()
 	if err != nil {

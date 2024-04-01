@@ -1,6 +1,9 @@
 package systemModels
 
-import "baize/app/baize"
+import (
+	"baize/app/baize"
+	"sort"
+)
 
 type SysDeptDQL struct {
 	ParentId int64  `form:"parentId,string" db:"parent_id"` //上级id
@@ -26,4 +29,24 @@ type SysDeptVo struct {
 type RoleDeptTree struct {
 	CheckedKeys []string     `json:"checkedKeys"` //keys
 	Depts       []*SysDeptVo `json:"depts"`       //部门
+}
+
+func GetParentNameAll(items []*SysDeptVo) []string {
+	ss := make([]string, len(items))
+	for _, item := range items {
+		ss = append(ss, GetParentName(items, item.ParentId, item.DeptName))
+	}
+	sort.Strings(ss)
+	return ss
+}
+
+func GetParentName(items []*SysDeptVo, parentId int64, name string) string {
+
+	for _, item := range items {
+		if item.DeptId == parentId {
+			pName := item.DeptName + "/" + name
+			return GetParentName(items, item.ParentId, pName)
+		}
+	}
+	return name
 }

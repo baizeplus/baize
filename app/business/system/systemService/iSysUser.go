@@ -32,6 +32,6 @@ type IUserService interface {
 	GetUserAuthRole(c *gin.Context, userId int64) *systemModels.UserAndRoles
 	SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit)
 	SelectAccredit(c *gin.Context) (sysUser *systemModels.Accredit)
-	ImportTemplate() (data []byte)
+	ImportTemplate(c *gin.Context) (data []byte)
 	GetUserProfile(c *gin.Context) *systemModels.UserProfile
 }

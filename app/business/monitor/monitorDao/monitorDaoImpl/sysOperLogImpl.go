@@ -10,13 +10,11 @@ import (
 
 type OperLogDao struct {
 	selectSql string
-	fromSql   string
 }
 
 func NewOperLog() *OperLogDao {
 	return &OperLogDao{
-		selectSql: ` select oper_id, title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time`,
-		fromSql:   ` from sys_oper_log`,
+		selectSql: ` select oper_id, title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time from sys_oper_log`,
 	}
 }
 
@@ -80,7 +78,6 @@ func (operLogDao *OperLogDao) SelectOperLogListAll(ctx context.Context, db sqly.
 	if openLog.EndTime != "" {
 		whereSql += " AND date_format(oper_time,'%y%m%d') >= :end_time"
 	}
-
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
@@ -102,15 +99,17 @@ func (operLogDao *OperLogDao) DeleteOperLogByIds(ctx context.Context, db sqly.Sq
 		panic(err)
 	}
 }
+
 func (operLogDao *OperLogDao) SelectOperLogById(ctx context.Context, db sqly.SqlyContext, operId int64) (operLog *monitorModels.SysOperLog) {
 	whereSql := `  where oper_id = ?`
 	operLog = new(monitorModels.SysOperLog)
-	err := db.GetContext(ctx, operLog, operLogDao.selectSql+operLogDao.fromSql+whereSql, operId)
+	err := db.GetContext(ctx, operLog, operLogDao.selectSql+whereSql, operId)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return
 }
+
 func (operLogDao *OperLogDao) CleanOperLog(ctx context.Context, db sqly.SqlyContext) {
 	_, err := db.ExecContext(ctx, "truncate table sys_oper_log")
 	if err != nil {

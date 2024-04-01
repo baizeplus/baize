@@ -318,7 +318,7 @@ func (uc *User) UserExport(c *gin.Context) {
 // @Success 200 {object} []byte
 // @Router /system/user/input [post]
 func (uc *User) ImportTemplate(c *gin.Context) {
-	data := uc.us.ImportTemplate()
+	data := uc.us.ImportTemplate(c)
 	baizeContext.DataPackageExcel(c, data)
 	return
 }
