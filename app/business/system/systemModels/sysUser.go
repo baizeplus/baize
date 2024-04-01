@@ -68,14 +68,14 @@ type EditUserStatus struct {
 	baize.BaseEntity
 }
 
-func RowsToSysUserDMLList(rows [][]string) (list []*SysUserDML, str string, failureNum int) {
-	list = make([]*SysUserDML, 0, len(rows)-1)
+func RowsToSysUserDMLList(rows [][]string, str string, failureNum int, dept map[string]int64) ([]*SysUserDML, string, int) {
+	list := make([]*SysUserDML, 0, len(rows)-1)
 	for i, row := range rows {
 		if i == 0 {
 			continue
 		}
-		if row[0] == "" || row[1] == "" {
-			str += "<br/>第" + strconv.Itoa(i+1) + "行数据格式有误"
+		if row[0] == "" {
+			str += "<br/>第" + strconv.Itoa(i+1) + "行用户名为空"
 			failureNum++
 			continue
 		}
@@ -96,7 +96,7 @@ func RowsToSysUserDMLList(rows [][]string) (list []*SysUserDML, str string, fail
 		sysUser.Status = status
 		list = append(list, sysUser)
 	}
-	return
+	return list, str, failureNum
 }
 
 type Accredit struct {

@@ -50,3 +50,20 @@ func GetParentName(items []*SysDeptVo, parentId int64, name string) string {
 	}
 	return name
 }
+func GetParentNameAndId(items []*SysDeptVo, parentId int64, name string) string {
+
+	for _, item := range items {
+		if item.DeptId == parentId {
+			pName := item.DeptName + "/" + name
+			return GetParentName(items, item.ParentId, pName)
+		}
+	}
+	return name
+}
+func GetParentNameAndIds(items []*SysDeptVo) map[string]int64 {
+	ss := make(map[string]int64)
+	for _, item := range items {
+		ss[GetParentName(items, item.ParentId, item.DeptName)] = item.DeptId
+	}
+	return ss
+}

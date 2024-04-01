@@ -1,6 +1,7 @@
 package systemServiceImpl
 
 import (
+	"baize/app/baize"
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
@@ -279,7 +280,23 @@ func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multi
 	}
 	successNum := 0
 
-	list, failureMsg, failureNum := systemModels.RowsToSysUserDMLList(rows)
+	deptSet := make(map[string]int64)
+	userNameSet := baize.NewSet([]string{})
+	for _, row := range rows {
+		deptSet[(row[2])] = 0
+		if userNameSet.Contains(row[0]) {
+			failureNum++
+			msg += "<br/>账号 " + row[0] + " 重复"
+		} else {
+			userNameSet.Add(row[0])
+		}
+	}
+	dept := new(systemModels.SysDeptDQL)
+	dept.DataScope = baizeContext.GetDataScope(c, "d")
+	list := userService.deptDao.SelectDeptList(c, userService.data, dept)
+	ids := systemModels.GetParentNameAndIds(list)
+	list := systemModels.SysUserDML
+	list, msg, failureNum = systemModels.RowsToSysUserDMLList(rows, msg, failureNum, ids)
 	password := bCryptPasswordEncoder.HashPassword("123456")
 	tx, err := userService.data.Beginx()
 	if err != nil {
