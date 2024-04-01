@@ -5,8 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-
 	"github.com/baizeplus/sqly"
 )
 
@@ -67,37 +65,9 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataById(ctx context.Context, db
 }
 
 func (sysDictDataDao *SysDictDataDao) InsertDictData(ctx context.Context, db sqly.SqlyContext, dictData *systemModels.SysDictDataVo) {
-	insertSQL := `insert into sys_dict_data(dict_code,dict_sort,dict_label,dict_value,dict_type,create_by,create_time,update_by,update_time %s)
-					values(:dict_code,:dict_sort,:dict_label,:dict_value,:dict_type,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
-
-	if dictData.CssClass != "" {
-		key += ",css_class"
-		value += ",:css_class"
-	}
-
-	if dictData.ListClass != "" {
-		key += ",list_class"
-		value += ",:list_class"
-	}
-
-	if dictData.IsDefault != "" {
-		key += ",is_default"
-		value += ",:is_default"
-	}
-
-	if dictData.Status != "" {
-		key += ",status"
-		value += ",:status"
-	}
-	if dictData.Remark != "" {
-		key += ",remark"
-		value += ",:remark"
-	}
-
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, dictData)
+	insertSQL := `insert into sys_dict_data(dict_code,dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,remark,create_by,create_time,update_by,update_time )
+					values(:dict_code,:dict_sort,:dict_label,:dict_value,:dict_type,:css_class,:list_class,:is_default,:status,:remark,:create_by,now(),:update_by,now() )`
+	_, err := db.NamedExecContext(ctx, insertSQL, dictData)
 	if err != nil {
 		panic(err)
 	}

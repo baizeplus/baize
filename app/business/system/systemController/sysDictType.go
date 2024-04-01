@@ -144,7 +144,7 @@ func (dtc *DictType) DictTypeRemove(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /system/dict/type/clearCache  [put]
+// @Router /system/dict/type/refreshCache  [put]
 func (dtc *DictType) DictTypeClearCache(c *gin.Context) {
 	dtc.dts.DictTypeClearCache(c)
 	baizeContext.Success(c)
