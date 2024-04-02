@@ -3,7 +3,6 @@ package baize
 import (
 	"database/sql/driver"
 	"fmt"
-	"github.com/gogf/gf/v2/util/gconv"
 	"strconv"
 	"time"
 )
@@ -24,7 +23,11 @@ func (t *Time) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Time) UnmarshalJSON(b []byte) error {
-	t.Time = time.Unix(gconv.Int64(string(b)), 0)
+	num, err := strconv.ParseInt(string(b), 10, 64)
+	if err != nil {
+		return err
+	}
+	t.Time = time.Unix(num/1000, 0)
 	return nil
 }
 func (t *Time) ToString() string {

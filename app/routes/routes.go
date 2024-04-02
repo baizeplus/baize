@@ -50,7 +50,7 @@ func NewGinEngine(
 
 	//不做鉴权的
 	{
-		if setting.Conf.UploadFile.Type == "localhost" {
+		if setting.Conf.UploadFile.Type == "local" {
 			group.Static(IOFile.ResourcePrefix, setting.Conf.UploadFile.Localhost.PublicPath)
 		}
 		systemRoutes.InitLoginRouter(group, sc.Login) //获取登录信息

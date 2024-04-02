@@ -92,6 +92,7 @@ func (userService *UserService) ImportTemplate(c *gin.Context) (data []byte) {
 	dvRange2.ShowInputMessage = true
 	dvRange2.ShowErrorMessage = true
 	f.AddDataValidation("Sheet1", dvRange1)
+	f.AddDataValidation("Sheet1", dvRange2)
 	f.SetSheetRow("Sheet1", "A1", &[]string{"登录名称", "用户名", "部门", "邮箱", "手机号", "性别"})
 	border := []excelize.Border{
 		{Type: "top", Style: 1, Color: "cccccc"},
@@ -106,9 +107,12 @@ func (userService *UserService) ImportTemplate(c *gin.Context) (data []byte) {
 			Type: "pattern", Color: []string{"515151"}, Pattern: 1},
 		Border: border},
 	)
-
 	// 为标题行设置样式
 	f.SetCellStyle("Sheet1", "A1", "F1", headerStyle)
+	f.SetColWidth("Sheet1", "A", "B", 15)
+	f.SetColWidth("Sheet1", "C", "C", 30)
+	f.SetColWidth("Sheet1", "D", "E", 20)
+	f.SetColWidth("Sheet1", "F", "F", 10)
 
 	buffer, err := f.WriteToBuffer()
 	if err != nil {

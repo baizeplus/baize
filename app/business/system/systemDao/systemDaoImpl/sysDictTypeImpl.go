@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/baizeplus/sqly"
 )
 
@@ -91,23 +90,10 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeByIds(ctx context.Context, d
 }
 
 func (sysDictTypeDao *SysDictTypeDao) InsertDictType(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeVo) {
-	insertSQL := `insert into sys_dict_type(dict_id,dict_name,dict_type,create_by,create_time,update_by,update_time %s)
-					values(:dict_id,:dict_name,:dict_type,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
+	insertSQL := `insert into sys_dict_type(dict_id,dict_name,dict_type,status,remark,create_by,create_time,update_by,update_time )
+					values(:dict_id,:dict_name,:dict_type,:status,:remark,:create_by,now(),:update_by,now() )`
 
-	if dictType.Status != "" {
-		key += ",status"
-		value += ",:status"
-	}
-
-	if dictType.Remark != "" {
-		key += ",remark"
-		value += ",:remark"
-	}
-
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, dictType)
+	_, err := db.NamedExecContext(ctx, insertSQL, dictType)
 	if err != nil {
 		panic(err)
 	}
