@@ -1,4 +1,11 @@
 definitions:
+  baize.List:
+    properties:
+      data:
+        items:
+          type: string
+        type: array
+    type: object
   monitorModels.SysUserOnline:
     properties:
       browser:
@@ -69,6 +76,25 @@ definitions:
         items:
           $ref: '#/definitions/systemModels.SysRoleVo'
         type: array
+    type: object
+  systemModels.ConsumptionNoticeVo:
+    properties:
+      createTime:
+        description: 创建时间
+        type: integer
+      id:
+        description: 通知ID
+        example: "0"
+        type: string
+      status:
+        description: 通知状态 1未读 2 已读
+        type: string
+      title:
+        description: 通知标题
+        type: string
+      txt:
+        description: 通知文本
+        type: string
     type: object
   systemModels.EditUserStatus:
     properties:
@@ -363,6 +389,44 @@ definitions:
         type: integer
       visible:
         type: string
+    type: object
+  systemModels.SysNoticeVo:
+    properties:
+      DeptIds:
+        allOf:
+        - $ref: '#/definitions/baize.List'
+        description: 接收部门列表
+      createBy:
+        description: 创建人
+        type: integer
+      createName:
+        description: 创建人
+        type: string
+      createTime:
+        description: 创建时间
+        type: integer
+      deptId:
+        description: 部门ID
+        type: integer
+      id:
+        description: 通知ID
+        example: "0"
+        type: string
+      title:
+        description: 通知标题
+        type: string
+      txt:
+        description: 通知文本
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+    required:
+    - title
+    - txt
     type: object
   systemModels.SysPostVo:
     properties:
@@ -1131,6 +1195,131 @@ paths:
       summary: 查询配置列表查询
       tags:
       - 配置相关
+  /system/consumption/isNewMessage:
+    get:
+      description: 消费方是否有新消息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 消费方是否有新消息
+      tags:
+      - 消息通知
+  /system/consumption/noticeDelete/{id}:
+    delete:
+      description: 消费方消息删除消息
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 消费方消息删除消息
+      tags:
+      - 消息通知
+  /system/consumption/noticeRead/{id}:
+    put:
+      description: 消费方消息修改为已读
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 消费方消息修改为已读
+      tags:
+      - 消息通知
+  /system/consumption/noticeReadAll:
+    put:
+      description: 消费方所有消息修改为已读
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 消费方所有消息修改为已读
+      tags:
+      - 消息通知
+  /system/consumption/userNoticeList:
+    get:
+      description: 消费方获取消息列表
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: title
+        type: string
+      - description: 未读消息1 已读2 全部不填
+        in: query
+        name: unread
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      rows:
+                        items:
+                          $ref: '#/definitions/systemModels.ConsumptionNoticeVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 消费方获取消息列表
+      tags:
+      - 消息通知
   /system/dept:
     get:
       description: 查询部门列表查询
@@ -1581,30 +1770,6 @@ paths:
       summary: 根据dictCode获取字典类型信息
       tags:
       - 字典相关
-  /system/dict/type/clearCache:
-    put:
-      description: 更新字典缓存
-      parameters:
-      - description: 字典
-        in: body
-        name: object
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.ResponseData'
-      security:
-      - BearerAuth: []
-      summary: 更新字典缓存
-      tags:
-      - 字典相关
   /system/dict/type/list:
     get:
       description: 查询字典类型列表
@@ -1678,6 +1843,30 @@ paths:
       security:
       - BearerAuth: []
       summary: 查询字典列表
+      tags:
+      - 字典相关
+  /system/dict/type/refreshCache:
+    put:
+      description: 更新字典缓存
+      parameters:
+      - description: 字典
+        in: body
+        name: object
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 更新字典缓存
       tags:
       - 字典相关
   /system/menu:
@@ -1824,6 +2013,111 @@ paths:
       summary: 根据菜单ID获取菜单信息
       tags:
       - 菜单相关
+  /system/notice:
+    post:
+      description: 新增消息通知
+      parameters:
+      - description: 系统角色
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/systemModels.SysNoticeVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 新增消息通知
+      tags:
+      - 消息通知
+  /system/notice/{id}:
+    get:
+      description: 根据id消息通知
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SysNoticeVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 根据id消息通知
+      tags:
+      - 消息通知
+  /system/notice/list:
+    get:
+      description: 消息通知列表
+      parameters:
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - description: 时间范围结束
+        in: query
+        name: timeRangeEnd
+        type: string
+      - description: 时间范围开始
+        in: query
+        name: timeRangeStart
+        type: string
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      rows:
+                        items:
+                          $ref: '#/definitions/systemModels.SysNoticeVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 消息通知列表
+      tags:
+      - 消息通知
   /system/post:
     post:
       description: 添加岗位
