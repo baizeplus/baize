@@ -261,3 +261,16 @@ func (userDao *SysUserDao) SelectPasswordByUserId(ctx context.Context, db sqly.S
 	}
 	return *password
 }
+
+func (userDao *SysUserDao) SelectUserIdsByDeptIds(ctx context.Context, db sqly.SqlyContext, deptIds []int64) []int64 {
+	query, i, err := sqly.In("select user_id from sys_user where dept_id in(?)", deptIds)
+	if err != nil {
+		panic(err)
+	}
+	list := make([]int64, 0)
+	err = db.SelectContext(ctx, &list, query, i...)
+	if err != nil {
+		panic(err)
+	}
+	return list
+}

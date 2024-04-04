@@ -1195,9 +1195,9 @@ paths:
       summary: 查询配置列表查询
       tags:
       - 配置相关
-  /system/consumption/isNewMessage:
+  /system/consumption/newMessage:
     get:
-      description: 消费方是否有新消息
+      description: 未读消息通知数量
       produces:
       - application/json
       responses:
@@ -1207,7 +1207,7 @@ paths:
             $ref: '#/definitions/response.ResponseData'
       security:
       - BearerAuth: []
-      summary: 消费方是否有新消息
+      summary: 未读消息通知数量
       tags:
       - 消息通知
   /system/consumption/noticeDelete/{id}:
@@ -2065,9 +2065,18 @@ paths:
     get:
       description: 消息通知列表
       parameters:
+      - in: query
+        name: createBy
+        type: string
       - description: 排序规则  降序desc   asc升序
         in: query
         name: isAsc
+        type: string
+      - in: query
+        name: noticeTitle
+        type: string
+      - in: query
+        name: noticeType
         type: string
       - description: 排序字段
         in: query
@@ -2083,17 +2092,6 @@ paths:
         in: query
         name: pageSize
         type: integer
-      - description: 时间范围结束
-        in: query
-        name: timeRangeEnd
-        type: string
-      - description: 时间范围开始
-        in: query
-        name: timeRangeStart
-        type: string
-      - in: query
-        name: title
-        type: string
       produces:
       - application/json
       responses:
@@ -2725,6 +2723,15 @@ paths:
       summary: 查询角色列表查询
       tags:
       - 角色相关
+  /system/sse:
+    get:
+      description: 建立SSE链接
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: 建立SSE链接
+      tags:
+      - 建立SSE链接
   /system/user:
     get:
       description: 查询用户列表

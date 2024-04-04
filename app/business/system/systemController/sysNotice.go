@@ -8,12 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type NoticeController struct {
+type Notice struct {
 	ns systemService.ISysNoticeService
 }
 
-func NewNoticeController(ns *systemServiceImpl.NoticeService) *NoticeController {
-	return &NoticeController{ns: ns}
+func NewNotice(ns *systemServiceImpl.NoticeService) *Notice {
+	return &Notice{ns: ns}
 }
 
 // NoticeList 消息通知列表
@@ -25,11 +25,11 @@ func NewNoticeController(ns *systemServiceImpl.NoticeService) *NoticeController 
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ListData{rows=[]systemModels.SysNoticeVo}} "成功"
 // @Router /system/notice/list [get]
-func (nc *NoticeController) NoticeList(c *gin.Context) {
+func (nc *Notice) NoticeList(c *gin.Context) {
 
 	n := new(systemModels.NoticeDQL)
 	_ = c.ShouldBind(n)
-
+	n.DataScope = baizeContext.GetDataScope(c, "sys_notice")
 	list, count := nc.ns.SelectNoticeList(c, n)
 	baizeContext.SuccessListData(c, list, count)
 
@@ -44,7 +44,7 @@ func (nc *NoticeController) NoticeList(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysNoticeVo} "成功"
 // @Router /system/notice/{id}  [get]
-func (nc *NoticeController) NoticeGetInfo(c *gin.Context) {
+func (nc *Notice) NoticeGetInfo(c *gin.Context) {
 	id := baizeContext.ParamInt64(c, "id")
 	if id == 0 {
 		baizeContext.ParameterError(c)
@@ -63,7 +63,7 @@ func (nc *NoticeController) NoticeGetInfo(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/notice [post]
-func (nc *NoticeController) NoticeAdd(c *gin.Context) {
+func (nc *Notice) NoticeAdd(c *gin.Context) {
 	na := new(systemModels.SysNoticeVo)
 	if err := c.ShouldBindJSON(na); err != nil {
 		baizeContext.ParameterError(c)
@@ -75,16 +75,16 @@ func (nc *NoticeController) NoticeAdd(c *gin.Context) {
 	baizeContext.Success(c)
 }
 
-// IsNewMessage 消费方是否有新消息 1有 2没有
-// @Summary 消费方是否有新消息
-// @Description 消费方是否有新消息
+// NewMessage 未读消息通知数量
+// @Summary 未读消息通知数量
+// @Description 未读消息通知数量
 // @Tags 消息通知
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
-// @Router /system/consumption/isNewMessage [get]
-func (nc *NoticeController) IsNewMessage(c *gin.Context) {
-	baizeContext.SuccessData(c, nc.ns.IsNewMessAge(c, baizeContext.GetUserId(c)))
+// @Router /system/consumption/newMessage [get]
+func (nc *Notice) NewMessage(c *gin.Context) {
+	baizeContext.SuccessData(c, nc.ns.NewMessAge(c, baizeContext.GetUserId(c)))
 }
 
 // UserNoticeList 消费方获取消息列表
@@ -96,8 +96,7 @@ func (nc *NoticeController) IsNewMessage(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData{data=response.ListData{rows=[]systemModels.ConsumptionNoticeVo}}
 // @Router /system/consumption/userNoticeList [get]
-func (nc *NoticeController) UserNoticeList(c *gin.Context) {
-
+func (nc *Notice) UserNoticeList(c *gin.Context) {
 	n := new(systemModels.ConsumptionNoticeDQL)
 	_ = c.ShouldBind(n)
 	n.UserId = baizeContext.GetUserId(c)
@@ -114,7 +113,7 @@ func (nc *NoticeController) UserNoticeList(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/consumption/noticeRead/{id} [put]
-func (nc *NoticeController) NoticeRead(c *gin.Context) {
+func (nc *Notice) NoticeRead(c *gin.Context) {
 	id := baizeContext.ParamInt64(c, "id")
 	if id == 0 {
 		baizeContext.ParameterError(c)
@@ -132,7 +131,7 @@ func (nc *NoticeController) NoticeRead(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/consumption/noticeReadAll [put]
-func (nc *NoticeController) NoticeReadAll(c *gin.Context) {
+func (nc *Notice) NoticeReadAll(c *gin.Context) {
 	nc.ns.UpdateNoticeReadAll(c, baizeContext.GetUserId(c))
 	baizeContext.Success(c)
 }
@@ -146,7 +145,7 @@ func (nc *NoticeController) NoticeReadAll(c *gin.Context) {
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
 // @Router /system/consumption/noticeDelete/{id} [delete]
-func (nc *NoticeController) NoticeDelete(c *gin.Context) {
+func (nc *Notice) NoticeDelete(c *gin.Context) {
 	id := baizeContext.ParamInt64(c, "id")
 	if id == 0 {
 		baizeContext.ParameterError(c)

@@ -812,21 +812,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/consumption/isNewMessage": {
+        "/system/consumption/newMessage": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "消费方是否有新消息",
+                "description": "未读消息通知数量",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "消息通知"
                 ],
-                "summary": "消费方是否有新消息",
+                "summary": "未读消息通知数量",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2259,8 +2259,23 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "排序规则  降序desc   asc升序",
                         "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "noticeTitle",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "noticeType",
                         "in": "query"
                     },
                     {
@@ -2281,23 +2296,6 @@ const docTemplate = `{
                         "default": 10,
                         "description": "数量",
                         "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "时间范围结束",
-                        "name": "timeRangeEnd",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "时间范围开始",
-                        "name": "timeRangeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "title",
                         "in": "query"
                     }
                 ],
@@ -3393,6 +3391,21 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/system/sse": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "建立SSE链接",
+                "tags": [
+                    "建立SSE链接"
+                ],
+                "summary": "建立SSE链接",
+                "responses": {}
             }
         },
         "/system/user": {

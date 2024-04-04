@@ -2,8 +2,8 @@ package systemController
 
 import "github.com/google/wire"
 
-var ProviderSet = wire.NewSet(NewUser, NewRole, NewPost, NewMenu, NewLogin, NewDictType, NewConfig, NewFile,
-	NewProfile, NewDictData, NewDept, wire.Struct(new(System), "*"))
+var ProviderSet = wire.NewSet(NewUser, NewRole, NewPost, NewMenu, NewLogin, NewDictType, NewConfig, NewFile, NewNotice,
+	NewProfile, NewDictData, NewDept, NewSse, wire.Struct(new(System), "*"))
 
 type System struct {
 	Login    *Login
@@ -17,4 +17,6 @@ type System struct {
 	Profile  *Profile
 	Config   *Config
 	File     *File
+	Sse      *Sse
+	Notice   *Notice
 }

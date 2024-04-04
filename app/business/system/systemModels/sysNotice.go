@@ -13,9 +13,9 @@ type SysNoticeVo struct {
 }
 
 type NoticeDQL struct {
-	TimeRangeStart string `form:"timeRangeStart" db:"time_start"` // 时间范围开始
-	TimeRangeEnd   string `form:"timeRangeEnd" db:"time_end"`     // 时间范围结束
-	Title          string `form:"title" db:"title"`
+	NoticeTitle string `form:"noticeTitle" db:"notice_title"`
+	CreateBy    string `form:"createBy" db:"create_by"`
+	NoticeType  string `form:"noticeType" db:"notice_type"`
 	baize.BaseEntityDQL
 }
 

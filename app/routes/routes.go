@@ -70,6 +70,8 @@ func NewGinEngine(
 		systemRoutes.InitSysPostRouter(group, sc.Post)         //岗位属性
 		systemRoutes.InitSysConfigRouter(group, sc.Config)     //配置文件
 		systemRoutes.InitFileRouter(group, sc.File)            //文件管理
+		systemRoutes.InitSysRouterRouter(group, sc.Notice)     //文件管理
+		systemRoutes.InitSseRouter(group, sc.Sse)              //SSE链接
 		monitorRouter.InitServerRouter(group, mc.Server)
 		monitorRouter.InitSysOperLogRouter(group, mc.Oper)
 		monitorRouter.InitSysUserOnlineRouter(group, mc.UserOnline) //在线用户监控

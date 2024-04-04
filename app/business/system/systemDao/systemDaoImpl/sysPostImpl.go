@@ -3,6 +3,8 @@ package systemDaoImpl
 import (
 	"baize/app/business/system/systemModels"
 	"context"
+	"database/sql"
+	"errors"
 	"github.com/baizeplus/sqly"
 )
 
@@ -89,7 +91,7 @@ func (postDao *SysPostDao) SelectPostById(ctx context.Context, db sqly.SqlyConte
 
 	dictData = new(systemModels.SysPostVo)
 	err := db.GetContext(ctx, dictData, postDao.postSql+" where post_id = ?", postId)
-	if err != nil {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return
