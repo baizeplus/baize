@@ -314,31 +314,35 @@ INSERT INTO `sys_menu` VALUES (1059, '预览代码', 116, 5, '#', '', '', 1, 0, 
 INSERT INTO `sys_menu` VALUES (1060, '生成代码', 116, 6, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 COMMIT;
 
+
+
 -- ----------------------------
 -- Table structure for sys_notice
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_notice`;
 CREATE TABLE `sys_notice` (
-  `notice_id` bigint NOT NULL AUTO_INCREMENT COMMENT '公告ID',
-  `notice_title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告标题',
-  `notice_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告类型（1通知 2公告）',
-  `notice_content` longblob COMMENT '公告内容',
-  `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0' COMMENT '公告状态（0正常 1关闭）',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '公告ID',
+  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告标题',
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告类型（1通知 2公告）',
+  `txt` longblob COMMENT '公告内容',
+  `dept_id` bigint DEFAULT NULL COMMENT '发件人所在部门',
+  `dept_ids` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '发送部门',
+  `create_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者名称',
   `create_by` bigint DEFAULT NULL COMMENT '创建者',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` bigint DEFAULT NULL COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`notice_id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='通知公告表';
 
 -- ----------------------------
--- Records of sys_notice
+-- Table structure for sys_notice_user
 -- ----------------------------
-BEGIN;
-INSERT INTO `sys_notice` VALUES (1, '温馨提醒：白泽新版本发布啦', '2', 0xE696B0E78988E69CACE58685E5AEB9, '0', 1, '2024-02-08 04:10:56', 1, NULL, '管理员');
-INSERT INTO `sys_notice` VALUES (2, '维护通知：白泽系统凌晨维护', '1', 0xE7BBB4E68AA4E58685E5AEB9, '0', 1, '2024-02-08 04:10:56', 1, NULL, '管理员');
-COMMIT;
+DROP TABLE IF EXISTS `sys_notice_user`;
+CREATE TABLE `sys_notice_user` (
+    `user_id` bigint NOT NULL,
+    `notice_id` bigint NOT NULL,
+    `status` char(1) DEFAULT NULL,
+    PRIMARY KEY (`user_id`,`notice_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息通知关联用户表';
 
 -- ----------------------------
 -- Table structure for sys_oper_log
