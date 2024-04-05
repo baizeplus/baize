@@ -26,10 +26,10 @@ func (l *List) Value() (driver.Value, error) {
 }
 
 func (l *List) Scan(v interface{}) error {
-	value, ok := v.(string)
+	value, ok := v.([]byte)
 	if ok {
-		l.Data = strings.Split(value, ",")
+		l.Data = strings.Split(string(value), ",")
 		return nil
 	}
-	return fmt.Errorf("can not convert %v to timestamp", v)
+	return fmt.Errorf("can not convert %v to string", v)
 }
