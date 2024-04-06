@@ -5,6 +5,7 @@ import (
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
+	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,9 @@ func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNot
 	noticeId := snowflake.GenID()
 	notice.Id = noticeId
 	ids := notice.DeptIds
+	notice.SetCreateBy(baizeContext.GetUserId(c))
+	notice.DeptId = baizeContext.GetDeptId(c)
+	notice.CreateName = baizeContext.GetUserName(c)
 	deptIds := make([]int64, 0, len(ids.Data))
 	for _, id := range ids.Data {
 		i, err := strconv.ParseInt(id, 10, 64)

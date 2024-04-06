@@ -50,8 +50,8 @@ func (s *SysNoticeDao) SelectNoticeById(ctx context.Context, db sqly.SqlyContext
 }
 
 func (s *SysNoticeDao) InsertNotice(ctx context.Context, db sqly.SqlyContext, notice *systemModels.SysNoticeVo) {
-	insertSQL := `insert into sys_notice(id,title,type,txt,create_by,create_time,create_name,dept_ids,dept_id,create_by,create_time)
-					values(:id,:title,:type,:txt,:create_by,:create_time,:create_name,:dept_ids,:dept_id,:create_by,:create_time)`
+	insertSQL := `insert into sys_notice(id,title,type,txt,create_name,dept_ids,dept_id,create_by,create_time)
+					values(:id,:title,:type,:txt,:create_name,:dept_ids,:dept_id,:create_by,:create_time)`
 	_, err := db.NamedExecContext(ctx, insertSQL, notice)
 	if err != nil {
 		panic(err)
