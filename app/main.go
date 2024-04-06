@@ -3,6 +3,7 @@ package main
 import (
 	"baize/app/setting"
 	"fmt"
+	"time"
 )
 
 // @title baize
@@ -16,6 +17,12 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	location, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic(err)
+	}
+	// 设置为中国时区
+	time.Local = location
 	app, cleanup, err := wireApp(setting.Conf.Datasource)
 	if err != nil {
 		panic(err)
