@@ -61,7 +61,7 @@ func NewServer() *Server {
 		server.MemTotal = fmt.Sprintf("%.2f", float64(v.Total)/1024/1024/1024)
 		server.MemFree = fmt.Sprintf("%.2f", float64(v.Free)/1024/1024/1024)
 		server.MemUsed = fmt.Sprintf("%.2f", float64(v.Used)/1024/1024/1024)
-		server.MemUsage = fmt.Sprintf("%.2f", v.UsedPercent)
+		server.MemUsage = fmt.Sprintf("%.2f", float64(v.Total-v.Free)/float64(v.Total)*100)
 	}
 
 	var gomem runtime.MemStats
