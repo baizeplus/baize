@@ -259,7 +259,7 @@ func (sysMenuDao *SysMenuDao) CheckMenuNameUnique(ctx context.Context, db sqly.S
 
 func (sysMenuDao *SysMenuDao) HasChildByMenuId(ctx context.Context, db sqly.SqlyContext, menuId int64) int {
 	var count = 0
-	err := db.GetContext(ctx, &count, "select count(*) from sys_menu where parent_id = ?", menuId)
+	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_menu where parent_id = ?)", menuId)
 	if err != nil && err != sql.ErrNoRows {
 		panic(err)
 	}

@@ -19,7 +19,7 @@ func NewSysUserDao() *SysUserDao {
 
 func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int {
 	var count = 0
-	err := db.GetContext(ctx, &count, "select count(*) from sys_user where user_name = ?", userName)
+	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_user WHERE user_name =?)", userName)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
