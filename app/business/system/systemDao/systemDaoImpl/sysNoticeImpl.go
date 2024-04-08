@@ -88,7 +88,7 @@ func (s *SysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, db sql
 }
 
 func (s *SysNoticeDao) SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
-	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name, snu.status from sys_notice sn
+	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,snu.status from sys_notice sn
 left join sys_notice_user snu on sn.id = snu.notice_id
 where snu.user_id=:user_id `
 	if notice.Title != "" {
