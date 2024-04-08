@@ -304,12 +304,10 @@ func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multi
 	list := make([]*systemModels.SysUserDML, 0)
 	password := bCryptPasswordEncoder.HashPassword(userService.cs.SelectConfigValueByKey(c, "sys.account.initPassword"))
 	list, msg, failureNum = systemModels.RowsToSysUserDMLList(rows, msg, failureNum, ids, password, baizeContext.GetUserId(c))
-	for _, user := range list {
-		unique := userService.userDao.CheckUserNameUnique(c, userService.data, user.UserName)
-		if unique == 1 {
-			failureNum++
-			msg += "<br/>账号 " + user.UserName + " 已存在"
-		}
+	names := userService.userDao.SelectUserNameByUserName(c, userService.data, userNameSet.ToSlice())
+	for _, name := range names {
+		failureNum++
+		msg += "<br/>账号 " + name + " 已存在"
 	}
 	if failureNum > 0 {
 		msg = "很抱歉，导入失败！共 " + strconv.Itoa(failureNum) + " 条数据格式不正确，错误如下：" + msg

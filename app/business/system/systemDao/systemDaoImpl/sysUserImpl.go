@@ -17,6 +17,18 @@ func NewSysUserDao() *SysUserDao {
 	return &SysUserDao{}
 }
 
+func (userDao *SysUserDao) SelectUserNameByUserName(ctx context.Context, db sqly.SqlyContext, userName []string) []string {
+	query, i, err := sqly.In("select user_name from sys_user where user_name in(?)", userName)
+	if err != nil {
+		panic(err)
+	}
+	list := make([]string, 0)
+	err = db.SelectContext(ctx, &list, query, i...)
+	if err != nil {
+		panic(err)
+	}
+	return list
+}
 func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_user WHERE user_name =?)", userName)

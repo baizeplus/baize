@@ -7,6 +7,7 @@ import (
 )
 
 type IUserDao interface {
+	SelectUserNameByUserName(ctx context.Context, db sqly.SqlyContext, userName []string) []string
 	CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int
 	CheckPhoneUnique(ctx context.Context, db sqly.SqlyContext, phonenumber string) int64
 	CheckEmailUnique(ctx context.Context, db sqly.SqlyContext, email string) int64
