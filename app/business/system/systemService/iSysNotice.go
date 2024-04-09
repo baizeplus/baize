@@ -12,7 +12,7 @@ type ISysNoticeService interface {
 	NewMessAge(c *gin.Context, userId int64) int64
 
 	SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64)
-	UpdateNoticeRead(c *gin.Context, noticeId []int64, userId int64)
+	UpdateNoticeRead(c *gin.Context, noticeId, userId int64)
 	UpdateNoticeReadAll(c *gin.Context, userId int64)
 	DeleteConsumptionNotice(c *gin.Context, noticeId []int64, userId int64)
 }

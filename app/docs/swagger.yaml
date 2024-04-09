@@ -79,6 +79,8 @@ definitions:
     type: object
   systemModels.ConsumptionNoticeVo:
     properties:
+      createName:
+        type: string
       createTime:
         description: 创建时间
         type: integer
@@ -95,6 +97,10 @@ definitions:
       txt:
         description: 通知文本
         type: string
+      type:
+        type: string
+    required:
+    - type
     type: object
   systemModels.EditUserStatus:
     properties:
@@ -400,9 +406,6 @@ definitions:
         type: string
       createTime:
         description: 创建时间
-        type: integer
-      deptId:
-        description: 部门ID
         type: integer
       deptIds:
         allOf:
@@ -1235,7 +1238,7 @@ paths:
       summary: 消费方消息删除消息
       tags:
       - 消息通知
-  /system/consumption/noticeRead/{ids}:
+  /system/consumption/noticeRead/{id}:
     put:
       description: 消费方消息修改为已读
       parameters:

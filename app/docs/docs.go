@@ -871,7 +871,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/consumption/noticeRead/{ids}": {
+        "/system/consumption/noticeRead/{id}": {
             "put": {
                 "security": [
                     {
@@ -4372,7 +4372,13 @@ const docTemplate = `{
         },
         "systemModels.ConsumptionNoticeVo": {
             "type": "object",
+            "required": [
+                "type"
+            ],
             "properties": {
+                "createName": {
+                    "type": "string"
+                },
                 "createTime": {
                     "description": "创建时间",
                     "type": "integer"
@@ -4392,6 +4398,9 @@ const docTemplate = `{
                 },
                 "txt": {
                     "description": "通知文本",
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -4831,10 +4840,6 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
-                },
-                "deptId": {
-                    "description": "部门ID",
                     "type": "integer"
                 },
                 "deptIds": {

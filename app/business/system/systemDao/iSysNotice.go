@@ -14,8 +14,8 @@ type ISysNoticeDao interface {
 	BatchSysNoticeUsers(ctx context.Context, db sqly.SqlyContext, notice []*systemModels.NoticeUser)
 	SelectNewMessageCountByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) int64
 	SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64)
-	SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) int
-	UpdateNoticeRead(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64)
+	SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId, userId int64) int
+	UpdateNoticeRead(ctx context.Context, db sqly.SqlyContext, noticeId int64, userId int64)
 	UpdateNoticeReadAll(ctx context.Context, db sqly.SqlyContext, userId int64)
 	DeleteConsumptionNotice(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64)
 }

@@ -84,7 +84,7 @@ func (n *NoticeService) NewMessAge(c *gin.Context, userId int64) int64 {
 func (n *NoticeService) SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
 	return n.nd.SelectConsumptionNoticeList(c, n.data, notice)
 }
-func (n *NoticeService) UpdateNoticeRead(c *gin.Context, noticeId []int64, userId int64) {
+func (n *NoticeService) UpdateNoticeRead(c *gin.Context, noticeId, userId int64) {
 	status := n.nd.SelectNoticeStatusByNoticeIdAndUserId(c, n.data, noticeId, userId)
 	if status == 0 {
 		return

@@ -112,14 +112,14 @@ func (nc *Notice) UserNoticeList(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
-// @Router /system/consumption/noticeRead/{ids} [put]
+// @Router /system/consumption/noticeRead/{id} [put]
 func (nc *Notice) NoticeRead(c *gin.Context) {
-	ids := baizeContext.ParamInt64Array(c, "ids")
-	if len(ids) == 0 {
+	id := baizeContext.ParamInt64(c, "id")
+	if id == 0 {
 		baizeContext.ParameterError(c)
 		return
 	}
-	nc.ns.UpdateNoticeRead(c, ids, baizeContext.GetUserId(c))
+	nc.ns.UpdateNoticeRead(c, id, baizeContext.GetUserId(c))
 	baizeContext.Success(c)
 }
 
