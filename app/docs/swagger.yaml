@@ -1202,6 +1202,32 @@ paths:
       summary: 查询配置列表查询
       tags:
       - 配置相关
+  /system/consumption/{id}:
+    get:
+      description: 消费方获取消息根据ID
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.ConsumptionNoticeVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 消费方获取消息根据ID
+      tags:
+      - 消息通知
   /system/consumption/newMessage:
     get:
       description: 未读消息通知数量

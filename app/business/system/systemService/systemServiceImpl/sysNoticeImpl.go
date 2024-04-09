@@ -81,6 +81,10 @@ func (n *NoticeService) NewMessAge(c *gin.Context, userId int64) int64 {
 	return n.nd.SelectNewMessageCountByUserId(c, n.data, userId)
 }
 
+func (n *NoticeService) SelectConsumptionNoticeById(c *gin.Context, noticeId int64) *systemModels.ConsumptionNoticeVo {
+	return n.nd.SelectConsumptionNoticeById(c, n.data, baizeContext.GetUserId(c), noticeId)
+}
+
 func (n *NoticeService) SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
 	return n.nd.SelectConsumptionNoticeList(c, n.data, notice)
 }

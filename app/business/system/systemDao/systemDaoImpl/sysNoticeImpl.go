@@ -87,6 +87,16 @@ func (s *SysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, db sql
 	return count
 }
 
+func (s *SysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, db sqly.SqlyContext, userId, noticeId int64) *systemModels.ConsumptionNoticeVo {
+	vo := new(systemModels.ConsumptionNoticeVo)
+	err := db.GetContext(ctx, vo, "`select sn.id,sn.title,sn.txt,sn.create_name, sn.type,snu.status from sys_notice sn left join sys_notice_user snu on sn.id = snu.notice_id where snu.user_id=? and snu.notice_id=?`",
+		userId, noticeId)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		panic(err)
+	}
+	return vo
+}
+
 func (s *SysNoticeDao) SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
 	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,snu.status from sys_notice sn
 left join sys_notice_user snu on sn.id = snu.notice_id

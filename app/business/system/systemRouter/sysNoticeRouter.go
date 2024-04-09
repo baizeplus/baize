@@ -13,6 +13,7 @@ func InitSysRouterRouter(router *gin.RouterGroup, dc *systemController.Notice) {
 	systemNoticeData.POST("", middlewares.HasPermission("system:notice:add"), dc.NoticeAdd)
 	systemConsumptionData := router.Group("/system/consumption")
 	systemConsumptionData.GET("/newMessage", dc.NewMessage)
+	systemConsumptionData.GET("/:id", dc.UserNoticeGetInfo)
 	systemConsumptionData.GET("/userNoticeList", dc.UserNoticeList)
 	systemConsumptionData.PUT("/noticeRead/:id", dc.NoticeRead)
 	systemConsumptionData.PUT("/noticeReadAll", dc.NoticeReadAll)

@@ -1013,6 +1013,52 @@
                 }
             }
         },
+        "/system/consumption/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "消费方获取消息根据ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "消息通知"
+                ],
+                "summary": "消费方获取消息根据ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.ConsumptionNoticeVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/system/dept": {
             "get": {
                 "security": [

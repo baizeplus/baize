@@ -87,6 +87,24 @@ func (nc *Notice) NewMessage(c *gin.Context) {
 	baizeContext.SuccessData(c, nc.ns.NewMessAge(c, baizeContext.GetUserId(c)))
 }
 
+// UserNoticeGetInfo 消费方获取消息根据ID
+// @Summary 消费方获取消息根据ID
+// @Description 消费方获取消息根据ID
+// @Tags 消息通知
+// @Param id path string true "id"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=systemModels.ConsumptionNoticeVo} "成功"
+// @Router /system/consumption/{id}  [get]
+func (nc *Notice) UserNoticeGetInfo(c *gin.Context) {
+	id := baizeContext.ParamInt64(c, "id")
+	if id == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
+	baizeContext.SuccessData(c, nc.ns.SelectConsumptionNoticeById(c, id))
+}
+
 // UserNoticeList 消费方获取消息列表
 // @Summary 消费方获取消息列表
 // @Description 消费方获取消息列表
