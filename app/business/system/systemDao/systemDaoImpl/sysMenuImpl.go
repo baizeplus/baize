@@ -251,7 +251,7 @@ func (sysMenuDao *SysMenuDao) SelectMenuTreeByUserId(ctx context.Context, db sql
 func (sysMenuDao *SysMenuDao) CheckMenuNameUnique(ctx context.Context, db sqly.SqlyContext, menuName string, parentId int64) int64 {
 	var roleId int64 = 0
 	err := db.GetContext(ctx, &roleId, "select menu_id from sys_menu where menu_name=? and parent_id = ?", menuName, parentId)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return roleId
@@ -260,7 +260,7 @@ func (sysMenuDao *SysMenuDao) CheckMenuNameUnique(ctx context.Context, db sqly.S
 func (sysMenuDao *SysMenuDao) HasChildByMenuId(ctx context.Context, db sqly.SqlyContext, menuId int64) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_menu where parent_id = ?)", menuId)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return count

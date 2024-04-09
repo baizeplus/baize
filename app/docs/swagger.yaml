@@ -392,10 +392,6 @@ definitions:
     type: object
   systemModels.SysNoticeVo:
     properties:
-      DeptIds:
-        allOf:
-        - $ref: '#/definitions/baize.List'
-        description: 接收部门列表
       createBy:
         description: 创建人
         type: integer
@@ -408,6 +404,10 @@ definitions:
       deptId:
         description: 部门ID
         type: integer
+      deptIds:
+        allOf:
+        - $ref: '#/definitions/baize.List'
+        description: 接收部门列表
       id:
         description: 通知ID
         example: "0"
@@ -416,6 +416,9 @@ definitions:
         description: 通知标题
         type: string
       txt:
+        description: 通知文本
+        type: string
+      type:
         description: 通知文本
         type: string
       updateBy:
@@ -427,6 +430,7 @@ definitions:
     required:
     - title
     - txt
+    - type
     type: object
   systemModels.SysPostVo:
     properties:
@@ -1210,7 +1214,7 @@ paths:
       summary: 未读消息通知数量
       tags:
       - 消息通知
-  /system/consumption/noticeDelete/{id}:
+  /system/consumption/noticeDelete/{ids}:
     delete:
       description: 消费方消息删除消息
       parameters:
@@ -1231,7 +1235,7 @@ paths:
       summary: 消费方消息删除消息
       tags:
       - 消息通知
-  /system/consumption/noticeRead/{id}:
+  /system/consumption/noticeRead/{ids}:
     put:
       description: 消费方消息修改为已读
       parameters:

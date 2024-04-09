@@ -105,16 +105,24 @@ where snu.user_id=:user_id `
 	}
 	return list, total
 }
-func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId, userId int64) string {
-	status := ""
-	err := db.GetContext(ctx, &status, `select status from sys_notice_user  where notice_id=? and user_id = ?`, noticeId, userId)
+func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) int {
+	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in(?))", userId, noticeId)
+	if err != nil {
+		panic(err)
+	}
+	count := 0
+	err = db.GetContext(ctx, &count, query, i...)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
-	return status
+	return count
 }
-func (s *SysNoticeDao) UpdateNoticeRead(ctx context.Context, db sqly.SqlyContext, noticeId, userId int64) {
-	_, err := db.ExecContext(ctx, `update sys_notice_user set status = '2'  where notice_id=? and user_id = ?`, noticeId, userId)
+func (s *SysNoticeDao) UpdateNoticeRead(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) {
+	query, i, err := sqly.In("update sys_notice_user set status = '2'  where user_id = ? and notice_id in(?)", userId, noticeId)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.ExecContext(ctx, query, i...)
 	if err != nil {
 		panic(err)
 	}
@@ -125,8 +133,12 @@ func (s *SysNoticeDao) UpdateNoticeReadAll(ctx context.Context, db sqly.SqlyCont
 		panic(err)
 	}
 }
-func (s *SysNoticeDao) DeleteConsumptionNotice(ctx context.Context, db sqly.SqlyContext, noticeId, userId int64) {
-	_, err := db.ExecContext(ctx, "delete from sys_notice_user where notice_id=? and user_id = ? ", noticeId, userId)
+func (s *SysNoticeDao) DeleteConsumptionNotice(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) {
+	query, i, err := sqly.In("delete from sys_notice_user where  user_id = ? and notice_id in(?) ", userId, noticeId)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.ExecContext(ctx, query, i...)
 	if err != nil {
 		panic(err)
 	}

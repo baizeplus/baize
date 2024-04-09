@@ -128,7 +128,7 @@ func (sysDictDataDao *SysDictDataDao) DeleteDictDataByIds(ctx context.Context, d
 }
 func (sysDictDataDao *SysDictDataDao) CountDictDataByTypes(ctx context.Context, db sqly.SqlyContext, dictType []string) int {
 	var count = 0
-	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_dict_data where dict_type in(?))", dictType)
+	query, i, err := sqly.In("SELECT !errors.Is(sql.ErrNoRows, err)TS( SELECT 1 FROM sys_dict_data where dict_type in(?))", dictType)
 	if err != nil {
 		panic(err)
 	}

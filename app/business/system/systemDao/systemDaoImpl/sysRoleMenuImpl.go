@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/baizeplus/sqly"
 )
 
@@ -42,7 +43,7 @@ func (sysRoleMenuDao *SysRoleMenuDao) DeleteRoleMenuByRoleId(ctx context.Context
 func (sysRoleMenuDao *SysRoleMenuDao) CheckMenuExistRole(ctx context.Context, db sqly.SqlyContext, menuId int64) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "select count(1) from sys_role_menu where menu_id = ?", menuId)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return count

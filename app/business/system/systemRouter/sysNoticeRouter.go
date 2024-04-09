@@ -14,8 +14,8 @@ func InitSysRouterRouter(router *gin.RouterGroup, dc *systemController.Notice) {
 	systemConsumptionData := router.Group("/system/consumption")
 	systemConsumptionData.GET("/newMessage", dc.NewMessage)
 	systemConsumptionData.GET("/userNoticeList", dc.UserNoticeList)
-	systemConsumptionData.PUT("/noticeRead/:id", dc.NoticeRead)
+	systemConsumptionData.PUT("/noticeRead/:ids", dc.NoticeRead)
 	systemConsumptionData.PUT("/noticeReadAll", dc.NoticeReadAll)
-	systemConsumptionData.DELETE("/noticeDelete/:id", dc.NoticeDelete)
+	systemConsumptionData.DELETE("/noticeDelete/:ids", dc.NoticeDelete)
 
 }

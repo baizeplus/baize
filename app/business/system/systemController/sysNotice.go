@@ -112,14 +112,14 @@ func (nc *Notice) UserNoticeList(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
-// @Router /system/consumption/noticeRead/{id} [put]
+// @Router /system/consumption/noticeRead/{ids} [put]
 func (nc *Notice) NoticeRead(c *gin.Context) {
-	id := baizeContext.ParamInt64(c, "id")
-	if id == 0 {
+	ids := baizeContext.ParamInt64Array(c, "ids")
+	if len(ids) == 0 {
 		baizeContext.ParameterError(c)
 		return
 	}
-	nc.ns.UpdateNoticeRead(c, id, baizeContext.GetUserId(c))
+	nc.ns.UpdateNoticeRead(c, ids, baizeContext.GetUserId(c))
 	baizeContext.Success(c)
 }
 
@@ -144,13 +144,13 @@ func (nc *Notice) NoticeReadAll(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object} response.ResponseData
-// @Router /system/consumption/noticeDelete/{id} [delete]
+// @Router /system/consumption/noticeDelete/{ids} [delete]
 func (nc *Notice) NoticeDelete(c *gin.Context) {
-	id := baizeContext.ParamInt64(c, "id")
-	if id == 0 {
+	ids := baizeContext.ParamInt64Array(c, "ids")
+	if len(ids) == 0 {
 		baizeContext.ParameterError(c)
 		return
 	}
-	nc.ns.DeleteConsumptionNotice(c, id, baizeContext.GetUserId(c))
+	nc.ns.DeleteConsumptionNotice(c, ids, baizeContext.GetUserId(c))
 	baizeContext.Success(c)
 }

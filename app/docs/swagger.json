@@ -829,7 +829,7 @@
                 }
             }
         },
-        "/system/consumption/noticeDelete/{id}": {
+        "/system/consumption/noticeDelete/{ids}": {
             "delete": {
                 "security": [
                     {
@@ -863,7 +863,7 @@
                 }
             }
         },
-        "/system/consumption/noticeRead/{id}": {
+        "/system/consumption/noticeRead/{ids}": {
             "put": {
                 "security": [
                     {
@@ -4809,17 +4809,10 @@
             "type": "object",
             "required": [
                 "title",
-                "txt"
+                "txt",
+                "type"
             ],
             "properties": {
-                "DeptIds": {
-                    "description": "接收部门列表",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/baize.List"
-                        }
-                    ]
-                },
                 "createBy": {
                     "description": "创建人",
                     "type": "integer"
@@ -4836,6 +4829,14 @@
                     "description": "部门ID",
                     "type": "integer"
                 },
+                "deptIds": {
+                    "description": "接收部门列表",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/baize.List"
+                        }
+                    ]
+                },
                 "id": {
                     "description": "通知ID",
                     "type": "string",
@@ -4846,6 +4847,10 @@
                     "type": "string"
                 },
                 "txt": {
+                    "description": "通知文本",
+                    "type": "string"
+                },
+                "type": {
                     "description": "通知文本",
                     "type": "string"
                 },

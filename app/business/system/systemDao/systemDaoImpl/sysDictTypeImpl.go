@@ -139,7 +139,7 @@ func (sysDictTypeDao *SysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, d
 func (sysDictTypeDao *SysDictTypeDao) CheckDictTypeUnique(ctx context.Context, db sqly.SqlyContext, dictType string) int64 {
 	var dictId int64 = 0
 	err := db.GetContext(ctx, &dictId, "select dict_id from sys_dict_type where dict_type = ?", dictType)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return dictId

@@ -837,7 +837,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/consumption/noticeDelete/{id}": {
+        "/system/consumption/noticeDelete/{ids}": {
             "delete": {
                 "security": [
                     {
@@ -871,7 +871,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/consumption/noticeRead/{id}": {
+        "/system/consumption/noticeRead/{ids}": {
             "put": {
                 "security": [
                     {
@@ -4817,17 +4817,10 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "title",
-                "txt"
+                "txt",
+                "type"
             ],
             "properties": {
-                "DeptIds": {
-                    "description": "接收部门列表",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/baize.List"
-                        }
-                    ]
-                },
                 "createBy": {
                     "description": "创建人",
                     "type": "integer"
@@ -4844,6 +4837,14 @@ const docTemplate = `{
                     "description": "部门ID",
                     "type": "integer"
                 },
+                "deptIds": {
+                    "description": "接收部门列表",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/baize.List"
+                        }
+                    ]
+                },
                 "id": {
                     "description": "通知ID",
                     "type": "string",
@@ -4854,6 +4855,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "txt": {
+                    "description": "通知文本",
+                    "type": "string"
+                },
+                "type": {
                     "description": "通知文本",
                     "type": "string"
                 },
