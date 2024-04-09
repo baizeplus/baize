@@ -3,6 +3,9 @@ package systemController
 import (
 	"baize/app/business/system/systemService"
 	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/constant/sessionStatus"
+	"baize/app/utils/baizeContext"
+	"baize/app/utils/session"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +21,15 @@ func NewSse(ss *systemServiceImpl.SseService) *Sse {
 // @Summary 建立SSE链接
 // @Description 建立SSE链接
 // @Tags 建立SSE链接
+// @Param  token path string true "token"
 // @Security BearerAuth
-// @Router /system/sse  [get]
+// @Router /system/sse/{token}  [get]
 func (s *Sse) BuildSse(c *gin.Context) {
+	manager := session.NewManger()
+	sess, err := manager.Get(c, c.Param("token"))
+	c.Set(sessionStatus.SessionKey, sess)
+	if err != nil {
+		baizeContext.InvalidToken(c)
+	}
 	s.ss.BuildNotificationChannel(c)
 }

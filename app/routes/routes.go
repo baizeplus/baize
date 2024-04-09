@@ -54,6 +54,7 @@ func NewGinEngine(
 			group.Static(IOFile.ResourcePrefix, setting.Conf.UploadFile.Localhost.PublicPath)
 		}
 		systemRoutes.InitLoginRouter(group, sc.Login) //获取登录信息
+		systemRoutes.InitSseRouter(group, sc.Sse)     //SSE链接
 
 	}
 	//做鉴权的
@@ -71,7 +72,6 @@ func NewGinEngine(
 		systemRoutes.InitSysConfigRouter(group, sc.Config)     //配置文件
 		systemRoutes.InitFileRouter(group, sc.File)            //文件管理
 		systemRoutes.InitSysRouterRouter(group, sc.Notice)     //文件管理
-		systemRoutes.InitSseRouter(group, sc.Sse)              //SSE链接
 		monitorRouter.InitServerRouter(group, mc.Server)
 		monitorRouter.InitSysOperLogRouter(group, mc.Oper)
 		monitorRouter.InitSysUserOnlineRouter(group, mc.UserOnline) //在线用户监控

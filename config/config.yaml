@@ -22,7 +22,7 @@ datasource:
 cache:
   type: redis
   redis:
-    host: 116.63.188.235
+    host: localhost
     port: 6379
     password:
     db: 0

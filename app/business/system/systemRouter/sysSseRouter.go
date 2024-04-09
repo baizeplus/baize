@@ -7,5 +7,5 @@ import (
 
 func InitSseRouter(router *gin.RouterGroup, sse *systemController.Sse) {
 	systemUser := router.Group("/system")
-	systemUser.GET("/sse", sse.BuildSse)
+	systemUser.GET("/sse/:token", sse.BuildSse)
 }

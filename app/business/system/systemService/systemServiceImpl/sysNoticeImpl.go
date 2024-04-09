@@ -72,6 +72,7 @@ func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNot
 		s.UserId = id
 		s.Status = "1"
 		users = append(users, s)
+		//n.ss.SendNotification(id, n.sss)
 	}
 
 	n.nd.BatchSysNoticeUsers(c, tx, users)
@@ -93,12 +94,12 @@ func (n *NoticeService) UpdateNoticeRead(c *gin.Context, noticeId, userId int64)
 	if status == 0 {
 		return
 	}
-	n.ss.SendNotification(userId, n.sss)
+	//n.ss.SendNotification(userId, n.sss)
 	n.nd.UpdateNoticeRead(c, n.data, noticeId, userId)
 }
 func (n *NoticeService) UpdateNoticeReadAll(c *gin.Context, userId int64) {
 	n.nd.UpdateNoticeReadAll(c, n.data, userId)
-	n.ss.SendNotification(userId, n.sss)
+	//n.ss.SendNotification(userId, n.sss)
 }
 func (n *NoticeService) DeleteConsumptionNotice(c *gin.Context, noticeId []int64, userId int64) {
 	n.nd.DeleteConsumptionNotice(c, n.data, noticeId, userId)

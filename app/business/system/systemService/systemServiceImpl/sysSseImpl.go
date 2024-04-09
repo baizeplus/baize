@@ -2,6 +2,7 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemModels"
+	"baize/app/utils/arrayUtils"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -30,7 +31,7 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 	ids := s.userMap[userId]
 	if ids == nil {
 		ids = []string{id}
-	} else {
+	} else if !arrayUtils.IsInArray(id, ids) {
 		ids = append(ids, id)
 	}
 	s.userMap[userId] = ids
@@ -55,24 +56,26 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 		return
 	}()
 	c.Stream(func(w io.Writer) bool {
-		if msg, ok := <-s.channelsMap[id]; ok {
-			c.SSEvent(msg.Key, msg.Value)
-			return true
-		} else {
-			return false
-		}
+		//if msg, ok := <-s.channelsMap[id]; ok {
+		//	c.SSEvent(msg.Key, msg.Value)
+		//	return true
+		//} else {
+		//	return false
+		//}
+		c.SSEvent("data", 1)
+		return true
 	})
 }
 func (s *SseService) SendNotification(userId int64, ss *systemModels.Sse) {
 	s.mutex.RLock()
-	userIds := s.userMap[userId]
+	tokens := s.userMap[userId]
 	s.mutex.RUnlock()
-	if userIds == nil {
+	if tokens == nil {
 		return
 	}
 
-	for _, id := range userIds {
-		channel := s.channelsMap[id]
+	for _, token := range tokens {
+		channel := s.channelsMap[token]
 		channel <- ss
 	}
 }
