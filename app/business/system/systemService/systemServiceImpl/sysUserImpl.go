@@ -16,7 +16,6 @@ import (
 	"context"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xuri/excelize/v2"
 	"mime/multipart"
 	"path/filepath"
@@ -205,7 +204,11 @@ func (userService *UserService) insertUserPost(ctx context.Context, db sqly.Sqly
 	if len(posts) != 0 {
 		list := make([]*systemModels.SysUserPost, 0, len(posts))
 		for _, postId := range posts {
-			post := systemModels.NewSysUserPost(userId, gconv.Int64(postId))
+			i, err := strconv.ParseInt(postId, 10, 64)
+			if err != nil {
+				panic(err)
+			}
+			post := systemModels.NewSysUserPost(userId, i)
 			list = append(list, post)
 		}
 		userService.userPostDao.BatchUserPost(ctx, db, list)
@@ -217,7 +220,11 @@ func (userService *UserService) insertUserRole(ctx context.Context, db sqly.Sqly
 	if len(roles) != 0 {
 		list := make([]*systemModels.SysUserRole, 0, len(roles))
 		for _, roleId := range roles {
-			role := systemModels.NewSysUserRole(userId, gconv.Int64(roleId))
+			i, err := strconv.ParseInt(roleId, 10, 64)
+			if err != nil {
+				panic(err)
+			}
+			role := systemModels.NewSysUserRole(userId, i)
 			list = append(list, role)
 		}
 		userService.userRoleDao.BatchUserRole(ctx, db, list)

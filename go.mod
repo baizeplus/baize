@@ -12,13 +12,12 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gogf/gf/v2 v2.6.2
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.5.0
 	github.com/mojocn/base64Captcha v1.3.6
 	github.com/mssola/user_agent v0.6.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/redis/go-redis/v9 v9.4.0
-	github.com/satori/go.uuid v1.2.0
 	github.com/shirou/gopsutil/v3 v3.24.1
 	github.com/spf13/viper v1.18.2
 	github.com/swaggo/files v1.0.1

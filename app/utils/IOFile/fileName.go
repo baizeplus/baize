@@ -1,18 +1,16 @@
 package IOFile
 
 import (
-	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/google/uuid"
+	"baize/app/utils/stringUtils"
+	"strconv"
 	"time"
 )
 
 func GetRandomName(userId int64, extensionName string) string {
-	uuid, _ := uuid.NewRandom()
-	nameKey := gconv.String(userId) + "/" + time.Now().Format(time.DateOnly) + "/" + uuid.String() + extensionName
+	nameKey := strconv.FormatInt(userId, 10) + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + extensionName
 	return nameKey
 }
 func GetRandomPath(userId int64, name string) string {
-	uuid, _ := uuid.NewRandom()
-	nameKey := gconv.String(userId) + "/" + time.Now().Format(time.DateOnly) + "/" + uuid.String() + "/" + name
+	nameKey := strconv.FormatInt(userId, 10) + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + "/" + name
 	return nameKey
 }

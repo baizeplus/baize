@@ -28,6 +28,8 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 	id := baizeContext.GetSession(c).Id()
 	userId := baizeContext.GetUserId(c)
 	s.mutex.Lock()
+	var newChannel = make(chan *systemModels.Sse)
+	s.channelsMap[id] = newChannel
 	ids := s.userMap[userId]
 	if ids == nil {
 		ids = []string{id}
@@ -56,14 +58,12 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 		return
 	}()
 	c.Stream(func(w io.Writer) bool {
-		//if msg, ok := <-s.channelsMap[id]; ok {
-		//	c.SSEvent(msg.Key, msg.Value)
-		//	return true
-		//} else {
-		//	return false
-		//}
-		c.SSEvent("data", 1)
-		return true
+		if msg, ok := <-s.channelsMap[id]; ok {
+			c.SSEvent(msg.Key, msg.Value)
+			return true
+		} else {
+			return false
+		}
 	})
 }
 func (s *SseService) SendNotification(userId int64, ss *systemModels.Sse) {
@@ -73,9 +73,10 @@ func (s *SseService) SendNotification(userId int64, ss *systemModels.Sse) {
 	if tokens == nil {
 		return
 	}
-
 	for _, token := range tokens {
-		channel := s.channelsMap[token]
-		channel <- ss
+		channel, ok := s.channelsMap[token]
+		if ok {
+			channel <- ss
+		}
 	}
 }

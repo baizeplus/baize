@@ -2,7 +2,7 @@ package stringUtils
 
 import (
 	"crypto/rand"
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"io"
 )
 
@@ -20,7 +20,11 @@ func GetNumberEncode(max int) string {
 }
 
 func GetUUID() string {
-	return uuid.NewV4().String()
+	newUUID, err := uuid.NewV7()
+	if err != nil {
+		panic(err)
+	}
+	return newUUID.String()
 }
 func GeneratePasswd(length int) string {
 	var table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+=-@#~,.[]()!%^*$"

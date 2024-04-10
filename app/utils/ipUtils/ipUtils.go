@@ -3,18 +3,16 @@ package ipUtils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gogf/gf/v2/util/gconv"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"strings"
 	"time"
 )
 
 func GetRealAddressByIP(ip string) string {
-	toByteIp := ipToByte(ip)
+	toByteIp := net.ParseIP(ip)
 	if isLocalIp(toByteIp) {
 		return "服务器登录"
 	}
@@ -24,16 +22,6 @@ func GetRealAddressByIP(ip string) string {
 	return getLocation(ip)
 }
 
-func ipToByte(ipStr string) []byte {
-	ips := strings.Split(ipStr, ".")
-	ip := make([]byte, 0, len(ips))
-	for _, s := range ips {
-		u := gconv.Uint8(s)
-		ip = append(ip, u)
-	}
-	return ip
-
-}
 func isLocalIp(IP net.IP) bool {
 	if IP.IsLoopback() || IP.IsLinkLocalMulticast() || IP.IsLinkLocalUnicast() {
 		return true
