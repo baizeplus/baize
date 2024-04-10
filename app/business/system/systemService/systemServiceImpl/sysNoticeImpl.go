@@ -102,5 +102,9 @@ func (n *NoticeService) UpdateNoticeReadAll(c *gin.Context, userId int64) {
 	go n.ss.SendNotification([]int64{userId}, n.sss)
 }
 func (n *NoticeService) DeleteConsumptionNotice(c *gin.Context, noticeId []int64, userId int64) {
+	i := n.nd.SelectNoticeStatusByNoticeIdsAndUserId(c, n.data, noticeId, userId)
 	n.nd.DeleteConsumptionNotice(c, n.data, noticeId, userId)
+	if i == 1 {
+		go n.ss.SendNotification([]int64{userId}, n.sss)
+	}
 }

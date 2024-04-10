@@ -123,6 +123,15 @@ func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context
 	}
 	return count
 }
+func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) int {
+	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in (?) ", userId, noticeId)
+	count := 0
+	err = db.GetContext(ctx, &count, query, i...)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		panic(err)
+	}
+	return count
+}
 func (s *SysNoticeDao) UpdateNoticeRead(ctx context.Context, db sqly.SqlyContext, noticeId int64, userId int64) {
 
 	_, err := db.ExecContext(ctx, "update sys_notice_user set status = '2'  where user_id = ? and notice_id = ?", userId, noticeId)
