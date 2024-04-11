@@ -32,6 +32,8 @@ func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext
 	}
 	list = make([]*systemModels.SysNoticeVo, 0)
 	total = new(int64)
+	notice.OrderBy = "id"
+	notice.IsAsc = "desc"
 	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+whereSql, notice, notice.ToPage())
 	if err != nil {
 		panic(err)
@@ -89,7 +91,7 @@ func (s *SysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, db sql
 
 func (s *SysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, db sqly.SqlyContext, userId, noticeId int64) *systemModels.ConsumptionNoticeVo {
 	vo := new(systemModels.ConsumptionNoticeVo)
-	err := db.GetContext(ctx, vo, "`select sn.id,sn.title,sn.txt,sn.create_name, sn.type,snu.status from sys_notice sn left join sys_notice_user snu on sn.id = snu.notice_id where snu.user_id=? and snu.notice_id=?`",
+	err := db.GetContext(ctx, vo, `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,sn.create_time,snu.status from sys_notice sn left join sys_notice_user snu on sn.id = snu.notice_id where snu.user_id=? and snu.notice_id=?`,
 		userId, noticeId)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
@@ -98,7 +100,7 @@ func (s *SysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, db sqly.
 }
 
 func (s *SysNoticeDao) SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
-	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,snu.status from sys_notice sn
+	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name,sn.create_time, sn.type,snu.status from sys_notice sn
 left join sys_notice_user snu on sn.id = snu.notice_id
 where snu.user_id=:user_id `
 	if notice.Title != "" {
@@ -107,6 +109,8 @@ where snu.user_id=:user_id `
 	if notice.Unread != "" {
 		selectSql += " AND snu.status=:status"
 	}
+	notice.OrderBy = "sn.id"
+	notice.IsAsc = "desc"
 	list = make([]*systemModels.ConsumptionNoticeVo, 0)
 	total = new(int64)
 	err := db.NamedSelectPageContext(ctx, &list, total, selectSql, notice, notice.ToPage())
@@ -124,7 +128,7 @@ func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context
 	return count
 }
 func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId []int64, userId int64) int {
-	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in (?) ", userId, noticeId)
+	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in (?)) ", userId, noticeId)
 	count := 0
 	err = db.GetContext(ctx, &count, query, i...)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
