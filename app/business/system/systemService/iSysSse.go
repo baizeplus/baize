@@ -7,6 +7,5 @@ import (
 
 type ISseService interface {
 	BuildNotificationChannel(c *gin.Context)
-
-	SendNotification(userId int64, ss *systemModels.Sse)
+	SendNotification(userId []int64, ss *systemModels.Sse)
 }

@@ -48,6 +48,7 @@ func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNot
 		}
 		deptIds = append(deptIds, i)
 	}
+	userIds := n.sud.SelectUserIdsByDeptIds(c, n.data, deptIds)
 	tx, err := n.data.Beginx()
 	if err != nil {
 		panic(err)
@@ -58,10 +59,10 @@ func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNot
 			panic(p)
 		} else {
 			err = tx.Commit()
+			go n.ss.SendNotification(userIds, n.sss)
 		}
 	}()
 	n.nd.InsertNotice(c, tx, notice)
-	userIds := n.sud.SelectUserIdsByDeptIds(c, n.data, deptIds)
 	if len(userIds) == 0 {
 		return
 	}
@@ -72,10 +73,9 @@ func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNot
 		s.UserId = id
 		s.Status = "1"
 		users = append(users, s)
-		//n.ss.SendNotification(id, n.sss)
 	}
-
 	n.nd.BatchSysNoticeUsers(c, tx, users)
+
 }
 
 func (n *NoticeService) NewMessAge(c *gin.Context, userId int64) int64 {
@@ -83,7 +83,13 @@ func (n *NoticeService) NewMessAge(c *gin.Context, userId int64) int64 {
 }
 
 func (n *NoticeService) SelectConsumptionNoticeById(c *gin.Context, noticeId int64) *systemModels.ConsumptionNoticeVo {
-	return n.nd.SelectConsumptionNoticeById(c, n.data, baizeContext.GetUserId(c), noticeId)
+	userId := baizeContext.GetUserId(c)
+	status := n.nd.SelectNoticeStatusByNoticeIdAndUserId(c, n.data, noticeId, userId)
+	if status == 1 {
+		n.nd.UpdateNoticeRead(c, n.data, noticeId, userId)
+		go n.ss.SendNotification([]int64{userId}, n.sss)
+	}
+	return n.nd.SelectConsumptionNoticeById(c, n.data, userId, noticeId)
 }
 
 func (n *NoticeService) SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
@@ -94,13 +100,17 @@ func (n *NoticeService) UpdateNoticeRead(c *gin.Context, noticeId, userId int64)
 	if status == 0 {
 		return
 	}
-	//n.ss.SendNotification(userId, n.sss)
 	n.nd.UpdateNoticeRead(c, n.data, noticeId, userId)
+	go n.ss.SendNotification([]int64{userId}, n.sss)
 }
 func (n *NoticeService) UpdateNoticeReadAll(c *gin.Context, userId int64) {
 	n.nd.UpdateNoticeReadAll(c, n.data, userId)
-	//n.ss.SendNotification(userId, n.sss)
+	go n.ss.SendNotification([]int64{userId}, n.sss)
 }
 func (n *NoticeService) DeleteConsumptionNotice(c *gin.Context, noticeId []int64, userId int64) {
+	i := n.nd.SelectNoticeStatusByNoticeIdsAndUserId(c, n.data, noticeId, userId)
 	n.nd.DeleteConsumptionNotice(c, n.data, noticeId, userId)
+	if i == 1 {
+		go n.ss.SendNotification([]int64{userId}, n.sss)
+	}
 }

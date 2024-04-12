@@ -4,9 +4,11 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/utils/arrayUtils"
 	"baize/app/utils/baizeContext"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"sync"
+	"time"
 )
 
 type SseService struct {
@@ -59,6 +61,7 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 	}()
 	c.Stream(func(w io.Writer) bool {
 		if msg, ok := <-s.channelsMap[id]; ok {
+			fmt.Println("b", time.Now().UnixNano())
 			c.SSEvent(msg.Key, msg.Value)
 			return true
 		} else {
@@ -66,17 +69,20 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 		}
 	})
 }
-func (s *SseService) SendNotification(userId int64, ss *systemModels.Sse) {
-	s.mutex.RLock()
-	tokens := s.userMap[userId]
-	s.mutex.RUnlock()
-	if tokens == nil {
-		return
-	}
-	for _, token := range tokens {
-		channel, ok := s.channelsMap[token]
-		if ok {
-			channel <- ss
+func (s *SseService) SendNotification(userIds []int64, ss *systemModels.Sse) {
+	for _, userId := range userIds {
+		s.mutex.RLock()
+		tokens := s.userMap[userId]
+		s.mutex.RUnlock()
+		if tokens == nil {
+			return
+		}
+		for _, token := range tokens {
+			channel, ok := s.channelsMap[token]
+			if ok {
+				channel <- ss
+			}
 		}
 	}
+
 }
