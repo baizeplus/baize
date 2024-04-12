@@ -2,6 +2,7 @@ package sessionStatus
 
 const (
 	SessionKey      = "_sess"
+	MsgKey          = "_msg"
 	UserId          = "userId"
 	DeptId          = "deptId"
 	Avatar          = "avatar"

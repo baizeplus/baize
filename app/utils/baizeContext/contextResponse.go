@@ -1,38 +1,57 @@
 package baizeContext
 
 import (
+	"baize/app/constant/sessionStatus"
 	"baize/app/utils/response"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
+var (
+	success      = &response.ResponseData{Code: response.Success, Msg: response.Success.Msg()}
+	parameter    = &response.ResponseData{Code: response.Parameter, Msg: response.Parameter.Msg()}
+	unauthorized = &response.ResponseData{Code: response.Unauthorized, Msg: response.Unauthorized.Msg()}
+	forbidden    = &response.ResponseData{Code: response.Forbidden, Msg: response.Forbidden.Msg()}
+)
+
 func Success(c *gin.Context) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Success, Msg: response.Success.Msg()})
+
+	c.JSON(http.StatusOK, success)
+	c.Set(sessionStatus.MsgKey, success)
 }
 func SuccessMsg(c *gin.Context, msg string) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Success, Msg: msg})
+	rd := &response.ResponseData{Code: response.Success, Msg: msg}
+	c.JSON(http.StatusOK, rd)
+	c.Set(sessionStatus.MsgKey, rd)
 }
 
 func SuccessData(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Success, Msg: response.Success.Msg(), Data: data})
+	rd := &response.ResponseData{Code: response.Success, Msg: response.Success.Msg(), Data: data}
+	c.JSON(http.StatusOK, rd)
+	c.Set(sessionStatus.MsgKey, rd)
 }
 func SuccessListData(c *gin.Context, rows interface{}, total *int64) {
 	c.JSON(http.StatusOK, response.ResponseData{Code: response.Success, Msg: response.Success.Msg(), Data: response.ListData{Rows: rows, Total: total}})
 }
 
 func Waring(c *gin.Context, msg string) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Waring, Msg: msg})
+	rd := &response.ResponseData{Code: response.Waring, Msg: msg}
+	c.JSON(http.StatusOK, rd)
+	c.Set(sessionStatus.MsgKey, msg)
 }
 
 func ParameterError(c *gin.Context) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Parameter, Msg: response.Parameter.Msg()})
+	c.JSON(http.StatusOK, parameter)
+	c.Set(sessionStatus.MsgKey, parameter)
 }
 func InvalidToken(c *gin.Context) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Unauthorized, Msg: response.Unauthorized.Msg()})
+	c.JSON(http.StatusOK, unauthorized)
+	c.Set(sessionStatus.MsgKey, unauthorized)
 }
 func PermissionDenied(c *gin.Context) {
-	c.JSON(http.StatusOK, response.ResponseData{Code: response.Forbidden, Msg: response.Forbidden.Msg()})
+	c.JSON(http.StatusOK, forbidden)
+	c.Set(sessionStatus.MsgKey, forbidden)
 }
 func DataPackageExcel(c *gin.Context, data []byte) {
 	c.Header("Content-Type", "application/vnd.ms-excel")

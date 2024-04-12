@@ -3,11 +3,14 @@ package middlewares
 import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
 	"bytes"
 	"context"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
+	"time"
 )
 
 type BusinessType string
@@ -37,18 +40,29 @@ func (c BusinessType) Msg() int8 {
 // SetLog 记录日志
 func SetLog(title string, businessTy BusinessType) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		start := time.Now()
 		data, _ := c.GetRawData()
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 		ol := new(monitorModels.SysOperLog)
 		ol.Title = title
 		ol.BusinessType = businessTy.Msg()
 		c.Next()
-		//ol.Status = c..Success.Msg()
+		value, ok := c.Get(sessionStatus.MsgKey)
+		if ok {
+			ol.Status = "0"
+			marshal, err := json.Marshal(value)
+			if err == nil {
+				ol.JsonResult = string(marshal)
+			}
+		} else {
+			ol.Status = "1"
+		}
 		ol.OperIp = c.ClientIP()
 		ol.OperUrl = c.Request.URL.Path
 		ol.RequestMethod = c.Request.Method
 		ol.OperName = baizeContext.GetUserName(c)
 		ol.OperParam = string(data) + c.Request.URL.RawQuery
+		ol.CostTime = int64(time.Since(start))
 		monitorServiceImpl.OperLog.InsertOperLog(context.Background(), ol)
 	}
 }

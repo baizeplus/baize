@@ -14,13 +14,12 @@ type OperLogDao struct {
 
 func NewOperLog() *OperLogDao {
 	return &OperLogDao{
-		selectSql: ` select oper_id, title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time from sys_oper_log`,
+		selectSql: ` select oper_id, title, business_type, method, request_method, operator_type, oper_name, oper_url, oper_ip, oper_param, json_result, status,  oper_time from sys_oper_log`,
 	}
 }
 
 func (operLogDao *OperLogDao) InsertOperLog(ctx context.Context, db sqly.SqlyContext, operLog *monitorModels.SysOperLog) {
-	_, err := db.NamedExecContext(ctx, "insert into sys_oper_log(oper_id,title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time)"+
-		"  values (:oper_id,:title, :business_type, :method, :request_method, :operator_type, :oper_name, :dept_name, :oper_url, :oper_ip, :oper_location, :oper_param, :json_result, :status, :error_msg, sysdate())", operLog)
+	_, err := db.NamedExecContext(ctx, "insert into sys_oper_log(oper_id,title, business_type, method, request_method, operator_type, oper_name, oper_url, oper_ip, oper_param, json_result, status,  oper_time)  values (:oper_id,:title, :business_type, :method, :request_method, :operator_type, :oper_name, :oper_url, :oper_ip, , :oper_param, :json_result, :status, sysdate())", operLog)
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +33,7 @@ func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.Sql
 	if openLog.BusinessType != nil {
 		whereSql += " AND business_type = :business_type"
 	}
-	if openLog.Status != nil {
+	if openLog.Status != "" {
 		whereSql += " AND status = :status"
 	}
 	if openLog.OperName != "" {
@@ -66,7 +65,7 @@ func (operLogDao *OperLogDao) SelectOperLogListAll(ctx context.Context, db sqly.
 	if openLog.BusinessType != nil {
 		whereSql += " AND business_type = :business_type"
 	}
-	if openLog.Status != nil {
+	if openLog.Status != "" {
 		whereSql += " AND status = :status"
 	}
 	if openLog.OperName != "" {

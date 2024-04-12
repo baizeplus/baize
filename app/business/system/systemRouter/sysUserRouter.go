@@ -13,7 +13,7 @@ func InitSysUserRouter(router *gin.RouterGroup, user *systemController.User) {
 	systemUser.GET("/", middlewares.HasPermission(SystemUserQuery), user.UserGetInfo)
 	systemUser.GET("/authRole/:userId", middlewares.HasPermission(SystemUserEdit), user.UserAuthRole)
 	systemUser.GET("/:userId", middlewares.HasPermission(SystemUserQuery), user.UserGetInfoById)
-	systemUser.POST("", middlewares.HasPermission("system:user:add"), user.UserAdd)
+	systemUser.POST("", middlewares.SetLog("用户", middlewares.INSERT), middlewares.HasPermission("system:user:add"), user.UserAdd)
 	systemUser.GET("/dataScope/:userId", middlewares.HasPermission(SystemUserQuery), user.SelectUserDataScope)
 	systemUser.PUT("/dataScope", middlewares.HasPermission(SystemUserEdit), user.UpdateUserDataScope)
 	systemUser.PUT("", middlewares.HasPermission(SystemUserEdit), user.UserEdit)
