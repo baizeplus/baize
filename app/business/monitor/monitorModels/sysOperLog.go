@@ -10,7 +10,7 @@ type SysOperLog struct {
 	BusinessType  int8        `json:"businessType" db:"business_type"`
 	Method        string      `json:"method" db:"method"`
 	RequestMethod string      `json:"requestMethod" db:"request_method"`
-	OperatorType  int8        `json:"operatorType" db:"operator_type"`
+	UserId        int64       `json:"userId" db:"user_id"`
 	OperName      string      `json:"operName" db:"oper_name"`
 	OperUrl       string      `json:"operUrl" db:"oper_url"`
 	OperIp        string      `json:"operIp" db:"oper_ip"`

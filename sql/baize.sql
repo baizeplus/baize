@@ -129,15 +129,12 @@ INSERT INTO `sys_dict_data` VALUES (15, 2, '公告', '2', 'sys_notice_type', '',
 INSERT INTO `sys_dict_data` VALUES (16, 1, '正常', '0', 'sys_notice_status', '', 'primary', 'Y', '0', 1, '2024-02-08 04:10:56', 1, NULL, '正常状态');
 INSERT INTO `sys_dict_data` VALUES (17, 2, '关闭', '1', 'sys_notice_status', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '关闭状态');
 INSERT INTO `sys_dict_data` VALUES (18, 99, '其他', '0', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '其他操作');
+INSERT INTO `sys_dict_data` VALUES (18, 0, '其他', '0', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '其他操作');
 INSERT INTO `sys_dict_data` VALUES (19, 1, '新增', '1', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '新增操作');
 INSERT INTO `sys_dict_data` VALUES (20, 2, '修改', '2', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '修改操作');
 INSERT INTO `sys_dict_data` VALUES (21, 3, '删除', '3', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '删除操作');
-INSERT INTO `sys_dict_data` VALUES (22, 4, '授权', '4', 'sys_oper_type', '', 'primary', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '授权操作');
-INSERT INTO `sys_dict_data` VALUES (23, 5, '导出', '5', 'sys_oper_type', '', 'warning', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '导出操作');
-INSERT INTO `sys_dict_data` VALUES (24, 6, '导入', '6', 'sys_oper_type', '', 'warning', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '导入操作');
-INSERT INTO `sys_dict_data` VALUES (25, 7, '强退', '7', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '强退操作');
-INSERT INTO `sys_dict_data` VALUES (26, 8, '生成代码', '8', 'sys_oper_type', '', 'warning', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '生成操作');
-INSERT INTO `sys_dict_data` VALUES (27, 9, '清空数据', '9', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '清空操作');
+INSERT INTO `sys_dict_data` VALUES (22, 4, '强退', '4', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, '2024-04-12 14:33:31', '强退操作');
+INSERT INTO `sys_dict_data` VALUES (23, 9, '清空数据', '9', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '清空操作');
 INSERT INTO `sys_dict_data` VALUES (28, 1, '成功', '0', 'sys_common_status', '', 'primary', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '正常状态');
 INSERT INTO `sys_dict_data` VALUES (29, 2, '失败', '1', 'sys_common_status', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '停用状态');
 COMMIT;
@@ -349,27 +346,21 @@ CREATE TABLE `sys_notice_user` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_oper_log`;
 CREATE TABLE `sys_oper_log` (
-  `oper_id` bigint NOT NULL AUTO_INCREMENT COMMENT '日志主键',
-  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '模块标题',
-  `business_type` int DEFAULT '0' COMMENT '业务类型（0其它 1新增 2修改 3删除）',
-  `method` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '方法名称',
-  `request_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '请求方式',
-  `operator_type` int DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
-  `oper_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '操作人员',
-  `dept_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '部门名称',
-  `oper_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '请求URL',
-  `oper_ip` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '主机地址',
-  `oper_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '操作地点',
-  `oper_param` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '请求参数',
-  `json_result` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '返回参数',
-  `status` int DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
-  `error_msg` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '错误消息',
-  `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
-  `cost_time` bigint DEFAULT '0' COMMENT '消耗时间',
+    `oper_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
+    `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '模块标题',
+    `business_type` int(0) NULL DEFAULT 0 COMMENT '业务类型（0其它 1新增 2修改 3删除）',
+    `method` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '方法名称',
+    `request_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '请求方式',
+    `oper_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '操作人员',
+    `oper_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '请求URL',
+    `oper_ip` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '主机地址',
+    `oper_param` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '请求参数',
+    `json_result` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '返回参数',
+    `status` int(0) NULL DEFAULT 0 COMMENT '操作状态（0正常 1异常）',
+    `user_id` bigint(0) NULL DEFAULT NULL COMMENT '用户ID',
+    `oper_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
+    `cost_time` bigint(0) NULL DEFAULT 0 COMMENT '消耗时间',
   PRIMARY KEY (`oper_id`) USING BTREE,
-  KEY `idx_sys_oper_log_bt` (`business_type`) USING BTREE,
-  KEY `idx_sys_oper_log_s` (`status`) USING BTREE,
-  KEY `idx_sys_oper_log_ot` (`oper_time`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志记录';
 
 

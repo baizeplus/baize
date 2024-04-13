@@ -66,6 +66,11 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	session.Set(c, sessionStatus.DeptId, user.DeptId)
 	session.Set(c, sessionStatus.DataScopeAspect, user.DataScope)
 	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				zap.L().Error("登录日志记录错误", zap.Any("error", err))
+			}
+		}()
 		l.LoginLocation = ipUtils.GetRealAddressByIP(l.IpAddr)
 		loginService.loginforDao.InserLogininfor(context.Background(), loginService.data, l)
 	}()

@@ -6,6 +6,7 @@ import (
 	"baize/app/utils/baizeContext"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"io"
 	"sync"
 	"time"
@@ -41,6 +42,11 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 	s.userMap[userId] = ids
 	s.mutex.Unlock()
 	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				zap.L().Error("SSE断开链接错误", zap.Any("error", err))
+			}
+		}()
 		<-closeNotify
 		s.mutex.Lock()
 		userIds := s.userMap[userId]
