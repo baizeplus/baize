@@ -128,7 +128,6 @@ INSERT INTO `sys_dict_data` VALUES (14, 1, '通知', '1', 'sys_notice_type', '',
 INSERT INTO `sys_dict_data` VALUES (15, 2, '公告', '2', 'sys_notice_type', '', 'success', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '公告');
 INSERT INTO `sys_dict_data` VALUES (16, 1, '正常', '0', 'sys_notice_status', '', 'primary', 'Y', '0', 1, '2024-02-08 04:10:56', 1, NULL, '正常状态');
 INSERT INTO `sys_dict_data` VALUES (17, 2, '关闭', '1', 'sys_notice_status', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '关闭状态');
-INSERT INTO `sys_dict_data` VALUES (18, 99, '其他', '0', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '其他操作');
 INSERT INTO `sys_dict_data` VALUES (18, 0, '其他', '0', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '其他操作');
 INSERT INTO `sys_dict_data` VALUES (19, 1, '新增', '1', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '新增操作');
 INSERT INTO `sys_dict_data` VALUES (20, 2, '修改', '2', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '修改操作');
@@ -360,7 +359,7 @@ CREATE TABLE `sys_oper_log` (
     `user_id` bigint(0) NULL DEFAULT NULL COMMENT '用户ID',
     `oper_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
     `cost_time` bigint(0) NULL DEFAULT 0 COMMENT '消耗时间',
-  PRIMARY KEY (`oper_id`) USING BTREE,
+  PRIMARY KEY (`oper_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志记录';
 
 
