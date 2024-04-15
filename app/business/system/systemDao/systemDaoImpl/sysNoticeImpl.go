@@ -32,8 +32,6 @@ func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext
 	}
 	list = make([]*systemModels.SysNoticeVo, 0)
 	total = new(int64)
-	notice.OrderBy = "id"
-	notice.IsAsc = "desc"
 	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+whereSql, notice, notice.ToPage())
 	if err != nil {
 		panic(err)
@@ -106,11 +104,12 @@ where snu.user_id=:user_id `
 	if notice.Title != "" {
 		selectSql += " AND sn.title like concat('%', :title, '%')"
 	}
-	if notice.Unread != "" {
+	if notice.Status != "" {
 		selectSql += " AND snu.status=:status"
 	}
-	notice.OrderBy = "sn.id"
-	notice.IsAsc = "desc"
+	if notice.Type != "" {
+		selectSql += " AND sn.type=:type"
+	}
 	list = make([]*systemModels.ConsumptionNoticeVo, 0)
 	total = new(int64)
 	err := db.NamedSelectPageContext(ctx, &list, total, selectSql, notice, notice.ToPage())

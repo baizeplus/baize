@@ -26,10 +26,13 @@ func NewNotice(ns *systemServiceImpl.NoticeService) *Notice {
 // @Success 200 {object}  response.ResponseData{data=response.ListData{rows=[]systemModels.SysNoticeVo}} "成功"
 // @Router /system/notice/list [get]
 func (nc *Notice) NoticeList(c *gin.Context) {
-
 	n := new(systemModels.NoticeDQL)
 	_ = c.ShouldBind(n)
 	n.DataScope = baizeContext.GetDataScope(c, "sys_notice")
+	if n.OrderBy == "" {
+		n.OrderBy = "id"
+		n.IsAsc = "desc"
+	}
 	list, count := nc.ns.SelectNoticeList(c, n)
 	baizeContext.SuccessListData(c, list, count)
 
@@ -118,6 +121,10 @@ func (nc *Notice) UserNoticeList(c *gin.Context) {
 	n := new(systemModels.ConsumptionNoticeDQL)
 	_ = c.ShouldBind(n)
 	n.UserId = baizeContext.GetUserId(c)
+	if n.OrderBy == "" {
+		n.OrderBy = "sn.id"
+		n.IsAsc = "desc"
+	}
 	list, total := nc.ns.SelectConsumptionNoticeList(c, n)
 	baizeContext.SuccessListData(c, list, total)
 }

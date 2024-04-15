@@ -19,6 +19,10 @@ func NewLogininfor(ls *monitorServiceImpl.LogininforService) *Logininfor {
 func (lc *Logininfor) LogininforList(c *gin.Context) {
 	loginfor := new(monitorModels.LogininforDQL)
 	_ = c.ShouldBind(loginfor)
+	if loginfor.OrderBy == "" {
+		loginfor.OrderBy = "info_id"
+		loginfor.IsAsc = "desc"
+	}
 	list, count := lc.ls.SelectLogininforList(c, loginfor)
 	baizeContext.SuccessListData(c, list, count)
 
@@ -27,6 +31,10 @@ func (lc *Logininfor) LogininforList(c *gin.Context) {
 func (lc *Logininfor) LogininforExport(c *gin.Context) {
 	loginfor := new(monitorModels.LogininforDQL)
 	_ = c.ShouldBind(loginfor)
+	if loginfor.OrderBy == "" {
+		loginfor.OrderBy = "info_id"
+		loginfor.IsAsc = "desc"
+	}
 	data := lc.ls.ExportLogininfor(c, loginfor)
 	baizeContext.DataPackageExcel(c, data)
 }

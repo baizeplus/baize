@@ -26,8 +26,9 @@ type NoticeUser struct {
 	Status   string `db:"status"` //通知状态  1未读 2 已读
 }
 type ConsumptionNoticeDQL struct {
-	Unread string `form:"unread" db:"status"` //未读消息1 已读2 全部不填
+	Status string `form:"status" db:"status"` //未读消息1 已读2 全部不填
 	Title  string `form:"title" db:"title"`
+	Type   string `form:"type" db:"type" ` //消息类型
 	UserId int64  `db:"user_id"  swaggerignore:"true"`
 	baize.BaseEntityDQL
 }
