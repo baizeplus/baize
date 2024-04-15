@@ -10,6 +10,6 @@ func InitSysLogininforRouter(router *gin.RouterGroup, lc *monitorController.Logi
 	logininfor := router.Group("/monitor/logininfor")
 	logininfor.GET("/list", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforList)
 	logininfor.GET("/export", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforExport)
-	logininfor.DELETE("/:infoIds", middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforRemove)
-	logininfor.DELETE("/clean", middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforClean)
+	logininfor.DELETE("/:infoIds", middlewares.SetLog("登录日志", middlewares.Delete), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforRemove)
+	logininfor.DELETE("/clean", middlewares.SetLog("登录日志", middlewares.Clear), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforClean)
 }

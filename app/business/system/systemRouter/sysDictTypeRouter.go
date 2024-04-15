@@ -11,10 +11,10 @@ func InitSysDictTypeRouter(router *gin.RouterGroup, dictType *systemController.D
 	systemDictType.GET("/list", middlewares.HasPermission("system:dict:list"), dictType.DictTypeList)
 	systemDictType.POST("/export", middlewares.HasPermission("system:dict:export"), dictType.DictTypeExport)
 	systemDictType.GET("/:dictId", middlewares.HasPermission("system:dict:query"), dictType.DictTypeGetInfo)
-	systemDictType.POST("", middlewares.HasPermission("system:dict:add"), dictType.DictTypeAdd)
-	systemDictType.PUT("", middlewares.HasPermission("system:dict:edit"), dictType.DictTypeEdit)
-	systemDictType.DELETE("/:dictIds", middlewares.HasPermission("system:dict:remove"), dictType.DictTypeRemove)
-	systemDictType.DELETE("/refreshCache", middlewares.HasPermission("system:dict:remove"), dictType.DictTypeClearCache)
+	systemDictType.POST("", middlewares.SetLog(dictTypeManagement, middlewares.Insert), middlewares.HasPermission("system:dict:add"), dictType.DictTypeAdd)
+	systemDictType.PUT("", middlewares.SetLog(dictTypeManagement, middlewares.Update), middlewares.HasPermission("system:dict:edit"), dictType.DictTypeEdit)
+	systemDictType.DELETE("/:dictIds", middlewares.SetLog(dictTypeManagement, middlewares.Delete), middlewares.HasPermission("system:dict:remove"), dictType.DictTypeRemove)
+	systemDictType.DELETE("/refreshCache", middlewares.SetLog(dictTypeManagement, middlewares.Clear), middlewares.HasPermission("system:dict:remove"), dictType.DictTypeClearCache)
 	systemDictType.GET("/optionSelect", dictType.DictTypeOptionSelect)
 
 }
