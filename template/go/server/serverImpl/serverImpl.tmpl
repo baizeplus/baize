@@ -9,6 +9,12 @@ import (
     "github.com/baizeplus/sqly"
     "github.com/gin-gonic/gin"
 )
+// ==========================================================================
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
+// version: v1.0
+// ==========================================================================
+
 
 type {{.Table.StructName}}Service struct {
     data    *sqly.DB

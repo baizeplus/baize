@@ -5,6 +5,12 @@ import (
 	"baize/app/middlewares"
 	"github.com/gin-gonic/gin"
 )
+// ==========================================================================
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
+// version: v1.0
+// ==========================================================================
+
 
 func Init{{.Table.StructName}}Router(router *gin.RouterGroup, {{.Table.BusinessName}} *{{.Table.ModuleName}}Controller.{{.Table.StructName}}) {
 	{{.Table.BusinessName}}Router := router.Group("/{{.Table.ModuleName}}/{{.Table.BusinessName}}")
