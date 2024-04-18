@@ -38,7 +38,7 @@ func (gc *GenTable) GenTableGetInfo(c *gin.Context) {
 
 func (gc *GenTable) DataList(c *gin.Context) {
 	getTable := new(toolModels.GenTableDQL)
-	c.ShouldBind(getTable)
+	_ = c.ShouldBind(getTable)
 	list, count := gc.gt.SelectDbTableList(c, getTable)
 	baizeContext.SuccessListData(c, list, count)
 
@@ -55,8 +55,8 @@ func (gc *GenTable) ImportTable(c *gin.Context) {
 }
 func (gc *GenTable) EditSave(c *gin.Context) {
 	genTable := new(toolModels.GenTableDML)
-	c.ShouldBindJSON(genTable)
-	//genTable.SetUpdateBy(bzc.GetCurrentUserName())
+	_ = c.ShouldBindJSON(genTable)
+	genTable.SetUpdateBy(baizeContext.GetUserId(c))
 	gc.gt.UpdateGenTable(c, genTable)
 	baizeContext.Success(c)
 }

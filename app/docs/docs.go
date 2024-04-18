@@ -974,13 +974,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "未读消息1 已读2 全部不填",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "未读消息1 已读2 全部不填",
-                        "name": "unread",
+                        "description": "消息类型",
+                        "name": "type",
                         "in": "query"
                     }
                 ],
@@ -3439,7 +3445,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/sse": {
+        "/system/sse/{token}": {
             "get": {
                 "security": [
                     {
@@ -3451,6 +3457,15 @@ const docTemplate = `{
                     "建立SSE链接"
                 ],
                 "summary": "建立SSE链接",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },

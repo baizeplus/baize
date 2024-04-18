@@ -1322,12 +1322,16 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: 未读消息1 已读2 全部不填
+        in: query
+        name: status
+        type: string
       - in: query
         name: title
         type: string
-      - description: 未读消息1 已读2 全部不填
+      - description: 消息类型
         in: query
-        name: unread
+        name: type
         type: string
       produces:
       - application/json
@@ -2756,9 +2760,15 @@ paths:
       summary: 查询角色列表查询
       tags:
       - 角色相关
-  /system/sse:
+  /system/sse/{token}:
     get:
       description: 建立SSE链接
+      parameters:
+      - description: token
+        in: path
+        name: token
+        required: true
+        type: string
       responses: {}
       security:
       - BearerAuth: []

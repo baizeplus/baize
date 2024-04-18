@@ -44,7 +44,6 @@ INSERT INTO `sys_config` VALUES (2, '用户管理-账号初始密码', 'sys.user
 INSERT INTO `sys_config` VALUES (3, '主框架页-侧边栏主题', 'sys.index.sideTheme', 'theme-dark', 'Y', 1, '2024-02-08 04:10:56', 1, NULL, '深色主题theme-dark，浅色主题theme-light');
 INSERT INTO `sys_config` VALUES (4, '账号自助-验证码开关', 'sys.account.captchaEnabled', 'false', 'Y', 1, '2024-02-08 04:10:56', 1, '2024-03-09 13:17:45', '是否开启验证码功能（true开启，false关闭）');
 INSERT INTO `sys_config` VALUES (5, '账号自助-是否开启用户注册功能', 'sys.account.registerUser', 'true', 'Y', 1, '2024-02-08 04:10:56', 1, '2024-03-09 13:24:50', '是否开启注册用户功能（true开启，false关闭）');
-INSERT INTO `sys_config` VALUES (6, '用户登录-黑名单列表', 'sys.login.blackIPList', '', 'Y', 1, '2024-02-08 04:10:56', 1, NULL, '设置登录IP黑名单限制，多个匹配项以;分隔，支持匹配（*通配、网段）');
 COMMIT;
 
 -- ----------------------------
@@ -133,7 +132,7 @@ INSERT INTO `sys_dict_data` VALUES (19, 1, '新增', '1', 'sys_oper_type', '', '
 INSERT INTO `sys_dict_data` VALUES (20, 2, '修改', '2', 'sys_oper_type', '', 'info', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '修改操作');
 INSERT INTO `sys_dict_data` VALUES (21, 3, '删除', '3', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '删除操作');
 INSERT INTO `sys_dict_data` VALUES (22, 4, '强退', '4', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, '2024-04-12 14:33:31', '强退操作');
-INSERT INTO `sys_dict_data` VALUES (23, 9, '清空数据', '9', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '清空操作');
+INSERT INTO `sys_dict_data` VALUES (23, 5, '清空数据', '5', 'sys_oper_type', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '清空操作');
 INSERT INTO `sys_dict_data` VALUES (28, 1, '成功', '0', 'sys_common_status', '', 'primary', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '正常状态');
 INSERT INTO `sys_dict_data` VALUES (29, 2, '失败', '1', 'sys_common_status', '', 'danger', 'N', '0', 1, '2024-02-08 04:10:56', 1, NULL, '停用状态');
 COMMIT;
@@ -292,7 +291,6 @@ INSERT INTO `sys_menu` VALUES (1041, '日志导出', 500, 3, '#', '', '', 1, 0, 
 INSERT INTO `sys_menu` VALUES (1042, '登录查询', 501, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 INSERT INTO `sys_menu` VALUES (1043, '登录删除', 501, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 INSERT INTO `sys_menu` VALUES (1044, '日志导出', 501, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1045, '账户解锁', 501, 4, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:unlock', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 INSERT INTO `sys_menu` VALUES (1046, '在线查询', 109, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 INSERT INTO `sys_menu` VALUES (1047, '批量强退', 109, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:batchLogout', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
 INSERT INTO `sys_menu` VALUES (1048, '单条强退', 109, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:forceLogout', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');

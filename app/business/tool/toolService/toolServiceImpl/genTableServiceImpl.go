@@ -60,7 +60,7 @@ func (genTabletService *GenTabletService) ImportTableSave(c *gin.Context, table 
 	genTabletService.genTabletColumnDao.BatchInsertGenTableColumn(c, genTabletService.data, genTableColumnList)
 
 }
-func (genTabletService *GenTabletService) UpdateGenTable(c *gin.Context, genTable *toolModels.GenTableDML) (err error) {
+func (genTabletService *GenTabletService) UpdateGenTable(c *gin.Context, genTable *toolModels.GenTableDML) {
 	genTabletService.genTabletDao.UpdateGenTable(c, genTabletService.data, genTable)
 	for _, cenTableColumn := range genTable.Columns {
 		genTabletService.genTabletColumnDao.UpdateGenTableColumn(c, genTabletService.data, cenTableColumn)
@@ -68,10 +68,10 @@ func (genTabletService *GenTabletService) UpdateGenTable(c *gin.Context, genTabl
 	return
 }
 
-func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, ids []int64) (err error) {
+func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, ids []int64) {
 	genTabletService.genTabletDao.DeleteGenTableByIds(c, genTabletService.data, ids)
 	genTabletService.genTabletColumnDao.DeleteGenTableColumnByIds(c, genTabletService.data, ids)
-	return nil
+	return
 }
 func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId int64) (m map[string]string) {
 	data := make(map[string]any)
