@@ -80,7 +80,7 @@ func (ddc *DictData) DictDataGetInfo(c *gin.Context) {
 // @Router /system/dict/data/type/{dictType}  [get]
 func (ddc *DictData) DictDataType(c *gin.Context) {
 	sysDictDataList := ddc.dds.SelectDictDataByType(c, c.Param("dictType"))
-	baizeContext.SuccessData(c, sysDictDataList)
+	baizeContext.SuccessGzip(c, sysDictDataList)
 }
 
 // DictDataAdd 添加字典数据

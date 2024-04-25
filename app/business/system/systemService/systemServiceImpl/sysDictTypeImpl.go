@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/utils/cache"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
@@ -13,12 +14,14 @@ import (
 type DictTypeService struct {
 	data        *sqly.DB
 	dictTypeDao systemDao.IDictTypeDao
+	dictKey     string
 }
 
 func NewDictTypeService(data *sqly.DB, dtd *systemDaoImpl.SysDictTypeDao) *DictTypeService {
 	return &DictTypeService{
 		data:        data,
 		dictTypeDao: dtd,
+		dictKey:     "sys_dict:",
 	}
 }
 
@@ -67,7 +70,7 @@ func (dictTypeService *DictTypeService) CheckDictTypeUnique(c *gin.Context, id i
 	return true
 }
 func (dictTypeService *DictTypeService) DictTypeClearCache(c *gin.Context) {
-	//sessionCache.Delete(constants.SysDictKey + "*")
+	cache.GetCache().Del(c, dictTypeService.dictKey+"*")
 }
 func (dictTypeService *DictTypeService) SelectDictTypeAll(c *gin.Context) (list []*systemModels.SysDictTypeVo) {
 	return dictTypeService.dictTypeDao.SelectDictTypeAll(c, dictTypeService.data, new(systemModels.SysDictTypeDQL))

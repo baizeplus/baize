@@ -15,6 +15,6 @@ type SysConfigVo struct {
 	ConfigKey   string `json:"configKey" db:"config_key" bze:"2,参数键名"`     //参数键名
 	ConfigValue string `json:"configValue" db:"config_value" bze:"3,参数键值"` //参数键值
 	ConfigType  string `json:"configType" db:"config_type" bze:"4,系统内置"`   //系统内置（Y是 N否）
-	Remark      string `json:"remark" db:"remark" bze:"5:备注"`              //备注
+	Remark      string `json:"remark" db:"remark" bze:"5,备注"`              //备注
 	baize.BaseEntity
 }

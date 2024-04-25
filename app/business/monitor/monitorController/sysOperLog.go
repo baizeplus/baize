@@ -19,6 +19,10 @@ func NewOperLog(ls *monitorServiceImpl.OperLogService) *OperLog {
 func (ol *OperLog) OperLogList(c *gin.Context) {
 	operLog := new(monitorModels.SysOperLogDQL)
 	_ = c.ShouldBind(operLog)
+	if operLog.OrderBy == "" {
+		operLog.OrderBy = "oper_id"
+		operLog.IsAsc = "desc"
+	}
 	list, count := ol.ls.SelectOperLogList(c, operLog)
 	baizeContext.SuccessListData(c, list, count)
 

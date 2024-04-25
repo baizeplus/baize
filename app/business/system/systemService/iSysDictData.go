@@ -6,7 +6,7 @@ import (
 )
 
 type IDictDataService interface {
-	SelectDictDataByType(c *gin.Context, dictType string) (sysDictDataList []*systemModels.SysDictDataVo)
+	SelectDictDataByType(c *gin.Context, dictType string) (data []byte)
 	SelectDictDataList(c *gin.Context, dictData *systemModels.SysDictDataDQL) (list []*systemModels.SysDictDataVo, count *int64)
 	ExportDictData(c *gin.Context, dictData *systemModels.SysDictDataDQL) (data []byte)
 	SelectDictDataById(c *gin.Context, dictCode int64) (dictData *systemModels.SysDictDataVo)
