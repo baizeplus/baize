@@ -236,12 +236,7 @@ INSERT INTO `sys_menu` VALUES (106, '参数设置', 1, 7, 'config', 'system/conf
 INSERT INTO `sys_menu` VALUES (107, '通知公告', 1, 8, 'notice', 'system/notice/index', '', 1, 0, 'C', '0', '0', 'system:notice:list', 'message', 1, '2024-02-08 04:10:55', 1, NULL, '通知公告菜单');
 INSERT INTO `sys_menu` VALUES (108, '日志管理', 1, 9, 'log', '', '', 1, 0, 'M', '0', '0', '', 'log', 1, '2024-02-08 04:10:55', 1, NULL, '日志管理菜单');
 INSERT INTO `sys_menu` VALUES (109, '在线用户', 2, 1, 'online', 'monitor/online/index', '', 1, 0, 'C', '0', '0', 'monitor:online:list', 'online', 1, '2024-02-08 04:10:55', 1, NULL, '在线用户菜单');
-INSERT INTO `sys_menu` VALUES (110, '定时任务', 2, 2, 'job', 'monitor/job/index', '', 1, 0, 'C', '0', '0', 'monitor:job:list', 'job', 1, '2024-02-08 04:10:55', 1, NULL, '定时任务菜单');
-INSERT INTO `sys_menu` VALUES (111, '数据监控', 2, 3, 'druid', 'monitor/druid/index', '', 1, 0, 'C', '0', '0', 'monitor:druid:list', 'druid', 1, '2024-02-08 04:10:55', 1, NULL, '数据监控菜单');
 INSERT INTO `sys_menu` VALUES (112, '服务监控', 2, 4, 'server', 'monitor/server/index', '', 1, 0, 'C', '0', '0', 'monitor:server:list', 'server', 1, '2024-02-08 04:10:55', 1, NULL, '服务监控菜单');
-INSERT INTO `sys_menu` VALUES (113, '缓存监控', 2, 5, 'cache', 'monitor/cache/index', '', 1, 0, 'C', '0', '0', 'monitor:cache:list', 'redis', 1, '2024-02-08 04:10:55', 1, NULL, '缓存监控菜单');
-INSERT INTO `sys_menu` VALUES (114, '缓存列表', 2, 6, 'cacheList', 'monitor/cache/list', '', 1, 0, 'C', '0', '0', 'monitor:cache:list', 'redis-list', 1, '2024-02-08 04:10:55', 1, NULL, '缓存列表菜单');
-INSERT INTO `sys_menu` VALUES (115, '表单构建', 3, 1, 'build', 'tool/build/index', '', 1, 0, 'C', '0', '0', 'tool:build:list', 'build', 1, '2024-02-08 04:10:55', 1, NULL, '表单构建菜单');
 INSERT INTO `sys_menu` VALUES (116, '代码生成', 3, 2, 'gen', 'tool/gen/index', '', 1, 0, 'C', '0', '0', 'tool:gen:list', 'code', 1, '2024-02-08 04:10:55', 1, NULL, '代码生成菜单');
 INSERT INTO `sys_menu` VALUES (117, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', '', 1, 0, 'C', '0', '0', 'tool:swagger:list', 'swagger', 1, '2024-02-08 04:10:55', 1, NULL, '系统接口菜单');
 INSERT INTO `sys_menu` VALUES (500, '操作日志', 108, 1, 'operlog', 'monitor/operlog/index', '', 1, 0, 'C', '0', '0', 'monitor:operlog:list', 'form', 1, '2024-02-08 04:10:55', 1, NULL, '操作日志菜单');
@@ -545,7 +540,7 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 105, 'admin', '白泽', 'ry@163.com', '15888888887', '0', 'http://api.ibaize.vip/profile/1/2024-03-19/a8b688dd-ca74-402b-b509-175753428b5e.jpg', '$2a$14$kOhr1gqDAGYara15BrSuLuI7uzOC7gfAyzJGiLsypO32mEb6O02LO', '1', '0', '0', 1, '2024-02-08 04:10:55', 1, '2024-03-15 09:31:36', '管理员');
+INSERT INTO `sys_user` VALUES (1, 105, 'admin', '白泽', 'bz@163.com', '15888888887', '0', '', '$2a$14$kOhr1gqDAGYara15BrSuLuI7uzOC7gfAyzJGiLsypO32mEb6O02LO', '1', '0', '0', 1, '2024-02-08 04:10:55', 1, '2024-03-15 09:31:36', '管理员');
 INSERT INTO `sys_user` VALUES (2, 105, 'bz', '白泽', 'bz@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '2', '0', '0', 1, '2024-02-08 04:10:55', 1, '2024-03-13 12:59:56', '测试员');
 COMMIT;
 

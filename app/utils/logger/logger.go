@@ -127,5 +127,5 @@ type SqlyLog struct {
 }
 
 func (s *SqlyLog) Debug(cost time.Duration, sql string, args ...interface{}) {
-	sl.Debug(sql, args, "cost:"+cost.String())
+	sl.Debug(sql, "\t", args, "\tcost:"+cost.String())
 }
