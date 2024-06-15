@@ -21,8 +21,8 @@ type {{.Table.StructName}}Service struct {
     {{.Table.BusinessName}}Dao {{.Table.ModuleName}}Dao.I{{.Table.StructName}}Dao
 }
 
-func New{{.Table.StructName}}Service(data *sqly.DB, {{.Table.BusinessName}}Dao *{{.Table.ModuleName}}Impl.{{.Table.StructName}}Dao) *PostService {
-    return &PostService{
+func New{{.Table.StructName}}Service(data *sqly.DB, {{.Table.BusinessName}}Dao *{{.Table.ModuleName}}DaoImpl.{{.Table.StructName}}Dao) *{{.Table.StructName}}Service {
+    return &{{.Table.StructName}}Service{
     data:    data,
     {{.Table.BusinessName}}Dao: {{.Table.BusinessName}}Dao,
     }
@@ -34,11 +34,11 @@ func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Select{{.Tabl
 }
 
 func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Select{{.Table.StructName}}ListAndTotal(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64) {
-    return {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}ListAndTotal(c,{{.Table.BusinessName}}Service.data,{{.IdField}})
+    return {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}ListAndTotal(c,{{.Table.BusinessName}}Service.data,{{.Table.BusinessName}})
 }
 
 func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Export{{.Table.StructName}}Excel(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (data []byte) {
-    list := {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}List(c,{{.Table.BusinessName}}Service.data,{{.IdField}})
+    list := {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}List(c,{{.Table.BusinessName}}Service.data,{{.Table.BusinessName}})
     toExcel, err := excel.SliceToExcel(list)
     if err != nil {
         panic(err)
@@ -51,14 +51,14 @@ func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Export{{.Tabl
 }
 
 func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Insert{{.Table.StructName}}(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo){
-    {{.Table.BusinessName}}.IdField = snowflake.GenID()
+    {{.Table.BusinessName}}.{{.GoField}} = snowflake.GenID()
     {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Insert{{.Table.StructName}}(c, {{.Table.BusinessName}}Service.data, {{.Table.BusinessName}})
 }
 
-func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Update{{.Table.StructName}}(c *gin.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo) {
+func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Update{{.Table.StructName}}(c *gin.Context,  {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo) {
     {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Update{{.Table.StructName}}(c, {{.Table.BusinessName}}Service.data, {{.Table.BusinessName}})
 }
 
 func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Delete{{.Table.StructName}}ByIds(c *gin.Context,{{.IdField}}s []{{.IdType}} ) {
-    {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Delete{{.Table.StructName}}(c, {{.Table.BusinessName}}Service.data, {{.IdField}}s)
+    {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Delete{{.Table.StructName}}ByIds(c, {{.Table.BusinessName}}Service.data, {{.IdField}}s)
 }

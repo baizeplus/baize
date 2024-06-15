@@ -1,5 +1,10 @@
 package genUtils
 
+import (
+	"regexp"
+	"strings"
+)
+
 // ColumnTypeStr 数据库字符串类型
 var ColumnTypeStr = []string{"char", "varchar", "narchar", "varchar2", "tinytext", "text", "mediumtext", "longtext"}
 
@@ -12,14 +17,13 @@ var ColumnTypeNumber = []string{"tinyint", "smallint", "mediumint", "int", "numb
 // ColumnNameBaseEntity 页面基础字段
 var ColumnNameBaseEntity = []string{"create_by", "create_time", "update_by", "update_time"}
 
-// IsExistInArray 判断string 是否存在在数组中
+// IsExistInArray 正则判断string 是否存在在数组中
 func IsExistInArray(value string, array []string) bool {
-	for _, v := range array {
-		if v == value {
-			return true
-		}
+	re, err := regexp.Compile(strings.Join(array, "|"))
+	if err != nil {
+		return false
 	}
-	return false
+	return re.MatchString(value)
 }
 
 // IsStringObject 判断是否是数据库字符串类型

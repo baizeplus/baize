@@ -108,7 +108,7 @@ func GetGenTableColumnDML(column *InformationSchemaColumn, tableId int64, userId
 	default:
 		//字段为字符串类型
 		genTableColumn.GoType = "string"
-		if strings.EqualFold(dataType, "text") || strings.EqualFold(dataType, "tinytext") || strings.EqualFold(dataType, "mediumtext") || strings.EqualFold(dataType, "longtext") {
+		if stringUtils.ReMatchingStr(dataType, "text|tinytext|mediumtext|longtext|longblob") {
 			genTableColumn.HtmlType = "textarea"
 		} else {
 			columnLength := genUtils.GetColumnLength(column.ColumnType)

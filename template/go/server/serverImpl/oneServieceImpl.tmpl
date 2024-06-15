@@ -1,0 +1,11 @@
+package {{.Table.ModuleName}}ServiceImpl
+
+import "github.com/google/wire"
+// ==========================================================================
+// date：{{.GenerateTime.Format "2006-01-02 15:04:05" }}
+// author：{{.Table.FunctionAuthor}}
+// version: v1.0
+// 建议放到 {{.Table.ModuleName}}ServiceImpl 目录下，建议命名为： servieceImpl.go
+// ==========================================================================
+
+var ProviderSet = wire.NewSet(New{{.Table.StructName}}Service)

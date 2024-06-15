@@ -1,8 +1,8 @@
 package {{.Table.ModuleName}}Controller
 
 import (
-    "{{.Table.PackageName}}{{.Table.ModuleName}}Server"
-    "{{.Table.PackageName}}{{.Table.ModuleName}}Server/{{.Table.ModuleName}}ServerImpl"
+    "{{.Table.PackageName}}{{.Table.ModuleName}}Service"
+    "{{.Table.PackageName}}{{.Table.ModuleName}}Service/{{.Table.ModuleName}}ServiceImpl"
     "{{.Table.PackageName}}{{.Table.ModuleName}}Models"
     "baize/app/utils/baizeContext"
     "github.com/gin-gonic/gin"
@@ -16,11 +16,11 @@ import (
 
 
 type {{.Table.StructName}} struct {
-    {{.Table.BusinessName}}Server {{.Table.ModuleName}}Server.I{{.Table.StructName}}Server
+    {{.Table.BusinessName}}Service {{.Table.ModuleName}}Service.I{{.Table.StructName}}Service
 }
 
-func New{{.Table.StructName}}(ps *{{.Table.ModuleName}}ServerImpl.I{{.Table.StructName}}Server) *{{.Table.StructName}} {
-return &{{.Table.StructName}}{ {{.Table.BusinessName}}Server:{{.Table.BusinessName}}Server }
+func New{{.Table.StructName}}({{.Table.BusinessName}}Service *{{.Table.ModuleName}}ServiceImpl.{{.Table.StructName}}Service) *{{.Table.StructName}} {
+return &{{.Table.StructName}}{ {{.Table.BusinessName}}Service:{{.Table.BusinessName}}Service }
 }
 
 // {{.Table.StructName}}List 查询{{.Table.FunctionName}}列表查询
@@ -35,7 +35,7 @@ return &{{.Table.StructName}}{ {{.Table.BusinessName}}Server:{{.Table.BusinessNa
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}List(c *gin.Context) {
     dql := new({{.Table.ModuleName}}Models.{{.Table.StructName}}DQL )
     _ = c.ShouldBind(dql)
-    list, count := {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Select{{.Table.StructName}}List(c, dql)
+    list, count := {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Select{{.Table.StructName}}ListAndTotal(c, dql)
     baizeContext.SuccessListData(c, list, count)
 }
 
@@ -51,7 +51,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}List(
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Export(c *gin.Context) {
     dql := new({{.Table.ModuleName}}Models.{{.Table.StructName}}DQL )
     _ = c.ShouldBind(dql)
-    data := {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.{{.Table.StructName}}Export(c, dql)
+    data := {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Export{{.Table.StructName}}Excel(c, dql)
     baizeContext.DataPackageExcel(c, data)
 }
 
@@ -70,26 +70,26 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}GetIn
         baizeContext.ParameterError(c)
         return
     }
-    baizeContext.SuccessData(c, {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Select{{.Table.StructName}}ById(c, {{.IdField}}))
+    baizeContext.SuccessData(c, {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Select{{.Table.StructName}}ById(c, {{.IdField}}))
 }
 
 // {{.Table.StructName}}Add 添加{{.Table.FunctionName}}
 // @Summary 添加{{.Table.FunctionName}}
 // @Description 添加{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
-// @Param  object body {{.Table.ModuleName}}.{{.Table.BusinessName}}Vo true "公司信息"
+// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "公司信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}  [post]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Add(c *gin.Context) {
-    vo := new({{.Table.ModuleName}}.{{.Table.BusinessName}}Vo)
+    vo := new({{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
     if err := c.ShouldBindJSON(vo); err != nil {
         baizeContext.ParameterError(c)
         return
     }
     vo.SetCreateBy(baizeContext.GetUserId(c))
-    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Insert{{.Table.StructName}}(c, vo)
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Insert{{.Table.StructName}}(c, vo)
     baizeContext.Success(c)
 }
 
@@ -97,19 +97,19 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Add(c
 // @Summary 修改{{.Table.FunctionName}}
 // @Description 修改{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
-// @Param  object body {{.Table.ModuleName}}.{{.Table.BusinessName}}Vo true "公司信息"
+// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "公司信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}  [put]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Edit(c *gin.Context) {
-    vo := new({{.Table.ModuleName}}.{{.Table.BusinessName}}Vo)
+    vo := new({{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
     if err := c.ShouldBindJSON(vo); err != nil {
         baizeContext.ParameterError(c)
     return
     }
     vo.SetUpdateBy(baizeContext.GetUserId(c))
-    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Update{{.Table.StructName}}(c, vo)
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Update{{.Table.StructName}}(c, vo)
     baizeContext.Success(c)
 }
 
@@ -123,6 +123,6 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Edit(
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/{{ "{" }}{{.IdField}}s}  [delete]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Remove(c *gin.Context) {
-    {{.Table.BusinessName}}.{{.Table.BusinessName}}Server.Delete{{.Table.StructName}}ByIds(c, baizeContext.ParamInt64Array(c, "{{.IdField}}s"))
+    {{.Table.BusinessName}}.{{.Table.BusinessName}}Service.Delete{{.Table.StructName}}ByIds(c, baizeContext.ParamInt64Array(c, "{{.IdField}}s"))
     baizeContext.Success(c)
 }

@@ -18,6 +18,6 @@ type I{{.Table.StructName}}Service interface {
     Select{{.Table.StructName}}ListAndTotal(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64)
     Export{{.Table.StructName}}Excel(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (data []byte)
     Insert{{.Table.StructName}}(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
-    Update{{.Table.StructName}}(c *gin.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
+    Update{{.Table.StructName}}(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
     Delete{{.Table.StructName}}ByIds(c *gin.Context,{{.IdField}}s []{{.IdType}} )
 }
