@@ -36,7 +36,7 @@ func ToUnderScoreCase(str string) string {
 	return retStr
 }
 
-//ConvertToBigCamelCase 将下划线大写方式命名的字符串转换为驼峰式。如果转换前的下划线大写方式命名的字符串为空，则返回空字符串。 例如：HELLO_WORLD->HelloWorld
+// ConvertToBigCamelCase 将下划线大写方式命名的字符串转换为驼峰式。如果转换前的下划线大写方式命名的字符串为空，则返回空字符串。 例如：HELLO_WORLD->HelloWorld
 func ConvertToBigCamelCase(name string) string {
 	if name == "" {
 		return ""
@@ -56,7 +56,7 @@ func ConvertToBigCamelCase(name string) string {
 	return result
 }
 
-//ConvertToLittleCamelCase 将下划线大写方式命名的字符串转换为驼峰式,首字母小写。如果转换前的下划线大写方式命名的字符串为空，则返回空字符串。 例如：HELLO_WORLD->helloWorld
+// ConvertToLittleCamelCase 将下划线大写方式命名的字符串转换为驼峰式,首字母小写。如果转换前的下划线大写方式命名的字符串为空，则返回空字符串。 例如：HELLO_WORLD->helloWorld
 func ConvertToLittleCamelCase(name string) string {
 	if name == "" {
 		return ""
@@ -90,4 +90,13 @@ func DeleteExtraSpace(s string) string {
 		spcIndex = reg.FindStringIndex(string(tmpStr))
 	}
 	return string(tmpStr)
+}
+
+// ReMatchingStr 使用正则匹配文本内容是否包含特定内容
+func ReMatchingStr(text string, pattern string) bool {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return false
+	}
+	return re.MatchString(text)
 }

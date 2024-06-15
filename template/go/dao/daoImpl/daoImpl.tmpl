@@ -4,6 +4,8 @@ import (
     "{{.Table.PackageName}}{{.Table.ModuleName}}Models"
     "database/sql"
     "fmt"
+    "context"
+    "errors"
 	"github.com/baizeplus/sqly"
 )
 
@@ -76,7 +78,7 @@ func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Insert{{.Table.Str
 	value := ""
 
 	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, dept)
+	_, err := db.NamedExecContext(ctx, insertStr, {{.Table.BusinessName}})
 	if err != nil {
 		panic(err)
 	}
