@@ -77,7 +77,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}GetIn
 // @Summary 添加{{.Table.FunctionName}}
 // @Description 添加{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
-// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "公司信息"
+// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "{{.Table.FunctionName}}信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
@@ -97,7 +97,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Add(c
 // @Summary 修改{{.Table.FunctionName}}
 // @Description 修改{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
-// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "公司信息"
+// @Param  object body {{.Table.ModuleName}}Models.{{.Table.StructName}}Vo true "{{.Table.FunctionName}}信息"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
