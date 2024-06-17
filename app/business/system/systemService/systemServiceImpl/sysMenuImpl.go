@@ -85,7 +85,7 @@ func (menuService *MenuService) BuildMenus(c *gin.Context, sysMenus []*systemMod
 			children.Path = m.Path
 			children.Component = m.Component
 			children.Name = stringUtils.Capitalize(m.Path)
-			children.Meta.Title = m.MenuType
+			children.Meta.Title = m.MenuName
 			r.Meta.Icon = m.Icon
 			r.Meta.NoCache = m.IsCache == "1"
 			childrenList = append(childrenList, children)

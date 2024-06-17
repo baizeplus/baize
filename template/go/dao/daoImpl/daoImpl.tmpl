@@ -41,7 +41,7 @@ func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Select{{.Table.Stru
 	whereSql := ``
 	{{range $index, $column := .Columns}}{{if eq $column.IsList "1"}}
 	if {{$.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
-		whereSql =" AND {{$column.ColumnName}} {{if eq $column.QueryType "EQ"}}={{else if eq $column.QueryType "NE"}}!={{else if eq $column.QueryType "GT"}}>{{else if eq $column.QueryType "GTE"}}>={{else if eq $column.QueryType "LT"}}<{{else if eq $column.QueryType "LTE"}}<={{else}}like{{end}} {{if ne $column.QueryType "LIKE"}}:{{$column.ColumnName}} {{else}}cosncat('%', :{{$column.ColumnName}}, '%') {{end}}"
+		whereSql =" AND {{$column.ColumnName}} {{if eq $column.QueryType "EQ"}}={{else if eq $column.QueryType "NE"}}!={{else if eq $column.QueryType "GT"}}>{{else if eq $column.QueryType "GTE"}}>={{else if eq $column.QueryType "LT"}}<{{else if eq $column.QueryType "LTE"}}<={{else}}like{{end}} {{if ne $column.QueryType "LIKE"}}:{{$column.ColumnName}} {{else}}concat('%', :{{$column.ColumnName}}, '%') {{end}}"
 	}
 	{{end}}{{end}}
 	if whereSql != "" {
@@ -97,7 +97,7 @@ func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao) Update{{.Table.Stru
 }
 
 func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Delete{{.Table.StructName}}ByIds(ctx context.Context, db sqly.SqlyContext, {{.IdField}}s []{{.IdType}} ) {
-	query, i, err := sqly.In("delete from {{.Table.TableName }} where  where {{.IdColumnName}} in(?)", {{.IdField}}s)
+	query, i, err := sqly.In("delete from {{.Table.TableName }} where {{.IdColumnName}} in(?)", {{.IdField}}s)
 	if err != nil {
 		panic(err)
 	}
