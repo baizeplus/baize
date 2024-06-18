@@ -1,11 +1,13 @@
 package toolServiceImpl
 
 import (
+	"archive/zip"
 	"baize/app/business/tool/toolDao"
 	"baize/app/business/tool/toolDao/toolDaoImpl"
 	"baize/app/business/tool/toolModels"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
+	"baize/app/utils/zipUtils"
 	"bytes"
 	"fmt"
 	"github.com/baizeplus/sqly"
@@ -13,6 +15,7 @@ import (
 	"go/format"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 )
@@ -90,6 +93,31 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 
 	return m
 }
+func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64) []byte {
+	// 创建一个内存缓冲区
+	buffer := new(bytes.Buffer)
+
+	// 创建一个新的 zip Writer
+	zipWriter := zip.NewWriter(buffer)
+	data := make(map[string]any)
+	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
+	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
+
+	root := "./template/go/"
+	var files []string
+	err := filepath.Walk(root, visit(&files))
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+
+		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), "tmpl")+"go", genTabletService.loadTemplateGo("./"+file, data)); err != nil {
+			panic(err)
+		}
+	}
+
+	return buffer.Bytes()
+}
 func visit(files *[]string) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -132,7 +160,7 @@ func (genTabletService *GenTabletService) setTemplateData(data map[string]any) {
 	for _, vo := range column {
 		if vo.IsPk == "1" {
 			data["IdField"] = vo.HtmlField
-			data["GoField"] = vo.GoField
+			data["IdField"] = vo.GoField
 			data["IdType"] = vo.GoType
 			data["IdColumnName"] = vo.ColumnName
 			break

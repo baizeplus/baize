@@ -69,7 +69,8 @@ func (gc *GenTable) Preview(c *gin.Context) {
 	baizeContext.SuccessData(c, s)
 }
 
-func (gc *GenTable) BatchGenCode(c *gin.Context) {
-	panic("等待开发")
+func (gc *GenTable) GenCode(c *gin.Context) {
+	s := gc.gt.GenCode(c, baizeContext.ParamInt64(c, "tableId"))
+	baizeContext.DataPackageZip(c, s)
 
 }

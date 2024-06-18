@@ -14,5 +14,6 @@ type IGenTableService interface {
 	UpdateGenTable(c *gin.Context, genTable *toolModels.GenTableDML)
 	DeleteGenTableByIds(c *gin.Context, ids []int64)
 	PreviewCode(c *gin.Context, tableId int64) (m map[string]string)
+	GenCode(c *gin.Context, tableId int64) []byte
 	SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo)
 }

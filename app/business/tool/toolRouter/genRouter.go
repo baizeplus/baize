@@ -15,6 +15,6 @@ func InitGenTableRouter(router *gin.RouterGroup, gt *toolController.GenTable) {
 	genTable.POST("/importTable", middlewares.HasPermission("tool:gen:list"), gt.ImportTable)
 	genTable.PUT("", middlewares.HasPermission("tool:gen:edit"), gt.EditSave)
 	genTable.DELETE("/:tableIds", middlewares.HasPermission("tool:gen:remove"), gt.GenTableRemove)
-	genTable.GET("/preview/:tableId", middlewares.HasPermission("tool:gen:remove"), gt.Preview)
-	genTable.GET("/batchGenCode", middlewares.HasPermission("tool:gen:code"), gt.BatchGenCode)
+	genTable.GET("/preview/:tableId", middlewares.HasPermission("tool:gen:code"), gt.Preview)
+	genTable.GET("/genCode/:tableId", middlewares.HasPermission("tool:gen:code"), gt.GenCode)
 }
