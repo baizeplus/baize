@@ -160,7 +160,7 @@ func (genTabletService *GenTabletService) setTemplateData(data map[string]any) {
 	for _, vo := range column {
 		if vo.IsPk == "1" {
 			data["IdField"] = vo.HtmlField
-			data["IdField"] = vo.GoField
+			data["IdGoField"] = vo.GoField
 			data["IdType"] = vo.GoType
 			data["IdColumnName"] = vo.ColumnName
 			break
