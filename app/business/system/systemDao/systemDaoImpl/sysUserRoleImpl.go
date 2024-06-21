@@ -41,7 +41,7 @@ func (sysUserRoleDao *SysUserRoleDao) DeleteUserRoleByUserId(ctx context.Context
 }
 func (sysUserRoleDao *SysUserRoleDao) CountUserRoleByRoleId(ctx context.Context, db sqly.SqlyContext, ids []int64) int {
 	var count = 0
-	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM from sys_user_role where role_id in(?))", ids)
+	query, i, err := sqly.In("SELECT EXISTS( SELECT 1  from sys_user_role where role_id in(?))", ids)
 	if err != nil {
 		panic(err)
 	}
