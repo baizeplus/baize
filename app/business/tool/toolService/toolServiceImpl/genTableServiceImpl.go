@@ -88,7 +88,21 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 		panic(err)
 	}
 	for _, file := range files {
-		m[filepath.Base(file)] = genTabletService.loadTemplateGo("./"+file, data)
+		formattedCode, err := format.Source(genTabletService.loadTemplate("./"+file, data))
+		if err != nil {
+			panic(err)
+		}
+		m[filepath.Base(file)] = string(formattedCode)
+	}
+	root = "./template/vue"
+	files = files[:0]
+	err = filepath.Walk(root, visit(&files))
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		loadTemplate := genTabletService.loadTemplate("./"+file, data)
+		m[filepath.Base(file)] = string(loadTemplate)
 	}
 
 	return m
@@ -110,8 +124,11 @@ func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64)
 		panic(err)
 	}
 	for _, file := range files {
-
-		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), "tmpl")+"go", genTabletService.loadTemplateGo("./"+file, data)); err != nil {
+		formattedCode, err := format.Source(genTabletService.loadTemplate("./"+file, data))
+		if err != nil {
+			panic(err)
+		}
+		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(formattedCode)); err != nil {
 			panic(err)
 		}
 	}
@@ -135,7 +152,7 @@ func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *g
 	return genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
 }
 
-func (genTabletService *GenTabletService) loadTemplateGo(templateName string, data map[string]any) string {
+func (genTabletService *GenTabletService) loadTemplate(templateName string, data map[string]any) []byte {
 	genTabletService.setTemplateData(data)
 	b, err := os.ReadFile(templateName)
 	if err != nil {
@@ -151,9 +168,10 @@ func (genTabletService *GenTabletService) loadTemplateGo(templateName string, da
 	if err != nil {
 		print(err)
 	}
-	formattedCode, err := format.Source(buffer.Bytes())
-	return string(formattedCode)
+
+	return buffer.Bytes()
 }
+
 func (genTabletService *GenTabletService) setTemplateData(data map[string]any) {
 	data["GenerateTime"] = time.Now()
 	column := data["Columns"].([]*toolModels.GenTableColumnVo)
