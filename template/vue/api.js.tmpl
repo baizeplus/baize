@@ -1,0 +1,44 @@
+import request from '@/utils/request'
+
+// 查询{{.Table.FunctionName}}列表
+export function list{{.Table.StructName}}(query) {
+  return request({
+    url: '/{{.Table.ModuleName}}/{{.Table.BusinessName}}/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询{{.Table.FunctionName}}详细
+export function get{{.Table.StructName}}({{.IdField}}) {
+  return request({
+    url: '/{{.Table.ModuleName}}/{{.Table.BusinessName}}' + {{.IdField}},
+    method: 'get'
+  })
+}
+
+// 新增{{.Table.FunctionName}}
+export function add{{.Table.StructName}}(data) {
+  return request({
+    url: '/{{.Table.ModuleName}}/{{.Table.BusinessName}}',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改{{.Table.FunctionName}}
+export function update{{.Table.StructName}}(data) {
+  return request({
+    url: '/{{.Table.ModuleName}}/{{.Table.BusinessName}}',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除{{.Table.FunctionName}}
+export function del{{.Table.StructName}}({{.IdField}}) {
+  return request({
+    url: '/{{.Table.ModuleName}}/{{.Table.BusinessName}}/' + {{.IdField}},
+    method: 'delete'
+  })
+}

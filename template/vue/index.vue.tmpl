@@ -1,0 +1,379 @@
+<template>
+  <div class="app-container">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+{{range $index, $column := .Columns}}
+{{if eq $column.IsQuery "1"}}
+{{if eq $column.HtmlType "input"}}
+      <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+        <el-input
+          v-model="queryParams.{{$column.HtmlField}}"
+          placeholder="请输入{{$column.ColumnComment}}"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+{{else if eq $column.HtmlType "select"}}
+      <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+        <el-select v-model="queryParams.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}" clearable>
+          <el-option
+            v-for="dict in ${dictType}"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+
+{{else if and (eq $column.HtmlType "datetime") (ne $column.QueryType "BETWEEN")}}
+      <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+        <el-date-picker clearable
+          v-model="queryParams.{{$column.HtmlField}}"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择{{$column.ColumnComment}}">
+        </el-date-picker>
+      </el-form-item>
+{{else if and (eq $column.HtmlType "datetime") (eq $column.QueryType "BETWEEN")}}
+      <el-form-item label="{{$column.ColumnComment}}" style="width: 308px">
+        <el-date-picker
+          v-model="daterange${AttrName}"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
+{{end}}
+{{end}}
+{{end}}
+      <el-form-item>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Plus"
+          @click="handleAdd"
+          v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="Edit"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:remove']"
+        >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Download"
+          @click="handleExport"
+          v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:export']"
+        >导出</el-button>
+      </el-col>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+
+    <el-table v-loading="loading" :data="{{.Table.BusinessName}}List" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+
+{{range $index, $column := .Columns}}
+{{if eq $column.IsPk "1"}}
+pk
+      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}" />
+{{else if and (eq $column.IsList "1") (eq $column.HtmlType "datetime")}}
+      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}" width="180">
+        <template #default="scope">
+          <span>{{ "{{" }} parseTime(scope.row.{{$column.HtmlField}}, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+{{else if and (eq $column.IsList "1") (eq $column.HtmlType "select")}}
+      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}">
+        <template #default="scope">
+          <dict-tag :options="${column.dictType}" :value="scope.row.{{$column.HtmlField}}"/>
+        </template>
+      </el-table-column>
+{{else}}
+      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}" />
+{{end}}
+{{end}}
+
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template #default="scope">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['{{.Table.ModuleName}}:{{.Table.BusinessName}}:remove']">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+
+
+    <!-- 添加或修改{{.FunctionName}}对话框 -->
+    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+      <el-form ref="{{.Table.BusinessName}}Ref" :model="form" :rules="rules" label-width="80px">
+{{range $index, $column := .Columns}}
+{{if eq $column.IsPk "1"}}
+
+
+#if($column.htmlType == "input")
+        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
+          <el-input v-model="form.${field}" placeholder="请输入{{$column.ColumnComment}}" />
+        </el-form-item>
+
+#elseif($column.htmlType == "select" )
+        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
+          <el-select v-model="form.${field}" placeholder="请选择{{$column.ColumnComment}}">
+            <el-option
+              v-for="dict in ${dictType}"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+#elseif($column.htmlType == "datetime")
+        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
+          <el-date-picker clearable
+            v-model="form.${field}"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择{{$column.ColumnComment}}">
+          </el-date-picker>
+        </el-form-item>
+#elseif($column.htmlType == "textarea")
+        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
+          <el-input v-model="form.${field}" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+
+{{end}}
+{{end}}
+
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+
+<script setup name="{{.Table.StructName}}">
+import { list{{.Table.StructName}}, get{{.Table.StructName}}, del{{.Table.StructName}}, add{{.Table.StructName}}, update{{.Table.StructName}} } from "@/api/{{.Table.ModuleName}}/{{.Table.BusinessName}}";
+
+const { proxy } = getCurrentInstance();
+
+const {{.Table.BusinessName}}List = ref([]);
+const open = ref(false);
+const loading = ref(true);
+const showSearch = ref(true);
+const ids = ref([]);
+const single = ref(true);
+const multiple = ref(true);
+const total = ref(0);
+const title = ref("");
+
+
+const data = reactive({
+  form: {},
+  queryParams: {
+    pageNum: 1,
+    pageSize: 10,
+{{range $index, $column := .Columns}}
+{{if eq $column.IsQuery "1"}}
+    {{$column.HtmlField}}: undefined
+{{end}}
+{{end}}
+  },
+  rules: {
+    #foreach ($column in $columns)
+#if($column.required)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+    $column.javaField: [
+      { required: true, message: "$comment不能为空", trigger: #if($column.htmlType == "select" || $column.htmlType == "radio")"change"#else"blur"#end }
+    ]#if($foreach.count != $columns.size()),#end
+#end
+#end
+  }
+});
+
+const { queryParams, form, rules } = toRefs(data);
+
+/** 查询{{.Table.FunctionName}}列表 */
+function getList() {
+  loading.value = true;
+#foreach ($column in $columns)
+#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
+  queryParams.value.params = {};
+#break
+#end
+#end
+#foreach ($column in $columns)
+#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+  if (null != daterange${AttrName} && '' != daterange${AttrName}) {
+    queryParams.value.params["begin${AttrName}"] = daterange${AttrName}.value[0];
+    queryParams.value.params["end${AttrName}"] = daterange${AttrName}.value[1];
+  }
+#end
+#end
+  list{{.Table.StructName}}(queryParams.value).then(response => {
+    {{.Table.BusinessName}}List.value = response.rows;
+    total.value = response.total;
+    loading.value = false;
+  });
+}
+
+// 取消按钮
+function cancel() {
+  open.value = false;
+  reset();
+}
+
+// 表单重置
+function reset() {
+  form.value = {
+#foreach ($column in $columns)
+#if($column.htmlType == "checkbox")
+    $column.javaField: []#if($foreach.count != $columns.size()),#end
+#else
+    $column.javaField: null#if($foreach.count != $columns.size()),#end
+#end
+#end
+  };
+#if($table.sub)
+  ${subclassName}List.value = [];
+#end
+  proxy.resetForm("{{.Table.BusinessName}}Ref");
+}
+
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
+  getList();
+}
+
+/** 重置按钮操作 */
+function resetQuery() {
+#foreach ($column in $columns)
+#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+  daterange${AttrName}.value = [];
+#end
+#end
+  proxy.resetForm("queryRef");
+  handleQuery();
+}
+
+// 多选框选中数据
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.{{.IdField}});
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+}
+
+/** 新增按钮操作 */
+function handleAdd() {
+  reset();
+  open.value = true;
+  title.value = "添加{{.Table.FunctionName}}";
+}
+
+/** 修改按钮操作 */
+function handleUpdate(row) {
+  reset();
+  const _{{.IdField}} = row.{{.IdField}} || ids.value
+  get{{.Table.StructName}}(_{{.IdField}}).then(response => {
+    form.value = response.data;
+
+#if($table.sub)
+    ${subclassName}List.value = response.data.${subclassName}List;
+#end
+    open.value = true;
+    title.value = "修改{{.Table.FunctionName}}";
+  });
+}
+
+/** 提交按钮 */
+function submitForm() {
+  proxy.#[[$]]#refs["{{.Table.BusinessName}}Ref"].validate(valid => {
+    if (valid) {
+
+#if($table.sub)
+      form.value.${subclassName}List = ${subclassName}List.value;
+#end
+      if (form.value.{{.IdField}} != null) {
+        update{{.Table.StructName}}(form.value).then(response => {
+          proxy.#[[$modal]]#.msgSuccess("修改成功");
+          open.value = false;
+          getList();
+        });
+      } else {
+        add{{.Table.StructName}}(form.value).then(response => {
+          proxy.#[[$modal]]#.msgSuccess("新增成功");
+          open.value = false;
+          getList();
+        });
+      }
+    }
+  });
+}
+
+/** 删除按钮操作 */
+function handleDelete(row) {
+  const {{.IdField}}s = row.{{.IdField}} || ids.value;
+  proxy.$modal.confirm('是否确认删除{{.Table.FunctionName}}编号为"' + {{.IdField}}s + '"的数据项？').then(function() {
+    return del{{.Table.StructName}}({{.IdField}}s);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+}
+}
+
+
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download('{{.Table.ModuleName}}/{{.Table.BusinessName}}/export', {
+    ...queryParams.value
+  }, `{{.BusinessName}}_#[[${new Date().getTime()}]]#.xlsx`)
+}
+
+getList();
+</script>

@@ -175,6 +175,7 @@ func (genTabletService *GenTabletService) loadTemplate(templateName string, data
 func (genTabletService *GenTabletService) setTemplateData(data map[string]any) {
 	data["GenerateTime"] = time.Now()
 	column := data["Columns"].([]*toolModels.GenTableColumnVo)
+	data["ColumnsLastIndex"] = len(column) - 1
 	for _, vo := range column {
 		if vo.IsPk == "1" {
 			data["IdField"] = vo.HtmlField
