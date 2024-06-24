@@ -16,7 +16,7 @@
       <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
         <el-select v-model="queryParams.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}" clearable>
           <el-option
-            v-for="dict in ${dictType}"
+            v-for="dict in {{$column.dictType}}"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -32,17 +32,6 @@
           value-format="YYYY-MM-DD"
           placeholder="请选择{{$column.ColumnComment}}">
         </el-date-picker>
-      </el-form-item>
-{{else if and (eq $column.HtmlType "datetime") (eq $column.QueryType "BETWEEN")}}
-      <el-form-item label="{{$column.ColumnComment}}" style="width: 308px">
-        <el-date-picker
-          v-model="daterange${AttrName}"
-          value-format="YYYY-MM-DD"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
       </el-form-item>
 {{end}}
 {{end}}
@@ -111,7 +100,7 @@ pk
 {{else if and (eq $column.IsList "1") (eq $column.HtmlType "select")}}
       <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}">
         <template #default="scope">
-          <dict-tag :options="${column.dictType}" :value="scope.row.{{$column.HtmlField}}"/>
+          <dict-tag :options="{{$column.dictType}}" :value="scope.row.{{$column.HtmlField}}"/>
         </template>
       </el-table-column>
 {{else}}
@@ -137,21 +126,19 @@ pk
 
 
 
-    <!-- 添加或修改{{.FunctionName}}对话框 -->
+    <!-- 添加或修改{{.Table.FunctionName}}对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="{{.Table.BusinessName}}Ref" :model="form" :rules="rules" label-width="80px">
 {{range $index, $column := .Columns}}
-{{if eq $column.IsPk "1"}}
+{{if ne $column.IsPk "1"}}
 
-
-#if($column.htmlType == "input")
-        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
-          <el-input v-model="form.${field}" placeholder="请输入{{$column.ColumnComment}}" />
+{{if ne $column.htmlType  "input"}}
+        <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+          <el-input v-model="form.{{$column.HtmlField}}" placeholder="请输入{{$column.ColumnComment}}" />
         </el-form-item>
-
-#elseif($column.htmlType == "select" )
-        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
-          <el-select v-model="form.${field}" placeholder="请选择{{$column.ColumnComment}}">
+{{if ne $column.htmlType  "select"}}
+        <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+          <el-select v-model="form.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}">
             <el-option
               v-for="dict in ${dictType}"
               :key="dict.value"
@@ -160,18 +147,18 @@ pk
             ></el-option>
           </el-select>
         </el-form-item>
-#elseif($column.htmlType == "datetime")
-        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
+{{if ne $column.htmlType  "datetime"}}
+        <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-date-picker clearable
-            v-model="form.${field}"
+            v-model="form.{{$column.HtmlField}}"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="请选择{{$column.ColumnComment}}">
           </el-date-picker>
         </el-form-item>
-#elseif($column.htmlType == "textarea")
-        <el-form-item label="{{$column.ColumnComment}}" prop="${field}">
-          <el-input v-model="form.${field}" type="textarea" placeholder="请输入内容" />
+{{if ne $column.htmlType  "textarea"}}
+            <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
+          <el-input v-model="form.{{$column.HtmlField}}" type="textarea" placeholder="请输入内容" />
         </el-form-item>
 
 {{end}}
@@ -217,19 +204,6 @@ const data = reactive({
 {{end}}
   },
   rules: {
-    #foreach ($column in $columns)
-#if($column.required)
-#set($parentheseIndex=$column.columnComment.indexOf("（"))
-#if($parentheseIndex != -1)
-#set($comment=$column.columnComment.substring(0, $parentheseIndex))
-#else
-#set($comment=$column.columnComment)
-#end
-    $column.javaField: [
-      { required: true, message: "$comment不能为空", trigger: #if($column.htmlType == "select" || $column.htmlType == "radio")"change"#else"blur"#end }
-    ]#if($foreach.count != $columns.size()),#end
-#end
-#end
   }
 });
 
@@ -238,21 +212,6 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询{{.Table.FunctionName}}列表 */
 function getList() {
   loading.value = true;
-#foreach ($column in $columns)
-#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
-  queryParams.value.params = {};
-#break
-#end
-#end
-#foreach ($column in $columns)
-#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
-#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
-  if (null != daterange${AttrName} && '' != daterange${AttrName}) {
-    queryParams.value.params["begin${AttrName}"] = daterange${AttrName}.value[0];
-    queryParams.value.params["end${AttrName}"] = daterange${AttrName}.value[1];
-  }
-#end
-#end
   list{{.Table.StructName}}(queryParams.value).then(response => {
     {{.Table.BusinessName}}List.value = response.rows;
     total.value = response.total;
@@ -269,17 +228,8 @@ function cancel() {
 // 表单重置
 function reset() {
   form.value = {
-#foreach ($column in $columns)
-#if($column.htmlType == "checkbox")
-    $column.javaField: []#if($foreach.count != $columns.size()),#end
-#else
-    $column.javaField: null#if($foreach.count != $columns.size()),#end
-#end
-#end
   };
-#if($table.sub)
-  ${subclassName}List.value = [];
-#end
+
   proxy.resetForm("{{.Table.BusinessName}}Ref");
 }
 
@@ -291,12 +241,6 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-#foreach ($column in $columns)
-#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
-#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
-  daterange${AttrName}.value = [];
-#end
-#end
   proxy.resetForm("queryRef");
   handleQuery();
 }
@@ -321,10 +265,6 @@ function handleUpdate(row) {
   const _{{.IdField}} = row.{{.IdField}} || ids.value
   get{{.Table.StructName}}(_{{.IdField}}).then(response => {
     form.value = response.data;
-
-#if($table.sub)
-    ${subclassName}List.value = response.data.${subclassName}List;
-#end
     open.value = true;
     title.value = "修改{{.Table.FunctionName}}";
   });
@@ -334,10 +274,6 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.#[[$]]#refs["{{.Table.BusinessName}}Ref"].validate(valid => {
     if (valid) {
-
-#if($table.sub)
-      form.value.${subclassName}List = ${subclassName}List.value;
-#end
       if (form.value.{{.IdField}} != null) {
         update{{.Table.StructName}}(form.value).then(response => {
           proxy.#[[$modal]]#.msgSuccess("修改成功");
