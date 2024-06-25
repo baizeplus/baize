@@ -61,7 +61,7 @@ func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Select{{.Table.Stru
 	whereSql := ``
 
 {{range $index, $column := .Columns -}}{{if eq $column.IsQuery "1"}}
-	if {{.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
+	if {{$.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
 		whereSql =" AND {{$column.ColumnName}} {{if eq $column.QueryType "EQ"}}={{else if eq $column.QueryType "NE"}}!={{else if eq $column.QueryType "GT"}}>{{else if eq $column.QueryType "GTE"}}>={{else if eq $column.QueryType "LT"}}<{{else if eq $column.QueryType "LTE"}}<={{else}}like{{end}} {{if ne $column.QueryType "LIKE"}}:{{$column.ColumnName}} {{else}}concat('%', :{{$column.ColumnName}}, '%') {{end}}"
 	}
 {{end}}{{- end}}
@@ -94,8 +94,8 @@ func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Insert{{.Table.Str
 func  ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao) Update{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)  {
 	updateSQL := `update {{.Table.TableName }} set  update_time = :update_time , update_by = :update_by `
 
-{{range $index, $column := .Columns -}}{{if eq $column.IsQuery "1"}}
-	if {{.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
+{{range $index, $column := .Columns -}}{{if eq $column.IsEdit "1"}}
+	if {{$.Table.BusinessName}}.{{$column.GoField}} != {{if(or (eq $column.GoType "int64") (eq $column.GoType "float64"))}}0{{else if eq $column.GoType "Time"}}nil{{else}}""{{end}}{
 		updateSQL += ", {{$column.ColumnName}} = :{{$column.ColumnName}}"
 	}
 {{end}}{{end}}

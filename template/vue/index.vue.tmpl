@@ -136,7 +136,7 @@ pk
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-input v-model="form.{{$column.HtmlField}}" placeholder="请输入{{$column.ColumnComment}}" />
         </el-form-item>
-{{if ne $column.htmlType  "select"}}
+{{else if ne $column.htmlType  "select"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-select v-model="form.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}">
             <el-option
@@ -147,7 +147,7 @@ pk
             ></el-option>
           </el-select>
         </el-form-item>
-{{if ne $column.htmlType  "datetime"}}
+{{else if ne $column.htmlType  "datetime"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-date-picker clearable
             v-model="form.{{$column.HtmlField}}"
@@ -156,11 +156,12 @@ pk
             placeholder="请选择{{$column.ColumnComment}}">
           </el-date-picker>
         </el-form-item>
-{{if ne $column.htmlType  "textarea"}}
+{{else if ne $column.htmlType  "textarea"}}
             <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-input v-model="form.{{$column.HtmlField}}" type="textarea" placeholder="请输入内容" />
         </el-form-item>
 
+{{end}}
 {{end}}
 {{end}}
 
