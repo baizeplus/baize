@@ -110,13 +110,11 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64) []byte {
 	// 创建一个内存缓冲区
 	buffer := new(bytes.Buffer)
-
 	// 创建一个新的 zip Writer
 	zipWriter := zip.NewWriter(buffer)
 	data := make(map[string]any)
 	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
 	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
-
 	root := "./template/go/"
 	var files []string
 	err := filepath.Walk(root, visit(&files))
@@ -126,13 +124,30 @@ func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64)
 	for _, file := range files {
 		formattedCode, err := format.Source(genTabletService.loadTemplate("./"+file, data))
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(formattedCode)); err != nil {
 			panic(err)
 		}
 	}
 
+	root = "./template/vue"
+	files = files[:0]
+	err = filepath.Walk(root, visit(&files))
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		loadTemplate := genTabletService.loadTemplate("./"+file, data)
+		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(loadTemplate)); err != nil {
+			panic(err)
+		}
+	}
+	// 关闭压缩包
+	if err := zipWriter.Close(); err != nil {
+		panic(err)
+	}
+	// 将缓冲区的内容写入到返回的字节切片中
 	return buffer.Bytes()
 }
 func visit(files *[]string) filepath.WalkFunc {
