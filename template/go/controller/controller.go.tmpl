@@ -62,7 +62,8 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Expor
 // @Param {{.IdField}} path string true "{{.IdField}}"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data={{.Table.ModuleName}}.{{.Table.BusinessName}}Vo}  "成功"
+
+// @Success 200 {object}  response.ResponseData{data={{.Table.ModuleName}}Models.{{.Table.StructName}}Vo}}  "成功"
 // @Router /{{.Table.ModuleName}}/{{.Table.BusinessName}}/{{ "{" }}{{.IdField}}}  [get]
 func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}GetInfo(c *gin.Context) {
     {{.IdField}} := baizeContext.ParamInt64(c, "{{.IdField}}")
@@ -117,7 +118,7 @@ func ({{.Table.BusinessName}} *{{.Table.StructName}}) {{.Table.StructName}}Edit(
 // @Summary 删除{{.Table.FunctionName}}
 // @Description 删除{{.Table.FunctionName}}
 // @Tags {{.Table.FunctionName}}相关
-// @Param {{.IdField}} path []string true "{{.IdField}}"
+// @Param {{.IdField}} path []string true "{{.IdField}}s"
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
