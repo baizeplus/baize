@@ -5,6 +5,7 @@ import (
 	"baize/app/business/tool/toolDao"
 	"baize/app/business/tool/toolDao/toolDaoImpl"
 	"baize/app/business/tool/toolModels"
+	genUtils "baize/app/business/tool/utils"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
 	"baize/app/utils/zipUtils"
@@ -174,7 +175,10 @@ func (genTabletService *GenTabletService) loadTemplate(templateName string, data
 		panic(err)
 	}
 	templateStr := string(b)
-	tmpl, err := template.New(templateName).Parse(templateStr) //建立一个模板，内容是"hello, {{.}}"
+	tmpl := template.New(templateName)
+	tmpl.Funcs(template.FuncMap{"Contains": genUtils.Contains, "CaseCamelLower": genUtils.CaseCamelLower, "HasSuffix": strings.HasSuffix})
+	// 解析模板字符串
+	tmpl, err = tmpl.Parse(templateStr)
 	if err != nil {
 		panic(err)
 	}
