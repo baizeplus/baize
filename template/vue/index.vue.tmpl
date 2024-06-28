@@ -16,7 +16,7 @@
       <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
         <el-select v-model="queryParams.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}" clearable>
           <el-option
-            v-for="dict in {{$column.dictType}}"
+            v-for="dict in {{$column.DictType}}"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -100,7 +100,7 @@ pk
 {{else if and (eq $column.IsList "1") (eq $column.HtmlType "select")}}
       <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.HtmlField}}">
         <template #default="scope">
-          <dict-tag :options="{{$column.dictType}}" :value="scope.row.{{$column.HtmlField}}"/>
+          <dict-tag :options="{{$column.DictType}}" :value="scope.row.{{$column.HtmlField}}"/>
         </template>
       </el-table-column>
 {{else}}
@@ -132,11 +132,11 @@ pk
 {{range $index, $column := .Columns}}
 {{if ne $column.IsPk "1"}}
 
-{{if ne $column.htmlType  "input"}}
+{{if ne $column.HtmlType  "input"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-input v-model="form.{{$column.HtmlField}}" placeholder="请输入{{$column.ColumnComment}}" />
         </el-form-item>
-{{else if ne $column.htmlType  "select"}}
+{{else if ne $column.HtmlType  "select"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-select v-model="form.{{$column.HtmlField}}" placeholder="请选择{{$column.ColumnComment}}">
             <el-option
@@ -147,7 +147,7 @@ pk
             ></el-option>
           </el-select>
         </el-form-item>
-{{else if ne $column.htmlType  "datetime"}}
+{{else if ne $column.HtmlType  "datetime"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-date-picker clearable
             v-model="form.{{$column.HtmlField}}"
@@ -156,7 +156,7 @@ pk
             placeholder="请选择{{$column.ColumnComment}}">
           </el-date-picker>
         </el-form-item>
-{{else if ne $column.htmlType  "textarea"}}
+{{else if ne $column.HtmlType  "textarea"}}
             <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.HtmlField}}">
           <el-input v-model="form.{{$column.HtmlField}}" type="textarea" placeholder="请输入内容" />
         </el-form-item>

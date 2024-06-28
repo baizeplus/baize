@@ -5,6 +5,7 @@ import (
 	"baize/app/business/tool/toolDao"
 	"baize/app/business/tool/toolDao/toolDaoImpl"
 	"baize/app/business/tool/toolModels"
+	genUtils "baize/app/business/tool/utils"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/snowflake"
 	"baize/app/utils/zipUtils"
@@ -110,13 +111,11 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64) []byte {
 	// 创建一个内存缓冲区
 	buffer := new(bytes.Buffer)
-
 	// 创建一个新的 zip Writer
 	zipWriter := zip.NewWriter(buffer)
 	data := make(map[string]any)
 	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, genTabletService.data, tableId)
 	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, genTabletService.data, tableId)
-
 	root := "./template/go/"
 	var files []string
 	err := filepath.Walk(root, visit(&files))
@@ -126,13 +125,30 @@ func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64)
 	for _, file := range files {
 		formattedCode, err := format.Source(genTabletService.loadTemplate("./"+file, data))
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(formattedCode)); err != nil {
 			panic(err)
 		}
 	}
 
+	root = "./template/vue"
+	files = files[:0]
+	err = filepath.Walk(root, visit(&files))
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		loadTemplate := genTabletService.loadTemplate("./"+file, data)
+		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(loadTemplate)); err != nil {
+			panic(err)
+		}
+	}
+	// 关闭压缩包
+	if err := zipWriter.Close(); err != nil {
+		panic(err)
+	}
+	// 将缓冲区的内容写入到返回的字节切片中
 	return buffer.Bytes()
 }
 func visit(files *[]string) filepath.WalkFunc {
@@ -159,7 +175,10 @@ func (genTabletService *GenTabletService) loadTemplate(templateName string, data
 		panic(err)
 	}
 	templateStr := string(b)
-	tmpl, err := template.New(templateName).Parse(templateStr) //建立一个模板，内容是"hello, {{.}}"
+	tmpl := template.New(templateName)
+	tmpl.Funcs(template.FuncMap{"Contains": genUtils.Contains, "CaseCamelLower": genUtils.CaseCamelLower, "HasSuffix": strings.HasSuffix})
+	// 解析模板字符串
+	tmpl, err = tmpl.Parse(templateStr)
 	if err != nil {
 		panic(err)
 	}

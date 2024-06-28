@@ -1,6 +1,7 @@
 package genUtils
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -112,4 +113,17 @@ func CheckTypeColumn(columnName string) bool {
 		}
 	}
 	return false
+}
+
+// Contains 不区分大小写的Contains函数
+func Contains(s, substr string) bool {
+	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
+}
+
+// CaseCamelLower 将字符串转换为驼峰命名法的首字母小写形式
+func CaseCamelLower(s string) string {
+	re := regexp.MustCompile("([a-z0-9])([A-Z])")
+	return re.ReplaceAllStringFunc(s, func(in string) string {
+		return strings.ToLower(in[:1]) + in[1:]
+	})
 }
