@@ -46,7 +46,7 @@ func (sysDeptDao *SysDeptDao) SelectDeptById(ctx context.Context, db sqly.SqlyCo
 	whereSql := ` where d.dept_id = ?`
 	dept = new(systemModels.SysDeptVo)
 	err := db.GetContext(ctx, dept, sysDeptDao.deptSql+whereSql, deptId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return dept
@@ -130,7 +130,7 @@ func (sysDeptDao *SysDeptDao) DeleteDeptById(ctx context.Context, db sqly.SqlyCo
 func (sysDeptDao *SysDeptDao) CheckDeptNameUnique(ctx context.Context, db sqly.SqlyContext, deptName string, parentId int64) int64 {
 	var roleId int64 = 0
 	err := db.GetContext(ctx, &roleId, "select dept_id from sys_dept where dept_name=? and parent_id = ?", deptName, parentId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return roleId
@@ -138,7 +138,7 @@ func (sysDeptDao *SysDeptDao) CheckDeptNameUnique(ctx context.Context, db sqly.S
 func (sysDeptDao *SysDeptDao) HasChildByDeptId(ctx context.Context, db sqly.SqlyContext, deptId int64) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "select count(1) from sys_dept where parent_id = ?", deptId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count
@@ -146,7 +146,7 @@ func (sysDeptDao *SysDeptDao) HasChildByDeptId(ctx context.Context, db sqly.Sqly
 func (sysDeptDao *SysDeptDao) CheckDeptExistUser(ctx context.Context, db sqly.SqlyContext, deptId int64) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "select count(1) from sys_user where dept_id = ? and del_flag = '0'", deptId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count

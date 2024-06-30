@@ -69,7 +69,7 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeById(ctx context.Context, db
 
 	dictType = new(systemModels.SysDictTypeVo)
 	err := db.GetContext(ctx, dictType, sysDictTypeDao.dictTypeSql+" where dict_id = ?", dictId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -139,7 +139,7 @@ func (sysDictTypeDao *SysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, d
 func (sysDictTypeDao *SysDictTypeDao) CheckDictTypeUnique(ctx context.Context, db sqly.SqlyContext, dictType string) int64 {
 	var dictId int64 = 0
 	err := db.GetContext(ctx, &dictId, "select dict_id from sys_dict_type where dict_type = ?", dictType)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return dictId

@@ -68,7 +68,7 @@ func (s *SysConfigDao) SelectConfigById(ctx context.Context, db sqly.SqlyContext
 	whereSql := ` where config_id = ?`
 	config = new(systemModels.SysConfigVo)
 	err := db.GetContext(ctx, config, s.configSql+whereSql, configId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return config
@@ -122,7 +122,7 @@ func (s *SysConfigDao) DeleteConfigById(ctx context.Context, db sqly.SqlyContext
 func (s *SysConfigDao) SelectConfigIdByConfigKey(ctx context.Context, db sqly.SqlyContext, configKey string) int64 {
 	var configId int64 = 0
 	err := db.GetContext(ctx, &configId, "select config_id from sys_config where config_key = ?", configKey)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return configId
@@ -131,7 +131,7 @@ func (s *SysConfigDao) SelectConfigIdByConfigKey(ctx context.Context, db sqly.Sq
 func (s *SysConfigDao) SelectConfigValueByConfigKey(ctx context.Context, db sqly.SqlyContext, configKey string) string {
 	var configValue = ""
 	err := db.GetContext(ctx, &configValue, "select config_value from sys_config where config_key = ?", configKey)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return configValue

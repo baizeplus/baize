@@ -30,7 +30,7 @@ func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao) Select{{.Table.Struc
 	{{.Table.BusinessName}} = new({{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
 	whereSql := ` where {{.IdColumnName}} = ?`
 	err := db.GetContext(ctx,{{.Table.BusinessName}} ,{{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql,{{.IdField}})
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return {{.Table.BusinessName}}

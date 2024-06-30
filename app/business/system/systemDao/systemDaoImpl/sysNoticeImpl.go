@@ -43,7 +43,7 @@ func (s *SysNoticeDao) SelectNoticeById(ctx context.Context, db sqly.SqlyContext
 	n := new(systemModels.SysNoticeVo)
 	sqlStr := `select id,title,type,txt,create_by,create_time,create_name,dept_ids from sys_notice where id=?`
 	err := db.GetContext(ctx, n, sqlStr, id)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return n
@@ -81,7 +81,7 @@ func (s *SysNoticeDao) BatchSysNoticeUsers(ctx context.Context, db sqly.SqlyCont
 func (s *SysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) int64 {
 	count := int64(0)
 	err := db.GetContext(ctx, &count, `select count(*) from  sys_notice_user  where user_id=? and status='1' `, userId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count
@@ -91,7 +91,7 @@ func (s *SysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, db sqly.
 	vo := new(systemModels.ConsumptionNoticeVo)
 	err := db.GetContext(ctx, vo, `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,sn.create_time,snu.status from sys_notice sn left join sys_notice_user snu on sn.id = snu.notice_id where snu.user_id=? and snu.notice_id=?`,
 		userId, noticeId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return vo
@@ -121,7 +121,7 @@ where snu.user_id=:user_id `
 func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, db sqly.SqlyContext, noticeId, userId int64) int {
 	count := 0
 	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id =?)", userId, noticeId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count
@@ -130,7 +130,7 @@ func (s *SysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Contex
 	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in (?)) ", userId, noticeId)
 	count := 0
 	err = db.GetContext(ctx, &count, query, i...)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count

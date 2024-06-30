@@ -77,7 +77,7 @@ func (rd *SysRoleDao) SelectRoleById(ctx context.Context, db sqly.SqlyContext, r
 	whereSql := ` where r.role_id = ?`
 	role = new(systemModels.SysRoleVo)
 	err := db.GetContext(ctx, role, rd.selectSql+whereSql, roleId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -90,7 +90,7 @@ func (rd *SysRoleDao) SelectBasicRolesByUserId(ctx context.Context, db sqly.Sqly
 				where  ur.user_id = ?`
 	roles = make([]*systemModels.SysRole, 0, 2)
 	err := db.SelectContext(ctx, &roles, sqlStr, userId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -103,7 +103,7 @@ func (rd *SysRoleDao) SelectRolePermissionByUserId(ctx context.Context, db sqly.
 				where  ur.user_id = ?`
 	roles = make([]string, 0, 1)
 	err := db.SelectContext(ctx, &roles, sqlStr, userId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -117,7 +117,7 @@ func (rd *SysRoleDao) SelectRoleListByUserId(ctx context.Context, db sqly.SqlyCo
 		where u.user_id = ?`
 	list = make([]int64, 0, 1)
 	err := db.SelectContext(ctx, &list, sqlStr, userId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -174,7 +174,7 @@ func (rd *SysRoleDao) DeleteRoleByIds(ctx context.Context, db sqly.SqlyContext, 
 func (rd *SysRoleDao) CheckRoleNameUnique(ctx context.Context, db sqly.SqlyContext, roleName string) int64 {
 	var roleId int64 = 0
 	err := db.GetContext(ctx, &roleId, "select role_id from sys_role where role_name = ?", roleName)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return roleId
@@ -183,7 +183,7 @@ func (rd *SysRoleDao) CheckRoleNameUnique(ctx context.Context, db sqly.SqlyConte
 func (rd *SysRoleDao) CheckRoleKeyUnique(ctx context.Context, db sqly.SqlyContext, roleKey string) int64 {
 	var roleId int64 = 0
 	err := db.GetContext(ctx, &roleId, "select role_id from sys_role where role_key = ?", roleKey)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return roleId

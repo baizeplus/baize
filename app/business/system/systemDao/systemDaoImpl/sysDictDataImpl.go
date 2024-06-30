@@ -58,7 +58,7 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataById(ctx context.Context, db
 
 	dictData = new(systemModels.SysDictDataVo)
 	err := db.GetContext(ctx, dictData, sysDictDataDao.dictDataSql+" where dict_code = ?", dictCode)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -102,7 +102,7 @@ func (sysDictDataDao *SysDictDataDao) UpdateDictData(ctx context.Context, db sql
 	if dictData.Status != "" {
 		updateSQL += ",status = :status"
 	}
-	if dictData.Status != "" {
+	if dictData.Remark != "" {
 		updateSQL += ",remark = :remark"
 	}
 
@@ -128,7 +128,7 @@ func (sysDictDataDao *SysDictDataDao) DeleteDictDataByIds(ctx context.Context, d
 }
 func (sysDictDataDao *SysDictDataDao) CountDictDataByTypes(ctx context.Context, db sqly.SqlyContext, dictType []string) int {
 	var count = 0
-	query, i, err := sqly.In("SELECT !errors.Is(sql.ErrNoRows, err)TS( SELECT 1 FROM sys_dict_data where dict_type in(?))", dictType)
+	query, i, err := sqly.In("SELECT !errors.Is(err, sql.ErrNoRows)TS( SELECT 1 FROM sys_dict_data where dict_type in(?))", dictType)
 	if err != nil {
 		panic(err)
 	}

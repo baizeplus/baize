@@ -103,7 +103,7 @@ func (operLogDao *OperLogDao) SelectOperLogById(ctx context.Context, db sqly.Sql
 	whereSql := `  where oper_id = ?`
 	operLog = new(monitorModels.SysOperLog)
 	err := db.GetContext(ctx, operLog, operLogDao.selectSql+whereSql, operId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return

@@ -43,7 +43,7 @@ func (sysRoleMenuDao *SysRoleMenuDao) DeleteRoleMenuByRoleId(ctx context.Context
 func (sysRoleMenuDao *SysRoleMenuDao) CheckMenuExistRole(ctx context.Context, db sqly.SqlyContext, menuId int64) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "select count(1) from sys_role_menu where menu_id = ?", menuId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count

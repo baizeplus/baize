@@ -91,7 +91,7 @@ func (postDao *SysPostDao) SelectPostById(ctx context.Context, db sqly.SqlyConte
 
 	dictData = new(systemModels.SysPostVo)
 	err := db.GetContext(ctx, dictData, postDao.postSql+" where post_id = ?", postId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return

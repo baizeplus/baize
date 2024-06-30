@@ -32,7 +32,7 @@ func (userDao *SysUserDao) SelectUserNameByUserName(ctx context.Context, db sqly
 func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int {
 	var count = 0
 	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_user WHERE user_name =?)", userName)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count
@@ -40,7 +40,7 @@ func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.Sqly
 func (userDao *SysUserDao) CheckPhoneUnique(ctx context.Context, db sqly.SqlyContext, phonenumber string) int64 {
 	var userId int64 = 0
 	err := db.GetContext(ctx, &userId, "select user_id from sys_user where phonenumber = ?", phonenumber)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return userId
@@ -49,7 +49,7 @@ func (userDao *SysUserDao) CheckPhoneUnique(ctx context.Context, db sqly.SqlyCon
 func (userDao *SysUserDao) CheckEmailUnique(ctx context.Context, db sqly.SqlyContext, email string) int64 {
 	var userId int64 = 0
 	err := db.GetContext(ctx, &userId, "select user_id from sys_user where email = ?", email)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return userId
@@ -145,7 +145,7 @@ func (userDao *SysUserDao) SelectUserByUserName(ctx context.Context, db sqly.Sql
 
 	loginUser = new(systemModels.User)
 	err := db.GetContext(ctx, loginUser, sqlStr, userName)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
@@ -161,7 +161,7 @@ func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyConte
 
 	sysUser = new(systemModels.SysUserVo)
 	err := db.GetContext(ctx, sysUser, sqlStr, userId)
-	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
