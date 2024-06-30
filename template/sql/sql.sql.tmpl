@@ -10,39 +10,29 @@
 {{$plugin = "plugins/"}}
 {{end}}
 
--- 当前日期
-select @now := now();
 
--- 目录 SQL
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(0,'{{$plugin}}{{.table.ModuleName}}/{{ CaseCamelLower .Table.BusinessName}}','{{.table.FunctionName}}管理','form','','{{.table.FunctionName}}管理',0,0,1,1,'{{$plugin}}{{CaseCamelLower .Table.BusinessName}}','','',0,'sys_admin',0,@now,@now,NULL );
 
--- 菜单父目录ID
-SELECT @parentId := LAST_INSERT_ID();
 
 -- 菜单 SQL
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/list','{{.table.FunctionName}}列表','list','','{{.table.FunctionName}}列表',1,0,1,1,'{{CaseCamelLower .Table.BusinessName}}List','','{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/list',0,'sys_admin',0,@now,@now,NULL );
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('{{.Table.FunctionName}}', '{{.Table.ParentMenuId}}', '1', '{{.Table.BusinessName}}', '{{.Table.ModuleName}}/${{.Table.BusinessName}}/index', 1, 0, 'C', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:list', '#', 1, sysdate(),1, sysdate(), '{{.Table.FunctionName}}菜单');
 
--- 按钮父目录ID
+-- 按钮父菜单ID
 SELECT @parentId := LAST_INSERT_ID();
 
 -- 按钮 SQL
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/get','{{.table.FunctionName}}查询','','','{{.table.FunctionName}}查询',2,0,1,1,'','','',0,'sys_admin',0,@now,@now,NULL );
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values({{.Table.FunctionName}}查询', @parentId, '1',  '#', '', 1, 0, 'F', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:query',        '#', 1, sysdate(), 1, sysdate(), '');
 
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/add','{{.table.FunctionName}}添加','','','{{.table.FunctionName}}添加',2,0,1,1,'','','',0,'sys_admin',0,@now,@now,NULL );
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('{{.Table.FunctionName}}新增', @parentId, '2',  '#', '', 1, 0, 'F', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:add',          '#', 1, sysdate(), 1, sysdate(), '');
 
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/edit','{{.table.FunctionName}}修改','','','{{.table.FunctionName}}修改',2,0,1,1,'','','',0,'sys_admin',0,@now,@now,NULL );
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('{{.Table.FunctionName}}修改', @parentId, '3',  '#', '', 1, 0, 'F', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:edit',         '#', 1, sysdate(), 1, sysdate(), '');
 
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/delete','{{.table.FunctionName}}删除','','','{{.table.FunctionName}}删除',2,0,1,1,'','','',0,'sys_admin',0,@now,@now,NULL );
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('{{.Table.FunctionName}}删除', @parentId, '4',  '#', '', 1, 0, 'F', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:remove',       '#', 1, sysdate(), 1, sysdate(), '');
 
-{{range $index,$column:= .table.Columns}}
-{{if and (HasSuffix $column.ColumnName "status") (eq $column.IsList "1") }}
-INSERT INTO `sys_auth_rule` (`pid`,`name`,`title`,`icon`,`condition`,`remark`,`menu_type`,`weigh`,`status`,`always_show`,`path`,`jump_path`,`component`,`is_frame`,`module_type`,`model_id`,`created_at`,`updated_at`,`deleted_at` )
-VALUES(@parentId,'{{$plugin}}{{$.table.ModuleName}}/{{CaseCamelLower .Table.BusinessName}}/change{{$column.GoField}}','{{$.table.FunctionName}}{{$column.ColumnComment}}修改','','','{{$.table.FunctionName}}{{$column.ColumnComment}}修改',2,0,1,1,'','','',0,'sys_admin',0,@now,@now,NULL );
-{{end}}
-{{end}}
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('{{.Table.FunctionName}}导出', @parentId, '5',  '#', '', 1, 0, 'F', '0', '0', '{{.Table.ModuleName}}:{{.Table.BusinessName}}:export',       '#', 1, sysdate(), 1, sysdate(), '');
+

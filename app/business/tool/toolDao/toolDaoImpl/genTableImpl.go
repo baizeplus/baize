@@ -84,7 +84,7 @@ func (genTableDao *GenTableDao) SelectDbTableListByNames(ctx context.Context, db
 func (genTableDao *GenTableDao) SelectGenTableById(ctx context.Context, db sqly.SqlyContext, id int64) (genTable *toolModels.GenTableVo) {
 	genTable = new(toolModels.GenTableVo)
 	err := db.GetContext(ctx, genTable, `SELECT
-       table_id, table_name, table_comment, sub_table_name,sub_table_fk_name, struct_name, 
+       table_id, table_name, table_comment, sub_table_name,sub_table_fk_name, struct_name, parent_menu_id,
       tpl_category, package_name,module_name, business_name,function_name, function_author, options, remark
 		FROM gen_table 
 		where table_id = ?`, id)
@@ -183,6 +183,9 @@ func (genTableDao *GenTableDao) UpdateGenTable(ctx context.Context, db sqly.Sqly
 	}
 	if genTable.Remark != "" {
 		updateSQL += ",remark = :remark"
+	}
+	if genTable.ParentMenuId != 0 {
+		updateSQL += ",parent_menu_id = :parent_menu_id"
 	}
 
 	updateSQL += " where table_id = :table_id"

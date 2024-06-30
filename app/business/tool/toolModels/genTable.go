@@ -30,6 +30,7 @@ type GenTableDML struct {
 	FunctionAuthor string               `json:"functionAuthor" db:"function_author"`
 	Options        string               `json:"options" db:"options"`
 	Remark         string               `json:"remark" db:"remark"`
+	ParentMenuId   int64                `json:"parentMenuId,string" db:"parent_menu_id"`
 	Columns        []*GenTableColumnDML `json:"columns"`
 	baize.BaseEntity
 }
@@ -46,6 +47,7 @@ func GetGenTableDML(table *DBTableVo, tableId int64, userId int64) *GenTableDML 
 	gen.FunctionName = strings.ReplaceAll(table.TableComment, "表", "")
 	gen.FunctionAuthor = "baize"
 	gen.TplCategory = "crud"
+	gen.ParentMenuId = 1
 	gen.SetCreateBy(userId)
 	return gen
 }
@@ -65,6 +67,7 @@ type GenTableVo struct {
 	FunctionAuthor string  `json:"functionAuthor" db:"function_author"`
 	Options        *string `json:"options" db:"options"`
 	Remark         string  `json:"remark" db:"remark"`
+	ParentMenuId   int64   `json:"parentMenuId,string" db:"parent_menu_id"`
 	baize.BaseEntity
 }
 

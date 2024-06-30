@@ -615,6 +615,7 @@ DROP TABLE IF EXISTS `gen_table`;
 CREATE TABLE `gen_table` (
      `table_id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
      `table_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '表名称',
+     `parent_menu_id` bigint(0) NULL DEFAULT NULL COMMENT '父菜单ID',
      `table_comment` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '表描述',
      `sub_table_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '关联子表的表名',
      `sub_table_fk_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '子表关联的外键名',

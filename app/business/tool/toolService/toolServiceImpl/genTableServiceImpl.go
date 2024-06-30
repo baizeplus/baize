@@ -101,10 +101,15 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 	if err != nil {
 		panic(err)
 	}
+	files = append(files, "template/sql/sql.sql.tmpl")
 	for _, file := range files {
 		loadTemplate := genTabletService.loadTemplate("./"+file, data)
 		m[filepath.Base(file)] = string(loadTemplate)
 	}
+
+	file := "/template/sql/sql.sql.tmpl"
+	loadTemplate := genTabletService.loadTemplate("./"+file, data)
+	m[filepath.Base(file)] = string(loadTemplate)
 
 	return m
 }
@@ -138,12 +143,14 @@ func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64)
 	if err != nil {
 		panic(err)
 	}
+	files = append(files, "template/sql/sql.sql.tmpl")
 	for _, file := range files {
 		loadTemplate := genTabletService.loadTemplate("./"+file, data)
 		if err := zipUtils.AddFileToZip(zipWriter, strings.TrimSuffix(strings.TrimPrefix(file, "template\\"), ".tmpl"), string(loadTemplate)); err != nil {
 			panic(err)
 		}
 	}
+
 	// 关闭压缩包
 	if err := zipWriter.Close(); err != nil {
 		panic(err)
