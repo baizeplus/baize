@@ -57,7 +57,6 @@ type SysUserDataScope struct {
 	UserId    int64    `json:"userId,string"  binding:"required"` //用户ID
 	DataScope string   `json:"dataScope"  binding:"required"`     //数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限,无任何）权限
 	DeptIds   []string `json:"deptIds"`                           //如果是自定义就是部门ID 其他不填
-	Ds        []int64  `json:"-"`                                 //如果是自定义就是部门ID 其他不填
 }
 
 type ResetPwd struct {
