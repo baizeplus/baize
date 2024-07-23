@@ -20,7 +20,7 @@ func NewConfigService(data *sqly.DB, cd *systemDaoImpl.SysConfigDao) *ConfigServ
 	return &ConfigService{data: data, cd: cd}
 }
 
-func (cs *ConfigService) SelectConfigList(c *gin.Context, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total *int64) {
+func (cs *ConfigService) SelectConfigList(c *gin.Context, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total int64) {
 	return cs.cd.SelectConfigList(c, cs.data, config)
 }
 func (cs *ConfigService) ConfigExport(c *gin.Context, config *systemModels.SysConfigDQL) (data []byte) {

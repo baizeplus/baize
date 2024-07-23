@@ -30,7 +30,7 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataByType(ctx context.Context, 
 	return
 }
 
-func (sysDictDataDao *SysDictDataDao) SelectDictDataList(ctx context.Context, db sqly.SqlyContext, dictData *systemModels.SysDictDataDQL) (list []*systemModels.SysDictDataVo, total *int64) {
+func (sysDictDataDao *SysDictDataDao) SelectDictDataList(ctx context.Context, db sqly.SqlyContext, dictData *systemModels.SysDictDataDQL) (list []*systemModels.SysDictDataVo, total int64) {
 	whereSql := ``
 	if dictData.DictType != "" {
 		whereSql += " AND dict_type = :dict_type"
@@ -45,9 +45,7 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*systemModels.SysDictDataVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, sysDictDataDao.dictDataSql+whereSql, dictData, dictData.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictDataDao.dictDataSql+whereSql, dictData, dictData.ToPage())
 	if err != nil {
 		panic(err)
 	}

@@ -17,7 +17,7 @@ func NewUserOnlineService() *UserOnlineService {
 	return new(UserOnlineService)
 }
 
-func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context, ol *monitorModels.SysUserOnlineDQL) (list []*monitorModels.SysUserOnline, total *int64) {
+func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context, ol *monitorModels.SysUserOnlineDQL) (list []*monitorModels.SysUserOnline, total int64) {
 
 	var cursor uint64 = 0
 	keyAll := make([]string, 0, 16)
@@ -58,8 +58,7 @@ func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context,
 		list = append(list, oui)
 	}
 
-	i := int64(len(list))
-	total = &i
+	total = int64(len(list))
 	return
 }
 

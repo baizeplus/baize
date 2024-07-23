@@ -14,7 +14,7 @@ func GetGenTableDao() *GenTableDao {
 	return &GenTableDao{}
 }
 
-func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total *int64) {
+func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total int64) {
 	var selectSql = `select table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, struct_name, tpl_category, package_name, module_name, business_name, function_name, function_author, options, create_by, create_time, update_by, update_time, remark  from gen_table`
 	whereSql := ``
 	if table.TableName != "" {
@@ -33,17 +33,14 @@ func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-
-	list = make([]*toolModels.GenTableVo, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+whereSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, table, table.ToPage())
 	if err != nil {
 		panic(err)
 	}
 	return
 
 }
-func (genTableDao *GenTableDao) SelectDbTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.DBTableVo, total *int64) {
+func (genTableDao *GenTableDao) SelectDbTableList(ctx context.Context, db sqly.SqlyContext, table *toolModels.GenTableDQL) (list []*toolModels.DBTableVo, total int64) {
 	var selectSql = `select table_name , table_comment, create_time, update_time  from information_schema.tables where table_schema = (select database())
 		AND table_name NOT LIKE 'gen_%'
 		AND table_name NOT IN (select table_name from gen_table)`
@@ -59,9 +56,7 @@ func (genTableDao *GenTableDao) SelectDbTableList(ctx context.Context, db sqly.S
 	if table.EndTime != "" {
 		selectSql += " date_format(create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
 	}
-	list = make([]*toolModels.DBTableVo, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, table, table.ToPage())
 	if err != nil {
 		panic(err)
 	}

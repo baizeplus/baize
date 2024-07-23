@@ -25,7 +25,7 @@ func NewDictTypeService(data *sqly.DB, dtd *systemDaoImpl.SysDictTypeDao) *DictT
 	}
 }
 
-func (dictTypeService *DictTypeService) SelectDictTypeList(c *gin.Context, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, count *int64) {
+func (dictTypeService *DictTypeService) SelectDictTypeList(c *gin.Context, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64) {
 	return dictTypeService.dictTypeDao.SelectDictTypeList(c, dictTypeService.data, dictType)
 
 }

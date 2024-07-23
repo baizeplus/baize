@@ -7,7 +7,7 @@ import (
 )
 
 type IDictTypeDao interface {
-	SelectDictTypeList(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total *int64)
+	SelectDictTypeList(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64)
 	SelectDictTypeAll(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo)
 	SelectDictTypeById(ctx context.Context, db sqly.SqlyContext, dictId int64) (dictType *systemModels.SysDictTypeVo)
 	SelectDictTypeByIds(ctx context.Context, db sqly.SqlyContext, dictId []int64) (dictTypes []string)

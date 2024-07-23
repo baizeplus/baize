@@ -27,7 +27,7 @@ func (ols *OperLogService) InsertOperLog(c context.Context, operLog *monitorMode
 	operLog.OperId = snowflake.GenID()
 	ols.old.InsertOperLog(c, ols.data, operLog)
 }
-func (ols *OperLogService) SelectOperLogList(c *gin.Context, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog, total *int64) {
+func (ols *OperLogService) SelectOperLogList(c *gin.Context, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog, total int64) {
 	list, total = ols.old.SelectOperLogList(c, ols.data, openLog)
 	return
 

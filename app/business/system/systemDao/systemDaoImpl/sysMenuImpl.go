@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/baizeplus/sqly"
 )
 
@@ -82,57 +81,9 @@ func (sysMenuDao *SysMenuDao) SelectMenuListByUserId(ctx context.Context, db sql
 }
 
 func (sysMenuDao *SysMenuDao) InsertMenu(ctx context.Context, db sqly.SqlyContext, menu *systemModels.SysMenuVo) {
-	insertSQL := `insert into sys_menu(menu_id,menu_name,parent_id,create_by,create_time,update_by,update_time %s)
-					values(:menu_id,:menu_name,:parent_id,:create_by,now(),:update_by,now() %s)`
-	key := ""
-	value := ""
-	if menu.OrderNum != 0 {
-		key += ",order_num"
-		value += ",:order_num"
-	}
-	if menu.Path != "" {
-		key += ",path"
-		value += ",:path"
-	}
-	if menu.Component != "" {
-		key += ",component"
-		value += ",:component"
-	}
-	if menu.IsFrame != "" {
-		key += ",is_frame"
-		value += ",:is_frame"
-	}
-	if menu.IsCache != "" {
-		key += ",is_cache"
-		value += ",:is_cache"
-	}
-	if menu.MenuType != "" {
-		key += ",menu_type"
-		value += ",:menu_type"
-	}
-	if menu.Visible != "" {
-		key += ",visible"
-		value += ",:visible"
-	}
-	if menu.Status != "" {
-		key += ",status"
-		value += ",:status"
-	}
-	if menu.Perms != "" {
-		key += ",Perms"
-		value += ",:perms"
-	}
-	if menu.Icon != "" {
-		key += ",icon"
-		value += ",:icon"
-	}
-	if menu.Remark != "" {
-		key += ",remark"
-		value += ",:remark"
-	}
-
-	insertStr := fmt.Sprintf(insertSQL, key, value)
-	_, err := db.NamedExecContext(ctx, insertStr, menu)
+	insertSQL := `insert into sys_menu(menu_id,menu_name,parent_id,create_by,create_time,update_by,update_time,order_num,path,component,is_frame,is_cache,menu_type,icon,status,perms,visible,remark)
+					values(:menu_id,:menu_name,:parent_id,:create_by,now(),:update_by,now() ,:order_num,:path,:component,:is_frame,:is_cache,:menu_type,:icon,:status,:perms,:visible,:remark)`
+	_, err := db.NamedExecContext(ctx, insertSQL, menu)
 	if err != nil {
 		panic(err)
 	}

@@ -15,7 +15,7 @@ func NewSysNoticeDao() *SysNoticeDao {
 	return &SysNoticeDao{}
 }
 
-func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.NoticeDQL) (list []*systemModels.SysNoticeVo, total *int64) {
+func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.NoticeDQL) (list []*systemModels.SysNoticeVo, total int64) {
 	selectSql := `select id,title,type,txt,create_by,create_time,create_name,dept_ids from sys_notice  `
 	whereSql := ""
 	if notice.NoticeTitle != "" {
@@ -30,9 +30,7 @@ func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*systemModels.SysNoticeVo, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql+whereSql, notice, notice.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, notice, notice.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +95,7 @@ func (s *SysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, db sqly.
 	return vo
 }
 
-func (s *SysNoticeDao) SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
+func (s *SysNoticeDao) SelectConsumptionNoticeList(ctx context.Context, db sqly.SqlyContext, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total int64) {
 	selectSql := `select sn.id,sn.title,sn.txt,sn.create_name,sn.create_time, sn.type,snu.status from sys_notice sn
 left join sys_notice_user snu on sn.id = snu.notice_id
 where snu.user_id=:user_id `
@@ -110,9 +108,7 @@ where snu.user_id=:user_id `
 	if notice.Type != "" {
 		selectSql += " AND sn.type=:type"
 	}
-	list = make([]*systemModels.ConsumptionNoticeVo, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectSql, notice, notice.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, notice, notice.ToPage())
 	if err != nil {
 		panic(err)
 	}

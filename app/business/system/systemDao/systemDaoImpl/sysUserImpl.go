@@ -167,7 +167,7 @@ func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyConte
 	return
 }
 
-func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo, total *int64) {
+func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	sql := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
 			 from sys_user u left join sys_dept d on u.dept_id = d.dept_id where u.del_flag = '0'`
 	if user.UserName != "" {
@@ -191,9 +191,7 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 	if user.DataScope != "" {
 		sql += " AND " + user.DataScope
 	}
-	list = make([]*systemModels.SysUserVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, sql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sql, user, user.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -222,7 +220,7 @@ func (userDao *SysUserDao) SelectUserListAll(ctx context.Context, db sqly.SqlyCo
 	if user.DeptId != 0 {
 		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
 	}
-	list = make([]*systemModels.SysUserVo, 0, 16)
+
 	err := db.NamedSelectContext(ctx, &list, sql, user)
 	if err != nil {
 		panic(err)

@@ -53,7 +53,7 @@ func (userService *UserService) SelectUserByUserName(c *gin.Context, userName st
 	return userService.userDao.SelectUserByUserName(c, userService.data, userName)
 
 }
-func (userService *UserService) SelectUserList(c *gin.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, count *int64) {
+func (userService *UserService) SelectUserList(c *gin.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, total int64) {
 	return userService.userDao.SelectUserList(c, userService.data, user)
 }
 

@@ -47,7 +47,7 @@ func (gc *GenTable) ColumnList(c *gin.Context) {
 	tableId := baizeContext.ParamInt64(c, "tableId")
 	list := gc.gt.SelectGenTableColumnListByTableId(c, tableId)
 	total := int64(len(list))
-	baizeContext.SuccessListData(c, list, &total)
+	baizeContext.SuccessListData(c, list, total)
 }
 func (gc *GenTable) ImportTable(c *gin.Context) {
 	gc.gt.ImportTableSave(c, strings.Split(c.Query("tables"), ","), "")

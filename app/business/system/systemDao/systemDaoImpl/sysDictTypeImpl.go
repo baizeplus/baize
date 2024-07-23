@@ -18,7 +18,7 @@ func NewSysDictTypeDao() *SysDictTypeDao {
 	}
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total *int64) {
+func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64) {
 	whereSql := ``
 	if dictType.DictName != "" {
 		whereSql += " AND dict_name like concat('%', :dictName, '%')"
@@ -33,9 +33,7 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*systemModels.SysDictTypeVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, sysDictTypeDao.dictTypeSql+whereSql, dictType, dictType.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictTypeDao.dictTypeSql+whereSql, dictType, dictType.ToPage())
 	if err != nil {
 		panic(err)
 	}

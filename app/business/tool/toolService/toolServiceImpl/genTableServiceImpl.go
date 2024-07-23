@@ -36,10 +36,10 @@ func NewGenTabletService(data *sqly.DB, gtc *toolDaoImpl.GenTableColumnDao, gt *
 	}
 }
 
-func (genTabletService *GenTabletService) SelectGenTableList(c *gin.Context, getTable *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total *int64) {
+func (genTabletService *GenTabletService) SelectGenTableList(c *gin.Context, getTable *toolModels.GenTableDQL) (list []*toolModels.GenTableVo, total int64) {
 	return genTabletService.genTabletDao.SelectGenTableList(c, genTabletService.data, getTable)
 }
-func (genTabletService *GenTabletService) SelectDbTableList(c *gin.Context, getTable *toolModels.GenTableDQL) (list []*toolModels.DBTableVo, total *int64) {
+func (genTabletService *GenTabletService) SelectDbTableList(c *gin.Context, getTable *toolModels.GenTableDQL) (list []*toolModels.DBTableVo, total int64) {
 	return genTabletService.genTabletDao.SelectDbTableList(c, genTabletService.data, getTable)
 }
 func (genTabletService *GenTabletService) SelectGenTableAll(c *gin.Context) (list []*toolModels.GenTableVo) {

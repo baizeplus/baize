@@ -8,7 +8,7 @@ import (
 
 type IUserService interface {
 	SelectUserByUserName(c *gin.Context, userName string) *systemModels.User
-	SelectUserList(c *gin.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, count *int64)
+	SelectUserList(c *gin.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, total int64)
 	UserExport(c *gin.Context, user *systemModels.SysUserDQL) (data []byte)
 	InsertUser(c *gin.Context, sysUser *systemModels.SysUserDML)
 	UpdateUser(c *gin.Context, sysUser *systemModels.SysUserDML)

@@ -16,7 +16,7 @@ type IUserDao interface {
 	UpdateUser(ctx context.Context, db sqly.SqlyContext, sysUser *systemModels.SysUserDML)
 	SelectUserByUserName(ctx context.Context, db sqly.SqlyContext, userName string) (loginUser *systemModels.User)
 	SelectUserById(ctx context.Context, db sqly.SqlyContext, userId int64) (sysUser *systemModels.SysUserVo)
-	SelectUserList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, total *int64)
+	SelectUserList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, total int64)
 	SelectUserListAll(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo)
 	DeleteUserByIds(ctx context.Context, db sqly.SqlyContext, ids []int64)
 	UpdateLoginInformation(ctx context.Context, db sqly.SqlyContext, userId int64, ip string)

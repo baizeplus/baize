@@ -19,7 +19,7 @@ func NewLogininforService(data *sqly.DB, ld *monitorDaoImpl.LogininforDao) *Logi
 	return &LogininforService{data: data, ld: ld}
 }
 
-func (ls *LogininforService) SelectLogininforList(c *gin.Context, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total *int64) {
+func (ls *LogininforService) SelectLogininforList(c *gin.Context, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total int64) {
 	return ls.ld.SelectLogininforList(c, ls.data, logininfor)
 
 }

@@ -41,7 +41,7 @@ func (postDao *SysPostDao) SelectPostListByUserId(ctx context.Context, db sqly.S
 	return
 }
 
-func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyContext, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, total *int64) {
+func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyContext, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, total int64) {
 	whereSql := ``
 	if post.PostCode != "" {
 		whereSql += " AND post_code like concat('%', :post_code, '%')"
@@ -56,9 +56,7 @@ func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyConte
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*systemModels.SysPostVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, postDao.postSql+whereSql, post, post.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, postDao.postSql+whereSql, post, post.ToPage())
 	if err != nil {
 		panic(err)
 	}

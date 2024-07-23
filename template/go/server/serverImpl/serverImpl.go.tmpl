@@ -33,7 +33,7 @@ func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Select{{.Tabl
     return {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}ById(c,{{.Table.BusinessName}}Service.data,{{.IdField}})
 }
 
-func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Select{{.Table.StructName}}ListAndTotal(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64) {
+func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Select{{.Table.StructName}}ListAndTotal(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total int64) {
     return {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Select{{.Table.StructName}}ListAndTotal(c,{{.Table.BusinessName}}Service.data,{{.Table.BusinessName}})
 }
 

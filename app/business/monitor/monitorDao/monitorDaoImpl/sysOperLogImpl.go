@@ -25,7 +25,7 @@ func (operLogDao *OperLogDao) InsertOperLog(ctx context.Context, db sqly.SqlyCon
 	}
 	return
 }
-func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.SqlyContext, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog, total *int64) {
+func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.SqlyContext, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog, total int64) {
 	whereSql := ``
 	if openLog.Title != "" {
 		whereSql += " AND title like concat('%', :title, '%')"
@@ -49,9 +49,7 @@ func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.Sql
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*monitorModels.SysOperLog, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, operLogDao.selectSql+whereSql, openLog, openLog.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, operLogDao.selectSql+whereSql, openLog, openLog.ToPage())
 	if err != nil {
 		panic(err)
 	}

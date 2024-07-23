@@ -108,7 +108,7 @@ func SuccessData(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, rd)
 	c.Set(sessionStatus.MsgKey, rd)
 }
-func SuccessListData(c *gin.Context, rows interface{}, total *int64) {
+func SuccessListData(c *gin.Context, rows interface{}, total int64) {
 	c.JSON(http.StatusOK, response.ResponseData{Code: response.Success, Msg: response.Success.Msg(), Data: response.ListData{Rows: rows, Total: total}})
 }
 func SuccessGzip(c *gin.Context, gzipData []byte) {

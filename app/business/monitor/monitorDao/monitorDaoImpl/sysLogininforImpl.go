@@ -23,7 +23,7 @@ func (ld *LogininforDao) InserLogininfor(ctx context.Context, db sqly.SqlyContex
 	}
 	return
 }
-func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyContext, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total *int64) {
+func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyContext, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total int64) {
 	whereSql := ``
 	if logininfor.IpAddr != "" {
 		whereSql += " AND ipaddr like concat(:ipaddr, '%')"
@@ -38,9 +38,7 @@ func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyC
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*monitorModels.Logininfor, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
 	if err != nil {
 		panic(err)
 	}

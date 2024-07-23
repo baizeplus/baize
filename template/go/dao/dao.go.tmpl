@@ -16,7 +16,7 @@ import (
 
 type I{{.Table.StructName}}Dao interface {
     Select{{.Table.StructName}}ById(ctx context.Context, db sqly.SqlyContext, {{.IdField}} {{.IdType}}  )({{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
-    Select{{.Table.StructName}}ListAndTotal(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total *int64)
+    Select{{.Table.StructName}}ListAndTotal(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo, total int64)
     Select{{.Table.StructName}}List(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}DQL) (list []*{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
     Insert{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)
     Update{{.Table.StructName}}(ctx context.Context, db sqly.SqlyContext, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo)

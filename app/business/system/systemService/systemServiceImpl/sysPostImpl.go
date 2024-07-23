@@ -22,7 +22,7 @@ func NewPostService(data *sqly.DB, pd *systemDaoImpl.SysPostDao) *PostService {
 	}
 }
 
-func (postService *PostService) SelectPostList(c *gin.Context, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, count *int64) {
+func (postService *PostService) SelectPostList(c *gin.Context, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, total int64) {
 	return postService.postDao.SelectPostList(c, postService.data, post)
 
 }

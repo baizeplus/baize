@@ -28,7 +28,7 @@ func NewRoleService(data *sqly.DB, rd *systemDaoImpl.SysRoleDao, rmd *systemDaoI
 	}
 }
 
-func (roleService *RoleService) SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, count *int64) {
+func (roleService *RoleService) SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64) {
 	return roleService.roleDao.SelectRoleList(c, roleService.data, role)
 
 }
@@ -171,11 +171,11 @@ func (roleService *RoleService) CheckRoleKeyUnique(c *gin.Context, id int64, rol
 	return true
 }
 
-func (roleService *RoleService) SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64) {
+func (roleService *RoleService) SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	return roleService.roleDao.SelectAllocatedList(c, roleService.data, user)
 }
 
-func (roleService *RoleService) SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64) {
+func (roleService *RoleService) SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	return roleService.roleDao.SelectUnallocatedList(c, roleService.data, user)
 
 }

@@ -18,7 +18,7 @@ func NewSysConfigDao() *SysConfigDao {
 	}
 }
 
-func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (list []*systemModels.SysConfigVo, total *int64) {
+func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext, config *systemModels.SysConfigDQL) (list []*systemModels.SysConfigVo, total int64) {
 	whereSql := ``
 	if config.ConfigName != "" {
 		whereSql += " AND config_name like concat('%', :config_name, '%')"
@@ -33,9 +33,7 @@ func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	list = make([]*systemModels.SysConfigVo, 0)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, s.configSql+whereSql, config, config.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, s.configSql+whereSql, config, config.ToPage())
 	if err != nil {
 		panic(err)
 	}

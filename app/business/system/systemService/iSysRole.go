@@ -6,7 +6,7 @@ import (
 )
 
 type IRoleService interface {
-	SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, count *int64)
+	SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64)
 	RoleExport(c *gin.Context, role *systemModels.SysRoleDQL) (data []byte)
 	SelectRoleById(c *gin.Context, roseId int64) (role *systemModels.SysRoleVo)
 	InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML)
@@ -19,8 +19,8 @@ type IRoleService interface {
 
 	CheckRoleNameUnique(c *gin.Context, id int64, roleName string) bool
 	CheckRoleKeyUnique(c *gin.Context, id int64, roleKey string) bool
-	SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64)
-	SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64)
+	SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)
+	SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)
 	InsertAuthUsers(c *gin.Context, roleId int64, userIds []int64)
 	DeleteAuthUsers(c *gin.Context, roleId int64, userIds []int64)
 	DeleteAuthUserRole(c *gin.Context, user *systemModels.SysUserRole)

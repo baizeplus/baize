@@ -62,7 +62,7 @@ func (dictDataService *DictDataService) SelectDictDataByType(c *gin.Context, dic
 	}
 	return dictDataService.gzipNil
 }
-func (dictDataService *DictDataService) SelectDictDataList(c *gin.Context, dictData *systemModels.SysDictDataDQL) (list []*systemModels.SysDictDataVo, count *int64) {
+func (dictDataService *DictDataService) SelectDictDataList(c *gin.Context, dictData *systemModels.SysDictDataDQL) (list []*systemModels.SysDictDataVo, total int64) {
 	return dictDataService.dictDataDao.SelectDictDataList(c, dictDataService.data, dictData)
 
 }

@@ -25,7 +25,7 @@ func NewNoticeService(data *sqly.DB, nd *systemDaoImpl.SysNoticeDao,
 	return &NoticeService{data: data, nd: nd, sud: sud, ss: ss, sss: &systemModels.Sse{Key: "notice", Value: "1"}}
 }
 
-func (n *NoticeService) SelectNoticeList(c *gin.Context, notice *systemModels.NoticeDQL) (list []*systemModels.SysNoticeVo, total *int64) {
+func (n *NoticeService) SelectNoticeList(c *gin.Context, notice *systemModels.NoticeDQL) (list []*systemModels.SysNoticeVo, total int64) {
 	return n.nd.SelectNoticeList(c, n.data, notice)
 }
 
@@ -92,7 +92,7 @@ func (n *NoticeService) SelectConsumptionNoticeById(c *gin.Context, noticeId int
 	return n.nd.SelectConsumptionNoticeById(c, n.data, userId, noticeId)
 }
 
-func (n *NoticeService) SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total *int64) {
+func (n *NoticeService) SelectConsumptionNoticeList(c *gin.Context, notice *systemModels.ConsumptionNoticeDQL) (list []*systemModels.ConsumptionNoticeVo, total int64) {
 	return n.nd.SelectConsumptionNoticeList(c, n.data, notice)
 }
 func (n *NoticeService) UpdateNoticeRead(c *gin.Context, noticeId, userId int64) {

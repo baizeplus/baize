@@ -21,7 +21,7 @@ type SysRoleDao struct {
 	selectSql string
 }
 
-func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total *int64) {
+func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64) {
 	whereSql := " where r.del_flag = '0'"
 	if role.RoleName != "" {
 		whereSql += " AND r.role_name like concat('%', :role_name, '%')"
@@ -38,9 +38,7 @@ func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, r
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	list = make([]*systemModels.SysRoleVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, rd.selectSql+whereSql, role, role.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, rd.selectSql+whereSql, role, role.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -188,7 +186,7 @@ func (rd *SysRoleDao) CheckRoleKeyUnique(ctx context.Context, db sqly.SqlyContex
 	}
 	return roleId
 }
-func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64) {
+func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	selectStr := ` select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time`
 
 	whereSql := ` from sys_user u
@@ -201,9 +199,7 @@ func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyConte
 	if user.Phonenumber != "" {
 		whereSql += " AND u.phonenumber like concat('%', :phonenumber, '%')"
 	}
-	list = make([]*systemModels.SysUserVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user, user.ToPage())
 	if err != nil {
 		panic(err)
 	}
@@ -211,7 +207,7 @@ func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyConte
 
 }
 
-func (rd *SysRoleDao) SelectUnallocatedList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total *int64) {
+func (rd *SysRoleDao) SelectUnallocatedList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	selectStr := ` select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time`
 
 	whereSql := `  from sys_user u
@@ -226,9 +222,7 @@ func (rd *SysRoleDao) SelectUnallocatedList(ctx context.Context, db sqly.SqlyCon
 	if user.Phonenumber != "" {
 		whereSql += " AND u.phonenumber like concat('%', :phonenumber, '%')"
 	}
-	list = make([]*systemModels.SysUserVo, 0, 16)
-	total = new(int64)
-	err := db.NamedSelectPageContext(ctx, &list, total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user, user.ToPage())
 	if err != nil {
 		panic(err)
 	}
