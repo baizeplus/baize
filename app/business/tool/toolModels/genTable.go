@@ -67,7 +67,7 @@ type GenTableVo struct {
 	FunctionAuthor string  `json:"functionAuthor" db:"function_author"`
 	Options        *string `json:"options" db:"options"`
 	Remark         string  `json:"remark" db:"remark"`
-	ParentMenuId   int64   `json:"parentMenuId,string" db:"parent_menu_id"`
+	ParentMenuId   *int64  `json:"parentMenuId,string" db:"parent_menu_id"`
 	baize.BaseEntity
 }
 
