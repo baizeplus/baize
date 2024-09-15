@@ -49,7 +49,7 @@ func (operLogDao *OperLogDao) SelectOperLogList(ctx context.Context, db sqly.Sql
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, operLogDao.selectSql+whereSql, openLog, openLog.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, operLogDao.selectSql+whereSql, openLog)
 	if err != nil {
 		panic(err)
 	}

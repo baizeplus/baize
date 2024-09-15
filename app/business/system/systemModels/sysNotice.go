@@ -1,6 +1,9 @@
 package systemModels
 
-import "baize/app/baize"
+import (
+	"baize/app/baize"
+	"time"
+)
 
 type SysNoticeVo struct {
 	Id         int64       `json:"id,string" db:"id"`                   //通知ID
@@ -34,11 +37,11 @@ type ConsumptionNoticeDQL struct {
 }
 
 type ConsumptionNoticeVo struct {
-	Id         int64       `json:"id,string" db:"id"`  //通知ID
-	Title      string      `json:"title" db:"title" `  //通知标题
-	Txt        string      `json:"txt" db:"txt" `      //通知文本
-	Status     string      `json:"status" db:"status"` //通知状态 1未读 2 已读
-	Type       string      `json:"type" db:"type" binding:"required"`
-	CreateName string      `json:"createName" db:"create_name"`
-	CreateTime *baize.Time `json:"createTime" db:"create_time" swaggertype:"integer"` //创建时间
+	Id         int64      `json:"id,string" db:"id"`  //通知ID
+	Title      string     `json:"title" db:"title" `  //通知标题
+	Txt        string     `json:"txt" db:"txt" `      //通知文本
+	Status     string     `json:"status" db:"status"` //通知状态 1未读 2 已读
+	Type       string     `json:"type" db:"type" binding:"required"`
+	CreateName string     `json:"createName" db:"create_name"`
+	CreateTime *time.Time `json:"createTime" db:"create_time"` //创建时间
 }

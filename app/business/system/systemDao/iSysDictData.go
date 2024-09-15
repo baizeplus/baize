@@ -12,6 +12,7 @@ type IDictDataDao interface {
 	SelectDictDataById(ctx context.Context, db sqly.SqlyContext, dictCode int64) (dictData *systemModels.SysDictDataVo)
 	InsertDictData(ctx context.Context, db sqly.SqlyContext, dictData *systemModels.SysDictDataVo)
 	UpdateDictData(ctx context.Context, db sqly.SqlyContext, dictData *systemModels.SysDictDataVo)
+	SelectDictTypesByDictCodes(ctx context.Context, db sqly.SqlyContext, dictCodes []int64) []string
 	DeleteDictDataByIds(ctx context.Context, db sqly.SqlyContext, dictCodes []int64)
 	CountDictDataByTypes(ctx context.Context, db sqly.SqlyContext, dictType []string) int
 }

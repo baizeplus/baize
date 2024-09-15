@@ -38,7 +38,7 @@ func (ld *LogininforDao) SelectLogininforList(ctx context.Context, db sqly.SqlyC
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, ld.selectSql+whereSql, logininfor, logininfor.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, ld.selectSql+whereSql, logininfor)
 	if err != nil {
 		panic(err)
 	}

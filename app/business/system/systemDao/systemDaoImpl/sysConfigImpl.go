@@ -33,7 +33,7 @@ func (s *SysConfigDao) SelectConfigList(ctx context.Context, db sqly.SqlyContext
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, s.configSql+whereSql, config, config.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, s.configSql+whereSql, config)
 	if err != nil {
 		panic(err)
 	}

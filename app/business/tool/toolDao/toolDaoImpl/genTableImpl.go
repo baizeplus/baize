@@ -33,7 +33,7 @@ func (genTableDao *GenTableDao) SelectGenTableList(ctx context.Context, db sqly.
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, table)
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +56,7 @@ func (genTableDao *GenTableDao) SelectDbTableList(ctx context.Context, db sqly.S
 	if table.EndTime != "" {
 		selectSql += " date_format(create_time,'%y%m%d') &lt;= date_format(:end_time,'%y%m%d')"
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, table, table.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, table)
 	if err != nil {
 		panic(err)
 	}

@@ -7,6 +7,7 @@ import (
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type DeptService struct {
@@ -32,7 +33,7 @@ func (ds *DeptService) SelectDeptById(c *gin.Context, deptId int64) (dept *syste
 func (ds *DeptService) InsertDept(c *gin.Context, dept *systemModels.SysDeptVo) {
 	//获取上级部门祖籍信息
 	parentDept := ds.SelectDeptById(c, dept.ParentId)
-	dept.Ancestors = fmt.Sprintf("%s,%d", parentDept.Ancestors, dept.ParentId)
+	dept.Ancestors = parentDept.Ancestors + "," + strconv.FormatInt(dept.ParentId, 10)
 	//执行添加
 	dept.DeptId = snowflake.GenID()
 	ds.deptDao.InsertDept(c, ds.data, dept)

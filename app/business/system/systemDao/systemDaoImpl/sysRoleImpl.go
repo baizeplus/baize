@@ -38,7 +38,7 @@ func (rd *SysRoleDao) SelectRoleList(ctx context.Context, db sqly.SqlyContext, r
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, rd.selectSql+whereSql, role, role.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, rd.selectSql+whereSql, role)
 	if err != nil {
 		panic(err)
 	}
@@ -199,7 +199,7 @@ func (rd *SysRoleDao) SelectAllocatedList(ctx context.Context, db sqly.SqlyConte
 	if user.Phonenumber != "" {
 		whereSql += " AND u.phonenumber like concat('%', :phonenumber, '%')"
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user)
 	if err != nil {
 		panic(err)
 	}
@@ -222,7 +222,7 @@ func (rd *SysRoleDao) SelectUnallocatedList(ctx context.Context, db sqly.SqlyCon
 	if user.Phonenumber != "" {
 		whereSql += " AND u.phonenumber like concat('%', :phonenumber, '%')"
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectStr+whereSql, user)
 	if err != nil {
 		panic(err)
 	}

@@ -56,7 +56,7 @@ func (postDao *SysPostDao) SelectPostList(ctx context.Context, db sqly.SqlyConte
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, postDao.postSql+whereSql, post, post.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, postDao.postSql+whereSql, post)
 	if err != nil {
 		panic(err)
 	}

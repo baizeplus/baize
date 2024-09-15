@@ -33,7 +33,7 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictTypeDao.dictTypeSql+whereSql, dictType, dictType.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictTypeDao.dictTypeSql+whereSql, dictType)
 	if err != nil {
 		panic(err)
 	}

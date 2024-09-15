@@ -48,7 +48,7 @@ func ({{.Table.BusinessName}}Dao *{{.Table.StructName}}Dao)  Select{{.Table.Stru
 		whereSql = " where " + whereSql[4:]
 	}
 
-	err := db.NamedSelectPageContext(ctx, &list, &total, {{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql, {{.Table.BusinessName}} , {{.Table.BusinessName}}.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, {{.Table.BusinessName}}Dao.{{.Table.BusinessName}}Sql+whereSql, {{.Table.BusinessName}})
 	if err != nil {
 		panic(err)
 	}

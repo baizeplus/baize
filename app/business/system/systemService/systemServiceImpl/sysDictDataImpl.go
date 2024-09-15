@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type DictDataService struct {
@@ -87,16 +88,22 @@ func (dictDataService *DictDataService) SelectDictDataById(c *gin.Context, dictC
 func (dictDataService *DictDataService) InsertDictData(c *gin.Context, dictData *systemModels.SysDictDataVo) {
 	dictData.DictCode = snowflake.GenID()
 	dictDataService.dictDataDao.InsertDictData(c, dictDataService.data, dictData)
-	cache.GetCache().Del(c, dictDataService.dictKey+"*")
+	dictDataService.deleteDictCache(dictData.DictType)
+
 }
 
 func (dictDataService *DictDataService) UpdateDictData(c *gin.Context, dictData *systemModels.SysDictDataVo) {
 	dictDataService.dictDataDao.UpdateDictData(c, dictDataService.data, dictData)
-	cache.GetCache().Del(c, dictDataService.dictKey+"*")
+	dictDataService.deleteDictCache(dictData.DictType)
 }
 func (dictDataService *DictDataService) DeleteDictDataByIds(c *gin.Context, dictCodes []int64) {
+
+	codes := dictDataService.dictDataDao.SelectDictTypesByDictCodes(c, dictDataService.data, dictCodes)
 	dictDataService.dictDataDao.DeleteDictDataByIds(c, dictDataService.data, dictCodes)
-	cache.GetCache().Del(c, dictDataService.dictKey+"*")
+	for _, code := range codes {
+		dictDataService.deleteDictCache(code)
+	}
+
 }
 func (dictDataService *DictDataService) CheckDictDataByTypes(c *gin.Context, dictType []string) bool {
 	return dictDataService.dictDataDao.CountDictDataByTypes(c, dictDataService.data, dictType) > 0
@@ -108,4 +115,11 @@ func (dictDataService *DictDataService) getDictCache(c context.Context, dictType
 		return nil
 	}
 	return []byte(getString)
+}
+
+func (dictDataService *DictDataService) deleteDictCache(dictType string) {
+	go func() {
+		time.Sleep(time.Second * 3)
+		cache.GetCache().Del(context.Background(), dictDataService.dictKey+dictType)
+	}()
 }

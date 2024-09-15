@@ -5,6 +5,7 @@ import (
 	genUtils "baize/app/business/tool/utils"
 	"baize/app/utils/stringUtils"
 	"strings"
+	"time"
 )
 
 type GenTableDQL struct {
@@ -72,8 +73,8 @@ type GenTableVo struct {
 }
 
 type DBTableVo struct {
-	TableName    string      `json:"tableName" db:"TABLE_NAME"`
-	TableComment string      `json:"tableComment" db:"TABLE_COMMENT"`
-	CreateTime   *baize.Time `json:"createTime" db:"CREATE_TIME"`
-	UpdateTime   *baize.Time `json:"updateTime" db:"UPDATE_TIME"`
+	TableName    string     `json:"tableName" db:"TABLE_NAME"`
+	TableComment string     `json:"tableComment" db:"TABLE_COMMENT"`
+	CreateTime   *time.Time `json:"createTime" db:"CREATE_TIME"`
+	UpdateTime   *time.Time `json:"updateTime" db:"UPDATE_TIME"`
 }

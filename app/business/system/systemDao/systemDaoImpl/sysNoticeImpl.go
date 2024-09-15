@@ -30,7 +30,7 @@ func (s *SysNoticeDao) SelectNoticeList(ctx context.Context, db sqly.SqlyContext
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, notice, notice.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql+whereSql, notice)
 	if err != nil {
 		panic(err)
 	}
@@ -108,7 +108,7 @@ where snu.user_id=:user_id `
 	if notice.Type != "" {
 		selectSql += " AND sn.type=:type"
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, notice, notice.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, selectSql, notice)
 	if err != nil {
 		panic(err)
 	}

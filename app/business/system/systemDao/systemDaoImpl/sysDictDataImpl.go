@@ -45,7 +45,7 @@ func (sysDictDataDao *SysDictDataDao) SelectDictDataList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictDataDao.dictDataSql+whereSql, dictData, dictData.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictDataDao.dictDataSql+whereSql, dictData)
 	if err != nil {
 		panic(err)
 	}
@@ -112,6 +112,18 @@ func (sysDictDataDao *SysDictDataDao) UpdateDictData(ctx context.Context, db sql
 	}
 	return
 }
+func (sysDictDataDao *SysDictDataDao) SelectDictTypesByDictCodes(ctx context.Context, db sqly.SqlyContext, dictCodes []int64) []string {
+	query, i, err := sqly.In("select dict_type from sys_dict_data where dict_code in(?)", dictCodes)
+	if err != nil {
+		panic(err)
+	}
+	list := make([]string, 0)
+	err = db.SelectContext(ctx, &list, query, i...)
+	if err != nil {
+		panic(err)
+	}
+	return list
+}
 
 func (sysDictDataDao *SysDictDataDao) DeleteDictDataByIds(ctx context.Context, db sqly.SqlyContext, dictCodes []int64) {
 	query, i, err := sqly.In("delete from sys_dict_data where dict_code in (?)", dictCodes)
@@ -126,7 +138,7 @@ func (sysDictDataDao *SysDictDataDao) DeleteDictDataByIds(ctx context.Context, d
 }
 func (sysDictDataDao *SysDictDataDao) CountDictDataByTypes(ctx context.Context, db sqly.SqlyContext, dictType []string) int {
 	var count = 0
-	query, i, err := sqly.In("SELECT !errors.Is(err, sql.ErrNoRows)TS( SELECT 1 FROM sys_dict_data where dict_type in(?))", dictType)
+	query, i, err := sqly.In("SELECT EXISTS ( SELECT * FROM sys_dict_data where dict_type in(?))", dictType)
 	if err != nil {
 		panic(err)
 	}

@@ -191,7 +191,7 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 	if user.DataScope != "" {
 		sql += " AND " + user.DataScope
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, sql, user, user.ToPage())
+	err := db.NamedSelectPageContext(ctx, &list, &total, sql, user)
 	if err != nil {
 		panic(err)
 	}
