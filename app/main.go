@@ -2,6 +2,7 @@ package main
 
 import (
 	"baize/app/setting"
+	"baize/app/utils/cache/redisListener"
 	"fmt"
 	"time"
 )
@@ -28,6 +29,7 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
+	redisListener.StartRedisListener()
 	app.Run(fmt.Sprintf(":%d", setting.Conf.Port))
 
 }

@@ -14,6 +14,7 @@ type AppConfig struct {
 	StartTime    string `mapstructure:"start_time"`
 	Port         int    `mapstructure:"port"`
 	Host         string `mapstructure:"host"`
+	Cluster      bool   `mapstructure:"cluster"`
 	*TokenConfig `mapstructure:"token"`
 	*LogConfig   `mapstructure:"log"`
 	*Datasource  `mapstructure:"datasource"`
@@ -65,7 +66,13 @@ func init() {
 		panic(err)
 	}
 
-	viper.WatchConfig()
+	if Conf.Cluster && viper.GetString("cache.type") != "redis" {
+
+		panic("cluster mode must use redis")
+
+	}
+
+	//viper.WatchConfig()   //监视文件更改
 
 	return
 }

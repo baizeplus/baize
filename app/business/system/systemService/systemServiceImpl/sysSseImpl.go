@@ -2,28 +2,36 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemModels"
+	"baize/app/setting"
 	"baize/app/utils/arrayUtils"
 	"baize/app/utils/baizeContext"
-	"fmt"
+	"baize/app/utils/cache"
+	"context"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"io"
 	"sync"
-	"time"
 )
 
+var SseServiceInstance *SseService
+
 type SseService struct {
-	channelsMap map[string]chan *systemModels.Sse
+	ChannelsMap map[string]chan *systemModels.SseType
 	userMap     map[int64][]string
 	mutex       sync.RWMutex
+
+	redisClient *redis.Client
 }
 
 func NewSseService() *SseService {
-
-	return &SseService{
-		channelsMap: make(map[string]chan *systemModels.Sse),
+	SseServiceInstance = &SseService{
+		ChannelsMap: make(map[string]chan *systemModels.SseType),
 		userMap:     make(map[int64][]string),
+		redisClient: cache.RedisClient,
 	}
+	return SseServiceInstance
 }
 
 func (s *SseService) BuildNotificationChannel(c *gin.Context) {
@@ -31,8 +39,8 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 	id := baizeContext.GetSession(c).Id()
 	userId := baizeContext.GetUserId(c)
 	s.mutex.Lock()
-	var newChannel = make(chan *systemModels.Sse)
-	s.channelsMap[id] = newChannel
+	var newChannel = make(chan *systemModels.SseType)
+	s.ChannelsMap[id] = newChannel
 	ids := s.userMap[userId]
 	if ids == nil {
 		ids = []string{id}
@@ -61,22 +69,33 @@ func (s *SseService) BuildNotificationChannel(c *gin.Context) {
 		} else {
 			s.userMap[userId] = userIds
 		}
-		delete(s.channelsMap, id)
+		delete(s.ChannelsMap, id)
 		s.mutex.Unlock()
 		return
 	}()
+
 	c.Stream(func(w io.Writer) bool {
-		if msg, ok := <-s.channelsMap[id]; ok {
-			fmt.Println("b", time.Now().UnixNano())
+		if msg, ok := <-s.ChannelsMap[id]; ok {
 			c.SSEvent(msg.Key, msg.Value)
 			return true
 		} else {
 			return false
 		}
 	})
+
 }
-func (s *SseService) SendNotification(userIds []int64, ss *systemModels.Sse) {
-	for _, userId := range userIds {
+func (s *SseService) SendNotification(c context.Context, ss *systemModels.Sse) {
+	if setting.Conf.Cluster && !ss.RedisPublish {
+		ss.RedisPublish = true
+		marshal, err := json.Marshal(ss)
+		if err != nil {
+			panic(err)
+		}
+		s.redisClient.Publish(c, "notification", marshal)
+		return
+	}
+
+	for _, userId := range ss.UserIds {
 		s.mutex.RLock()
 		tokens := s.userMap[userId]
 		s.mutex.RUnlock()
@@ -84,9 +103,9 @@ func (s *SseService) SendNotification(userIds []int64, ss *systemModels.Sse) {
 			return
 		}
 		for _, token := range tokens {
-			channel, ok := s.channelsMap[token]
+			channel, ok := s.ChannelsMap[token]
 			if ok {
-				channel <- ss
+				channel <- ss.Sse
 			}
 		}
 	}

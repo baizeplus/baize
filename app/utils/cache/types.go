@@ -9,6 +9,7 @@ import (
 )
 
 var cache Cache
+var RedisClient *redis.Client
 
 func GetCache() Cache {
 	return cache
@@ -21,6 +22,7 @@ func init() {
 			Password: viper.GetString("cache.redis.password"),
 			DB:       viper.GetInt("cache.redis.db"),
 		})
+		RedisClient = r
 		cache = NewRedisCache(r)
 	default:
 		cache = NewBuildInMapCache()

@@ -27,9 +27,9 @@ func NewSse(ss *systemServiceImpl.SseService) *Sse {
 func (s *Sse) BuildSse(c *gin.Context) {
 	manager := session.NewManger()
 	sess, err := manager.Get(c, c.Param("token"))
-	c.Set(sessionStatus.SessionKey, sess)
 	if err != nil {
 		baizeContext.InvalidToken(c)
 	}
+	c.Set(sessionStatus.SessionKey, sess)
 	s.ss.BuildNotificationChannel(c)
 }

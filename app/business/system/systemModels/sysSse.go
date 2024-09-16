@@ -1,6 +1,12 @@
 package systemModels
 
+type SseType struct {
+	Key   string
+	Value string
+}
+
 type Sse struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	UserIds      []int64
+	RedisPublish bool
+	Sse          *SseType
 }

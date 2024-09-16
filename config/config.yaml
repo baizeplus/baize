@@ -3,6 +3,7 @@ mode: "dev" #dev 开发模式，日志打印到控制台，prod  生产模式，
 port: 8080
 version: 12.0.0
 start_time: "2022-08-08"  #此日期用于雪花算法
+cluster: true   #如果集群部署 cache必须使用redis
 host: http://localhost:8080
 log:
   level: debug

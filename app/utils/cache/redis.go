@@ -19,12 +19,22 @@ var (
 
 type RedisCache struct {
 	client redis.Cmdable
+	//client *redis.Client
 }
 
 func NewRedisCache(client redis.Cmdable) *RedisCache {
+	//func NewRedisCache(client *redis.Client) *RedisCache {
 	return &RedisCache{client: client}
 
 }
+
+//func (r *RedisCache) Publish(ctx context.Context, channel string, message interface{}) error {
+//	return r.client.Publish(ctx, channel, message).Err()
+//}
+//
+//func (r *RedisCache) Subscribe(ctx context.Context, channels ...string) *redis.PubSub {
+//	return r.client.Subscribe(ctx, channels...).Channel()
+//}
 
 func (r *RedisCache) Set(ctx context.Context, key string, val string, expiration time.Duration) error {
 	result, err := r.client.Set(ctx, key, val, expiration).Result()
@@ -38,8 +48,7 @@ func (r *RedisCache) Set(ctx context.Context, key string, val string, expiration
 }
 
 func (r *RedisCache) Get(ctx context.Context, key string) (string, error) {
-	client := r.client
-	return client.Get(ctx, key).Result()
+	return r.client.Get(ctx, key).Result()
 }
 
 func (r *RedisCache) Del(ctx context.Context, keys ...string) error {
