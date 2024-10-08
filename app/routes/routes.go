@@ -76,6 +76,7 @@ func NewGinEngine(
 		monitorRouter.InitSysOperLogRouter(group, mc.Oper)
 		monitorRouter.InitSysUserOnlineRouter(group, mc.UserOnline) //在线用户监控
 		monitorRouter.InitSysLogininforRouter(group, mc.Logfor)
+		monitorRouter.InitJobRouter(group, mc.Job)
 		toolRouter.InitGenTableRouter(group, gc.GenTable)
 	}
 
