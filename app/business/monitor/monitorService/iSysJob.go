@@ -8,10 +8,9 @@ import (
 type IJobService interface {
 	SelectJobList(c *gin.Context, job *monitorModels.JobDQL) (list []*monitorModels.JobVo, total int64)
 	SelectJobById(c *gin.Context, id int64) (job *monitorModels.JobVo)
-	DeleteJob(c *gin.Context, job *monitorModels.JobVo)
 	DeleteJobByIds(c *gin.Context, jobIds []int64)
 	ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bool
 	Run(c *gin.Context, job *monitorModels.JobVo)
 	InsertJob(c *gin.Context, job *monitorModels.JobDML)
-	UpdateJob(c *gin.Context, job *monitorModels.JobDML)
+	UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool
 }

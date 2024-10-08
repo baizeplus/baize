@@ -79,7 +79,7 @@ func (jd *JobDao) DeleteJobById(ctx context.Context, db sqly.SqlyContext, id int
 	return
 }
 func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDML) {
-	updateSQL := `update sys_job set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_job set invoke_target = :invoke_target,update_time = now() , update_by = :update_by`
 
 	if job.CronExpression != "" {
 		updateSQL += ",cron_expression = :cron_expression"
@@ -95,10 +95,6 @@ func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monit
 
 	if job.JobParams != "" {
 		updateSQL += ",job_params = :job_params"
-	}
-
-	if job.InvokeTarget != nil {
-		updateSQL += ",invoke_target = :invoke_target"
 	}
 
 	if job.Status != "" {

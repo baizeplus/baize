@@ -42,23 +42,35 @@ func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModel
 	return
 }
 
-func (js *JobService) DeleteJob(c *gin.Context, job *monitorModels.JobVo) {}
-func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64)      {}
+func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64) {
+	for _, id := range jobIds {
+		cr, ok := js.cronMap[id]
+		if ok {
+			cr.Stop()
+			delete(js.cronMap, id)
+		}
+	}
+	js.jd.DeleteJobByIds(c, js.data, jobIds)
+}
+
 func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bool {
-	jobVo := js.SelectJobById(c, job.JobId)
+
 	if job.Status == js.normal {
+		jobVo := js.SelectJobById(c, job.JobId)
 		_, ok := js.funMap[jobVo.InvokeTarget]
 		if !ok {
 			return false
 		}
-		c := cron.New()
-		_, err := c.AddFunc(jobVo.CronExpression, js.runFunction(jobVo.InvokeTarget))
-
-		if err != nil {
-			panic(err)
+		_, ok = js.cronMap[job.JobId]
+		if ok {
+			c := cron.New()
+			_, err := c.AddFunc(jobVo.CronExpression, js.runFunction(jobVo.InvokeTarget))
+			if err != nil {
+				panic(err)
+			}
+			c.Start()
+			js.cronMap[job.JobId] = c
 		}
-		c.Start()
-		js.cronMap[job.JobId] = c
 	} else if job.Status == js.pause {
 		cr, ok := js.cronMap[job.JobId]
 		if ok {
@@ -78,8 +90,34 @@ func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	job.JobId = snowflake.GenID()
 	js.jd.InsertJob(c, js.data, job)
 }
-func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) {
+func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool {
+	if job.Status == js.normal {
+		//jobVo := js.SelectJobById(c, job.JobId)
+		_, ok := js.funMap[job.InvokeTarget]
+		if !ok {
+			return false
+		}
+		_, ok = js.cronMap[job.JobId]
+		if ok {
+			c := cron.New()
+			_, err := c.AddFunc(job.CronExpression, js.runFunction(job.InvokeTarget))
+			if err != nil {
+				panic(err)
+			}
+			c.Start()
+			js.cronMap[job.JobId] = c
+		}
+	} else if job.Status == js.pause {
+		cr, ok := js.cronMap[job.JobId]
+		if ok {
+			cr.Stop()
+			delete(js.cronMap, job.JobId)
+		}
+
+	}
+
 	js.jd.UpdateJob(c, js.data, job)
+	return true
 }
 func (js *JobService) getQuartzCache(c context.Context, invokeTarget string) string {
 	s := js.quartzKey + invokeTarget

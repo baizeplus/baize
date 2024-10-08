@@ -26,7 +26,7 @@ type JobDML struct {
 	JobName        *string `json:"jobName" db:"job_name"`
 	JobGroup       *string `json:"jobGroup" db:"job_group"`
 	JobParams      string  `json:"jobParams" db:"job_params"`
-	InvokeTarget   *string `json:"invokeTarget" db:"invoke_target"`
+	InvokeTarget   string  `json:"invokeTarget" db:"invoke_target"`
 	CronExpression string  `json:"cronExpression" db:"cron_expression"`
 	Status         string  `json:"status" db:"status"`
 	Remark         *string `json:"remark" db:"remark"`
