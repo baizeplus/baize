@@ -65,7 +65,8 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bo
 		_, ok = js.cronMap[job.JobId]
 		if ok {
 			cr := cron.New()
-			_, err := cr.AddFunc(jobVo.CronExpression, js.runFunction(js.SelectJobById(c, job.JobId)))
+			j := js.SelectJobById(c, job.JobId)
+			_, err := cr.AddFunc(jobVo.CronExpression, js.runFunction(j))
 			if err != nil {
 				panic(err)
 			}
@@ -84,15 +85,16 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bo
 	return true
 }
 func (js *JobService) Run(c *gin.Context, job *monitorModels.JobVo) {
-
-	go js.runFunction(js.SelectJobById(c, job.JobId))
+	j := js.SelectJobById(c, job.JobId)
+	go js.runFunction(j)()
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	job.JobId = snowflake.GenID()
 	js.jd.InsertJob(c, js.data, job)
 	if job.Status == js.normal {
 		cr := cron.New()
-		_, err := cr.AddFunc(job.CronExpression, js.runFunction(js.SelectJobById(c, job.JobId)))
+		j := js.SelectJobById(c, job.JobId)
+		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
 		if err != nil {
 			panic(err)
 		}
@@ -113,7 +115,8 @@ func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool 
 			delete(js.cronMap, job.JobId)
 		}
 		cr = cron.New()
-		_, err := cr.AddFunc(job.CronExpression, js.runFunction(js.SelectJobById(c, job.JobId)))
+		j := js.SelectJobById(c, job.JobId)
+		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
 		if err != nil {
 			panic(err)
 		}
@@ -156,9 +159,10 @@ func (js *JobService) runFunction(job *monitorModels.JobVo) func() {
 		m.InvokeTarget = job.InvokeTarget
 		m.JobName = job.JobName
 		m.InvokeTarget = job.InvokeTarget
-		start := time.Now()
+		m.CreateTime = time.Now()
+		m.JobParams = job.JobParams
 		defer func() {
-			m.CostTime = int64(time.Since(start))
+			m.CostTime = int64(time.Since(m.CreateTime))
 			if e := recover(); e != nil {
 				m.Status = "1"
 				m.ExceptionInfo = e.(error).Error()

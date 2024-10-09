@@ -114,6 +114,7 @@ func (j *Job) JobRun(c *gin.Context) {
 	vo := new(monitorModels.JobVo)
 	c.ShouldBindJSON(vo)
 	j.ls.Run(c, vo)
+	baizeContext.Success(c)
 }
 
 // JobRemove 删除定时任务

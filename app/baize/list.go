@@ -28,6 +28,9 @@ func (l *List) Value() (driver.Value, error) {
 func (l *List) Scan(v interface{}) error {
 	value, ok := v.([]byte)
 	if ok {
+		if len(value) == 0 {
+			l.Data = make([]string, 0)
+		}
 		l.Data = strings.Split(string(value), ",")
 		return nil
 	}
