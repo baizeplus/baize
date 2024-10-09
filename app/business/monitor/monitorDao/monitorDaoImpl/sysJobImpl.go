@@ -10,12 +10,14 @@ import (
 
 func NewJobDao() *JobDao {
 	return &JobDao{
-		selectSql: "select job_id, job_name,job_params, job_group, invoke_target, cron_expression,status, create_by, create_time, remark  from sys_job",
+		selectSql:    "select job_id, job_name,job_params, invoke_target, cron_expression,status, create_by, create_time, remark  from sys_job",
+		selectLogSql: "select job_log_id,job_id, job_name,job_params, invoke_target,status, create_time ,cost_time  from sys_job_log",
 	}
 }
 
 type JobDao struct {
-	selectSql string
+	selectSql    string
+	selectLogSql string
 }
 
 func (jd *JobDao) SelectJobList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDQL) (list []*monitorModels.JobVo, total int64) {
@@ -23,10 +25,7 @@ func (jd *JobDao) SelectJobList(ctx context.Context, db sqly.SqlyContext, job *m
 	if job.JobName != "" {
 		whereSql += " AND job_name like concat('%', :job_name, '%')"
 	}
-	if job.JobGroup != "" {
-		whereSql += " AND job_group = :job_group"
-	}
-	if job.Status != nil {
+	if job.Status != "" {
 		whereSql += " AND status = :status"
 	}
 	if job.InvokeTarget != "" {
@@ -89,11 +88,7 @@ func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monit
 		updateSQL += ",job_name = :job_name"
 	}
 
-	if job.JobGroup != nil {
-		updateSQL += ",job_group = :job_group"
-	}
-
-	if job.JobParams != "" {
+	if job.JobParams.Data != nil {
 		updateSQL += ",job_params = :job_params"
 	}
 
@@ -113,8 +108,8 @@ func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monit
 	return
 }
 func (jd *JobDao) InsertJob(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDML) {
-	insertSQL := `insert into sys_job(job_id,job_name,job_group,job_params,invoke_target,cron_expression,status,create_by,create_time,update_by,update_time ,remark)
-					values(:job_id,:job_name,:job_group,:job_params,:invoke_target,:cron_expression,:status,:create_by,now(),:update_by,now() ,:remark)`
+	insertSQL := `insert into sys_job(job_id,job_name,job_params,invoke_target,cron_expression,status,create_by,create_time,update_by,update_time ,remark)
+					values(:job_id,:job_name,:job_params,:invoke_target,:cron_expression,:status,:create_by,now(),:update_by,now() ,:remark)`
 	_, err := db.NamedExecContext(ctx, insertSQL, job)
 	if err != nil {
 		panic(err)
@@ -130,4 +125,44 @@ func (jd *JobDao) DeleteJobByIds(ctx context.Context, db sqly.SqlyContext, ids [
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (jd *JobDao) InsertJobLog(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobLog) {
+	insertSQL := `insert into sys_job_log(job_log_id,job_id, job_name,job_params, invoke_target,status, create_time ,cost_time)
+					values(:job_log_id,:job_id, :job_name,:job_params, :invoke_target,:status, :create_time ,:cost_time)`
+	_, err := db.NamedExecContext(ctx, insertSQL, job)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+func (jd *JobDao) SelectJobLogList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDQL) (list []*monitorModels.JobLog, total int64) {
+	whereSql := ``
+	if job.Status != "" {
+		whereSql += " AND status = :status"
+	}
+	if job.InvokeTarget != "" {
+		whereSql += " AND invoke_target like concat('%', :invoke_target, '%')"
+	}
+
+	if whereSql != "" {
+		whereSql = " where " + whereSql[4:]
+	}
+
+	err := db.NamedSelectPageContext(ctx, &list, &total, jd.selectLogSql+whereSql, job)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (jd *JobDao) SelectJobLogById(ctx context.Context, db sqly.SqlyContext, id int64) (vo *monitorModels.JobLog) {
+	vo = new(monitorModels.JobLog)
+	err := db.GetContext(ctx, vo, jd.selectLogSql+" where job_log_id = ?", id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil
+	} else if err != nil {
+		panic(err)
+	}
+	return vo
 }

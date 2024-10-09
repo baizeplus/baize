@@ -676,7 +676,6 @@ DROP TABLE IF EXISTS `sys_job`;
 CREATE TABLE `sys_job`  (
     `job_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '任务ID',
     `job_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '任务名称',
-    `job_group` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组名',
     `job_params` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '参数',
     `invoke_target` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '调用目标字符串',
     `cron_expression` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '' COMMENT 'cron执行表达式',
@@ -686,5 +685,19 @@ CREATE TABLE `sys_job`  (
     `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '' COMMENT '更新者',
     `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
     `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '' COMMENT '备注信息',
-    PRIMARY KEY (`job_id`, `job_name`, `job_group`) USING BTREE
+    PRIMARY KEY (`job_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = '定时任务调度表' ROW_FORMAT = Dynamic;
+
+drop table if exists sys_job_log;
+create table sys_job_log (
+     job_log_id          bigint(20)     not null auto_increment    comment '任务日志ID',
+     job_id              bigint(20)     not null                   comment '任务ID',
+     job_name            varchar(64)    not null                   comment '任务名称',
+     job_group           varchar(64)    not null                   comment '任务组名',
+     invoke_target       varchar(500)   not null                   comment '调用目标字符串',
+     status              char(1)        default '0'                comment '执行状态（0正常 1失败）',
+     exception_info      varchar(2000)  default ''                 comment '异常信息',
+     create_time         datetime                                  comment '创建时间',
+     cost_time         bigint(20)     default 0                  comment '耗时（毫秒）',
+     primary key (job_log_id)
+) engine=innodb comment = '定时任务调度日志表';
