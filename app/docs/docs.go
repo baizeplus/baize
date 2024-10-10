@@ -367,6 +367,348 @@ const docTemplate = `{
                 }
             }
         },
+        "/monitor/job": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "编辑定时任务",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "编辑定时任务",
+                "parameters": [
+                    {
+                        "description": "编辑信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/monitorModels.JobDML"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "新增定时任务",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "新增定时任务",
+                "parameters": [
+                    {
+                        "description": "新增信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/monitorModels.JobDML"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/changeStatus": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改定时任务状态",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "修改定时任务状态",
+                "parameters": [
+                    {
+                        "description": "修改信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/monitorModels.JobDML"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/getFunList": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取方法列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "获取方法列表",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询定时任务列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "查询定时任务列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "invokeTarget",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "jobName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10000,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ListData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitorModels.JobVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/run": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "执行定时任务",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "执行定时任务",
+                "parameters": [
+                    {
+                        "description": "执行信息",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/monitorModels.JobVo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/{jobIds}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除定时任务",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "删除定时任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jobIds",
+                        "name": "jobIds",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/{jobId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询定时任务信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "查询定时任务信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "jobId",
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/monitorModels.JobVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/monitor/online/list": {
             "get": {
                 "security": [
@@ -644,7 +986,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -723,7 +1065,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -967,7 +1309,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -1116,7 +1458,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -1480,7 +1822,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -1839,7 +2181,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -2121,7 +2463,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -2345,7 +2687,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -2541,7 +2883,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -2612,7 +2954,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -3067,7 +3409,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -3163,7 +3505,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -3303,7 +3645,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -3524,7 +3866,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -3984,7 +4326,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "default": 10,
+                        "default": 10000,
                         "description": "数量",
                         "name": "pageSize",
                         "in": "query"
@@ -4330,6 +4672,95 @@ const docTemplate = `{
                 }
             }
         },
+        "monitorModels.JobDML": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "cronExpression": {
+                    "type": "string"
+                },
+                "invokeTarget": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobParams": {
+                    "$ref": "#/definitions/baize.List"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "monitorModels.JobVo": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "cronExpression": {
+                    "type": "string"
+                },
+                "invokeTarget": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobParams": {
+                    "$ref": "#/definitions/baize.List"
+                },
+                "nextValidTime": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "integer"
+                }
+            }
+        },
         "monitorModels.SysUserOnline": {
             "type": "object",
             "properties": {
@@ -4442,7 +4873,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "id": {
                     "description": "通知ID",
@@ -4853,7 +5284,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "parentId": {
-                    "type": "integer"
+                    "type": "string",
+                    "example": "0"
                 },
                 "parentName": {
                     "type": "string"

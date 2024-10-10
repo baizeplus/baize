@@ -6,6 +6,7 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/task"
 	"baize/app/setting"
+	"baize/app/utils/baizeContext"
 	"baize/app/utils/cache"
 	"baize/app/utils/snowflake"
 	"context"
@@ -40,6 +41,15 @@ func (js *JobService) SelectJobList(c *gin.Context, job *monitorModels.JobDQL) (
 }
 func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModels.JobVo) {
 	job = js.jd.SelectJobById(c, js.data, id)
+	if job != nil {
+		schedule, err := cron.ParseStandard(job.CronExpression)
+		if err != nil {
+			panic(err)
+		}
+		now := time.Now()
+		next := schedule.Next(now)
+		job.NextValidTime = &next
+	}
 	return
 }
 
@@ -54,19 +64,14 @@ func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64) {
 	js.jd.DeleteJobByIds(c, js.data, jobIds)
 }
 
-func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bool {
+func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus) {
 
 	if job.Status == js.normal {
-		jobVo := js.SelectJobById(c, job.JobId)
-		_, ok := js.funMap[jobVo.InvokeTarget]
+		jobVo := js.jd.SelectJobById(c, js.data, job.JobId)
+		_, ok := js.cronMap[job.JobId]
 		if !ok {
-			return false
-		}
-		_, ok = js.cronMap[job.JobId]
-		if ok {
 			cr := cron.New()
-			j := js.SelectJobById(c, job.JobId)
-			_, err := cr.AddFunc(jobVo.CronExpression, js.runFunction(j))
+			_, err := cr.AddFunc(jobVo.CronExpression, js.runFunction(jobVo))
 			if err != nil {
 				panic(err)
 			}
@@ -81,11 +86,15 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobDML) bo
 		}
 
 	}
-	js.jd.UpdateJob(c, js.data, job)
-	return true
+	d := new(monitorModels.JobDML)
+	d.JobId = job.JobId
+	d.Status = job.Status
+	d.SetUpdateBy(baizeContext.GetUserId(c))
+	js.jd.UpdateJob(c, js.data, d)
+
 }
-func (js *JobService) Run(c *gin.Context, job *monitorModels.JobVo) {
-	j := js.SelectJobById(c, job.JobId)
+func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
+	j := js.jd.SelectJobById(c, js.data, job.JobId)
 	go js.runFunction(j)()
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
@@ -93,7 +102,7 @@ func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	js.jd.InsertJob(c, js.data, job)
 	if job.Status == js.normal {
 		cr := cron.New()
-		j := js.SelectJobById(c, job.JobId)
+		j := js.jd.SelectJobById(c, js.data, job.JobId)
 		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
 		if err != nil {
 			panic(err)
@@ -103,11 +112,19 @@ func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 
 	}
 }
-func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool {
-	_, ok := js.funMap[job.InvokeTarget]
-	if !ok {
-		return false
+func (js *JobService) FunIsExist(invokeTarget string) bool {
+	_, ok := js.funMap[invokeTarget]
+	return ok
+}
+func (js *JobService) GetFunList() []string {
+	keys := make([]string, 0, len(js.funMap))
+	for k := range js.funMap {
+		keys = append(keys, k)
 	}
+	return keys
+}
+func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) {
+
 	if job.Status == js.normal {
 		cr, ok := js.cronMap[job.JobId]
 		if ok {
@@ -115,7 +132,7 @@ func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool 
 			delete(js.cronMap, job.JobId)
 		}
 		cr = cron.New()
-		j := js.SelectJobById(c, job.JobId)
+		j := js.jd.SelectJobById(c, js.data, job.JobId)
 		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
 		if err != nil {
 			panic(err)
@@ -133,14 +150,20 @@ func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) bool 
 	}
 
 	js.jd.UpdateJob(c, js.data, job)
-	return true
 }
 
 func (js *JobService) runFunction(job *monitorModels.JobVo) func() {
 	return func() {
 		ctx := context.Background()
+
 		if setting.Conf.Cluster {
-			success, err := cache.RedisClient.SetNX(ctx, "scheduled_task_lock", "locked", time.Minute).Result()
+			schedule, err := cron.ParseStandard(job.CronExpression)
+			if err != nil {
+				panic(err)
+			}
+			now := time.Now()
+			nextTime := schedule.Next(now).Unix()
+			success, err := cache.RedisClient.SetNX(ctx, fmt.Sprintf("scheduled_task_lock:%s:%d", job.JobName, nextTime), "locked", time.Minute).Result()
 			if err != nil {
 				fmt.Println("Error connecting to Redis:", err)
 				return

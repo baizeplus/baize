@@ -7,4 +7,4 @@ wire:
 	cd app/ && wire
 
 swag:
-	cd app/ && swag  init --parseDependency
+	cd app/ && swag  init

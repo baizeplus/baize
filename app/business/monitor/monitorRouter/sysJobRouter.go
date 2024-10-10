@@ -15,4 +15,5 @@ func InitJobRouter(router *gin.RouterGroup, jc *monitorController.Job) {
 	job.PUT("/changeStatus", middlewares.HasPermission("monitor:job:changeStatus"), jc.JobChangeStatus)
 	job.PUT("/run", middlewares.HasPermission("monitor:job:changeStatus"), jc.JobRun)
 	job.DELETE("/:jobIds", middlewares.HasPermission("monitor:job:remove"), jc.JobRemove)
+	job.GET("/getFunList", middlewares.HasPermission("monitor:job:list"), jc.GetFunList)
 }

@@ -11,7 +11,7 @@ type JobVo struct {
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
 	CronExpression string      `json:"cronExpression" db:"cron_expression"`
-	NextValidTime  string      `json:"nextValidTime"`
+	NextValidTime  *time.Time  `json:"nextValidTime"`
 	Status         string      `json:"status" db:"status"`
 	Remark         string      `json:"remark" db:"remark"`
 	baize.BaseEntity
@@ -44,4 +44,8 @@ type JobLog struct {
 	ExceptionInfo string      `json:"exceptionInfo" db:"exception_info"`
 	CreateTime    time.Time   `json:"createTime" db:"create_time"`
 	CostTime      int64       `json:"costTime" db:"cost_time"`
+}
+type JobStatus struct {
+	JobId  int64  `json:"jobId,string" db:"job_id" binding:"required"`
+	Status string `json:"status" db:"status"`
 }

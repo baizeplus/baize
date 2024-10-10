@@ -6,6 +6,68 @@ definitions:
           type: string
         type: array
     type: object
+  monitorModels.JobDML:
+    properties:
+      createBy:
+        description: 创建人
+        type: integer
+      createTime:
+        description: 创建时间
+        type: integer
+      cronExpression:
+        type: string
+      invokeTarget:
+        type: string
+      jobId:
+        example: "0"
+        type: string
+      jobName:
+        type: string
+      jobParams:
+        $ref: '#/definitions/baize.List'
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+    type: object
+  monitorModels.JobVo:
+    properties:
+      createBy:
+        description: 创建人
+        type: integer
+      createTime:
+        description: 创建时间
+        type: integer
+      cronExpression:
+        type: string
+      invokeTarget:
+        type: string
+      jobId:
+        example: "0"
+        type: string
+      jobName:
+        type: string
+      jobParams:
+        $ref: '#/definitions/baize.List'
+      nextValidTime:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        description: 修改人
+        type: integer
+      updateTime:
+        description: 修改时间
+        type: integer
+    type: object
   monitorModels.SysUserOnline:
     properties:
       browser:
@@ -83,7 +145,7 @@ definitions:
         type: string
       createTime:
         description: 创建时间
-        type: integer
+        type: string
       id:
         description: 通知ID
         example: "0"
@@ -376,7 +438,8 @@ definitions:
       orderNum:
         type: integer
       parentId:
-        type: integer
+        example: "0"
+        type: string
       parentName:
         type: string
       path:
@@ -936,6 +999,210 @@ paths:
       summary: 退出
       tags:
       - 登录
+  /monitor/job:
+    post:
+      description: 新增定时任务
+      parameters:
+      - description: 新增信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/monitorModels.JobDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 新增定时任务
+      tags:
+      - 定时任务
+    put:
+      description: 编辑定时任务
+      parameters:
+      - description: 编辑信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/monitorModels.JobDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 编辑定时任务
+      tags:
+      - 定时任务
+  /monitor/job/{jobId}:
+    get:
+      description: 查询定时任务信息
+      parameters:
+      - description: jobId
+        in: path
+        name: jobId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/monitorModels.JobVo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询定时任务信息
+      tags:
+      - 定时任务
+  /monitor/job/{jobIds}:
+    delete:
+      description: 删除定时任务
+      parameters:
+      - description: jobIds
+        in: path
+        name: jobIds
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 删除定时任务
+      tags:
+      - 定时任务
+  /monitor/job/changeStatus:
+    put:
+      description: 修改定时任务状态
+      parameters:
+      - description: 修改信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/monitorModels.JobDML'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 修改定时任务状态
+      tags:
+      - 定时任务
+  /monitor/job/getFunList:
+    get:
+      description: 获取方法列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 获取方法列表
+      tags:
+      - 定时任务
+  /monitor/job/list:
+    get:
+      description: 查询定时任务列表
+      parameters:
+      - in: query
+        name: invokeTarget
+        type: string
+      - description: 排序规则  降序desc   asc升序
+        in: query
+        name: isAsc
+        type: string
+      - in: query
+        name: jobName
+        type: string
+      - description: 排序字段
+        in: query
+        name: orderBy
+        type: string
+      - default: 1
+        description: 第几页
+        in: query
+        name: pageNum
+        type: integer
+      - default: 10000
+        description: 数量
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.ListData'
+                  - properties:
+                      Rows:
+                        items:
+                          $ref: '#/definitions/monitorModels.JobVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 查询定时任务列表
+      tags:
+      - 定时任务
+  /monitor/job/run:
+    put:
+      description: 执行定时任务
+      parameters:
+      - description: 执行信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/monitorModels.JobVo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+      security:
+      - BearerAuth: []
+      summary: 执行定时任务
+      tags:
+      - 定时任务
   /monitor/online/{tokenId}:
     delete:
       description: 强退在线用户列表
@@ -1122,7 +1389,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1173,7 +1440,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1317,7 +1584,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1378,7 +1645,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1650,7 +1917,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1830,7 +2097,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -1995,7 +2262,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2124,7 +2391,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2284,7 +2551,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2329,7 +2596,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2583,7 +2850,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2639,7 +2906,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2722,7 +2989,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -2804,7 +3071,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize
@@ -3106,7 +3373,7 @@ paths:
         in: query
         name: pageNum
         type: integer
-      - default: 10
+      - default: 10000
         description: 数量
         in: query
         name: pageSize

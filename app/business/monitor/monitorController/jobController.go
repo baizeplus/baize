@@ -23,11 +23,11 @@ func NewJob(ls *monitorServiceImpl.JobService) *Job {
 // @Param  object query monitorModels.JobDQL true "查询信息"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]monitorModels.Job}}  "成功"
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]monitorModels.JobVo}}  "成功"
 // @Router /monitor/job/list  [get]
 func (j *Job) JobList(c *gin.Context) {
 	job := new(monitorModels.JobDQL)
-	c.ShouldBind(job)
+	_ = c.ShouldBind(job)
 	list, total := j.ls.SelectJobList(c, job)
 	baizeContext.SuccessListData(c, list, total)
 }
@@ -39,10 +39,14 @@ func (j *Job) JobList(c *gin.Context) {
 // @Param  jobId path int true "jobId"
 // @Security BearerAuth
 // @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=monitorModels.Job}  "成功"
+// @Success 200 {object}  response.ResponseData{data=monitorModels.JobVo}  "成功"
 // @Router /monitor/job/{jobId}  [get]
 func (j *Job) JobGetInfo(c *gin.Context) {
 	jobId := baizeContext.ParamInt64(c, "jobId")
+	if jobId == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
 	menu := j.ls.SelectJobById(c, jobId)
 	baizeContext.SuccessData(c, menu)
 }
@@ -58,7 +62,16 @@ func (j *Job) JobGetInfo(c *gin.Context) {
 // @Router /monitor/job  [post]
 func (j *Job) JobAdd(c *gin.Context) {
 	job := new(monitorModels.JobDML)
-	c.ShouldBind(job)
+	err := c.ShouldBindJSON(job)
+	if err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
+	ok := j.ls.FunIsExist(job.InvokeTarget)
+	if !ok {
+		baizeContext.Waring(c, "目标方法未找到")
+		return
+	}
 	job.SetCreateBy(baizeContext.GetUserId(c))
 	j.ls.InsertJob(c, job)
 	baizeContext.Success(c)
@@ -75,7 +88,11 @@ func (j *Job) JobAdd(c *gin.Context) {
 // @Router /monitor/job  [put]
 func (j *Job) JobEdit(c *gin.Context) {
 	job := new(monitorModels.JobDML)
-	c.ShouldBind(job)
+	err := c.ShouldBindJSON(job)
+	if err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
 	job.SetUpdateBy(baizeContext.GetUserId(c))
 	j.ls.UpdateJob(c, job)
 	baizeContext.Success(c)
@@ -91,13 +108,13 @@ func (j *Job) JobEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /monitor/job/changeStatus  [put]
 func (j *Job) JobChangeStatus(c *gin.Context) {
-	job := new(monitorModels.JobDML)
-	c.ShouldBind(job)
-	status := j.ls.ChangeStatus(c, job)
-	if !status {
-		baizeContext.Waring(c, "目标方法未找到")
+	job := new(monitorModels.JobStatus)
+	err := c.ShouldBindJSON(job)
+	if err != nil || job.Status == "" {
+		baizeContext.ParameterError(c)
 		return
 	}
+	j.ls.ChangeStatus(c, job)
 	baizeContext.Success(c)
 }
 
@@ -111,8 +128,12 @@ func (j *Job) JobChangeStatus(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /monitor/job/run  [put]
 func (j *Job) JobRun(c *gin.Context) {
-	vo := new(monitorModels.JobVo)
-	c.ShouldBindJSON(vo)
+	vo := new(monitorModels.JobStatus)
+	err := c.ShouldBindJSON(vo)
+	if err != nil {
+		baizeContext.ParameterError(c)
+		return
+	}
 	j.ls.Run(c, vo)
 	baizeContext.Success(c)
 }
@@ -130,4 +151,16 @@ func (j *Job) JobRemove(c *gin.Context) {
 	j.ls.DeleteJobByIds(c, baizeContext.ParamInt64Array(c, "jobIds"))
 	baizeContext.Success(c)
 
+}
+
+// GetFunList 获取方法列表
+// @Summary 获取方法列表
+// @Description 获取方法列表
+// @Tags 定时任务
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData "成功"
+// @Router /monitor/job/getFunList  [get]
+func (j *Job) GetFunList(c *gin.Context) {
+	baizeContext.SuccessData(c, j.ls.GetFunList())
 }
