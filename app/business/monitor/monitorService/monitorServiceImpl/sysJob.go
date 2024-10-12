@@ -10,29 +10,39 @@ import (
 	"baize/app/utils/cache"
 	"baize/app/utils/snowflake"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 	"time"
 )
 
+var job *JobService
+
+func GetJobService() *JobService {
+	return job
+}
+
 type JobService struct {
-	data      *sqly.DB
-	jd        monitorDao.IJobDao
-	funMap    map[string]func(...string)
-	cronMap   map[int64]*cron.Cron
-	normal    string
-	pause     string
-	quartzKey string
+	data        *sqly.DB
+	redisClient *redis.Client
+	jd          monitorDao.IJobDao
+	funMap      map[string]func(...string)
+	cronMap     map[int64]*cron.Cron
+	normal      string
+	pause       string
+	quartzKey   string
 }
 
 func NewJobService(data *sqly.DB, jd *monitorDaoImpl.JobDao) *JobService {
 	funMap := make(map[string]func(...string))
 	funMap["NoParams"] = task.NoParams
 	funMap["Params"] = task.Params
-	return &JobService{data: data, jd: jd, funMap: funMap, cronMap: make(map[int64]*cron.Cron),
+	job = &JobService{data: data, redisClient: cache.RedisClient, jd: jd, funMap: funMap, cronMap: make(map[int64]*cron.Cron),
 		normal: "0", pause: "1", quartzKey: "quartz:"}
+	return job
 }
 
 func (js *JobService) SelectJobList(c *gin.Context, job *monitorModels.JobDQL) (list []*monitorModels.JobVo, total int64) {
@@ -55,36 +65,19 @@ func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModel
 
 func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64) {
 	for _, id := range jobIds {
-		cr, ok := js.cronMap[id]
-		if ok {
-			cr.Stop()
-			delete(js.cronMap, id)
-		}
+		m := new(monitorModels.JobRedis)
+		m.Id = id
+		js.DeleteRunCron(c, m)
 	}
 	js.jd.DeleteJobByIds(c, js.data, jobIds)
 }
 
 func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus) {
-
+	m := new(monitorModels.JobRedis)
+	m.Id = job.JobId
+	js.DeleteRunCron(c, m)
 	if job.Status == js.normal {
-		jobVo := js.jd.SelectJobById(c, js.data, job.JobId)
-		_, ok := js.cronMap[job.JobId]
-		if !ok {
-			cr := cron.New()
-			_, err := cr.AddFunc(jobVo.CronExpression, js.runFunction(jobVo))
-			if err != nil {
-				panic(err)
-			}
-			cr.Start()
-			js.cronMap[job.JobId] = cr
-		}
-	} else if job.Status == js.pause {
-		cr, ok := js.cronMap[job.JobId]
-		if ok {
-			cr.Stop()
-			delete(js.cronMap, job.JobId)
-		}
-
+		js.StartRunCron(c, m)
 	}
 	d := new(monitorModels.JobDML)
 	d.JobId = job.JobId
@@ -94,22 +87,22 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus)
 
 }
 func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
-	j := js.jd.SelectJobById(c, js.data, job.JobId)
-	go js.runFunction(j)()
+	vo := js.jd.SelectJobById(c, js.data, job.JobId)
+	jr := new(monitorModels.JobRun)
+	jr.JobId = vo.JobId
+	jr.JobName = vo.JobName
+	jr.JobParams = vo.JobParams
+	jr.InvokeTarget = vo.InvokeTarget
+	jr.CronExpression = vo.CronExpression
+	go js.runFunction(jr)()
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	job.JobId = snowflake.GenID()
 	js.jd.InsertJob(c, js.data, job)
 	if job.Status == js.normal {
-		cr := cron.New()
-		j := js.jd.SelectJobById(c, js.data, job.JobId)
-		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
-		if err != nil {
-			panic(err)
-		}
-		cr.Start()
-		js.cronMap[job.JobId] = cr
-
+		m := new(monitorModels.JobRedis)
+		m.Id = job.JobId
+		js.StartRunCron(c, m)
 	}
 }
 func (js *JobService) FunIsExist(invokeTarget string) bool {
@@ -124,35 +117,42 @@ func (js *JobService) GetFunList() []string {
 	return keys
 }
 func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) {
-
+	m := new(monitorModels.JobRedis)
+	m.Id = job.JobId
+	js.DeleteRunCron(c, m)
 	if job.Status == js.normal {
-		cr, ok := js.cronMap[job.JobId]
-		if ok {
-			cr.Stop()
-			delete(js.cronMap, job.JobId)
-		}
-		cr = cron.New()
-		j := js.jd.SelectJobById(c, js.data, job.JobId)
-		_, err := cr.AddFunc(job.CronExpression, js.runFunction(j))
-		if err != nil {
-			panic(err)
-		}
-		cr.Start()
-		js.cronMap[job.JobId] = cr
-
-	} else if job.Status == js.pause {
-		cr, ok := js.cronMap[job.JobId]
-		if ok {
-			cr.Stop()
-			delete(js.cronMap, job.JobId)
-		}
-
+		js.StartRunCron(c, m)
 	}
-
 	js.jd.UpdateJob(c, js.data, job)
 }
 
-func (js *JobService) runFunction(job *monitorModels.JobVo) func() {
+func (js *JobService) InitJobRun() {
+	ctx := context.Background()
+	list := js.jd.SelectJobAll(ctx, js.data)
+	for _, vo := range list {
+		_, ok := js.funMap[vo.InvokeTarget]
+		if !ok {
+			panic("目标方法未找到")
+		}
+		if vo.Status == js.normal {
+			jr := new(monitorModels.JobRun)
+			jr.JobId = vo.JobId
+			jr.JobName = vo.JobName
+			jr.JobParams = vo.JobParams
+			jr.InvokeTarget = vo.InvokeTarget
+			jr.CronExpression = vo.CronExpression
+			cr := cron.New()
+			_, err := cr.AddFunc(vo.CronExpression, js.runFunction(jr))
+			if err != nil {
+				panic(err)
+			}
+			cr.Start()
+			js.cronMap[vo.JobId] = cr
+		}
+	}
+}
+
+func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
 	return func() {
 		ctx := context.Background()
 
@@ -168,11 +168,7 @@ func (js *JobService) runFunction(job *monitorModels.JobVo) func() {
 				fmt.Println("Error connecting to Redis:", err)
 				return
 			}
-			if success {
-				defer func() {
-					cache.RedisClient.Del(ctx, "scheduled_task_lock")
-				}()
-			} else {
+			if !success {
 				return
 			}
 		}
@@ -196,5 +192,53 @@ func (js *JobService) runFunction(job *monitorModels.JobVo) func() {
 		}()
 		f := js.funMap[job.InvokeTarget]
 		f(job.JobParams.Data...)
+	}
+}
+func (js *JobService) StartRunCron(c context.Context, jo *monitorModels.JobRedis) {
+	if setting.Conf.Cluster && !jo.RedisPublish {
+		jo.RedisPublish = true
+		jo.Type = 0
+		marshal, err := json.Marshal(jo)
+		if err != nil {
+			panic(err)
+		}
+		js.redisClient.Publish(c, "job", marshal)
+		return
+	}
+	cr, ok := js.cronMap[jo.Id]
+	if ok {
+		cr.Stop()
+		delete(js.cronMap, jo.Id)
+	}
+	vo := js.jd.SelectJobById(c, js.data, jo.Id)
+	cr = cron.New()
+	jr := new(monitorModels.JobRun)
+	jr.JobId = vo.JobId
+	jr.JobName = vo.JobName
+	jr.JobParams = vo.JobParams
+	jr.InvokeTarget = vo.InvokeTarget
+	jr.CronExpression = vo.CronExpression
+	_, err := cr.AddFunc(jr.CronExpression, js.runFunction(jr))
+	if err != nil {
+		panic(err)
+	}
+	cr.Start()
+	js.cronMap[jo.Id] = cr
+}
+func (js *JobService) DeleteRunCron(c context.Context, jo *monitorModels.JobRedis) {
+	if setting.Conf.Cluster && !jo.RedisPublish {
+		jo.RedisPublish = true
+		jo.Type = 1
+		marshal, err := json.Marshal(jo)
+		if err != nil {
+			panic(err)
+		}
+		js.redisClient.Publish(c, "job", marshal)
+		return
+	}
+	cr, ok := js.cronMap[jo.Id]
+	if ok {
+		cr.Stop()
+		delete(js.cronMap, jo.Id)
 	}
 }

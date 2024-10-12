@@ -15,23 +15,26 @@ import (
 	"sync"
 )
 
-var SseServiceInstance *SseService
+var sseService *SseService
+
+func GetSeeService() *SseService {
+	return sseService
+}
 
 type SseService struct {
 	ChannelsMap map[string]chan *systemModels.SseType
 	userMap     map[int64][]string
 	mutex       sync.RWMutex
-
 	redisClient *redis.Client
 }
 
 func NewSseService() *SseService {
-	SseServiceInstance = &SseService{
+	sseService = &SseService{
 		ChannelsMap: make(map[string]chan *systemModels.SseType),
 		userMap:     make(map[int64][]string),
 		redisClient: cache.RedisClient,
 	}
-	return SseServiceInstance
+	return sseService
 }
 
 func (s *SseService) BuildNotificationChannel(c *gin.Context) {

@@ -22,6 +22,13 @@ type JobDQL struct {
 	Status       string `form:"status" db:"Status"`
 	baize.BaseEntityDQL
 }
+type JobRun struct {
+	JobId          int64       `json:"jobId,string" db:"job_id"`
+	JobName        string      `json:"jobName" db:"job_name"`
+	JobParams      *baize.List `json:"jobParams" db:"job_params"`
+	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
+	CronExpression string      `json:"cronExpression" db:"cron_expression"`
+}
 
 type JobDML struct {
 	JobId          int64       `json:"jobId,string" db:"job_id"`
@@ -48,4 +55,9 @@ type JobLog struct {
 type JobStatus struct {
 	JobId  int64  `json:"jobId,string" db:"job_id" binding:"required"`
 	Status string `json:"status" db:"status"`
+}
+type JobRedis struct {
+	Id           int64
+	RedisPublish bool
+	Type         int8
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"baize/app/business/monitor/monitorService/monitorServiceImpl"
 	"baize/app/setting"
 	"baize/app/utils/cache/redisListener"
 	"fmt"
@@ -30,6 +31,7 @@ func main() {
 	}
 	defer cleanup()
 	redisListener.StartRedisListener()
+	monitorServiceImpl.GetJobService().InitJobRun()
 	app.Run(fmt.Sprintf(":%d", setting.Conf.Port))
 
 }
