@@ -13,7 +13,6 @@ type JobVo struct {
 	CronExpression string      `json:"cronExpression" db:"cron_expression"`
 	NextValidTime  *time.Time  `json:"nextValidTime"`
 	Status         string      `json:"status" db:"status"`
-	Remark         string      `json:"remark" db:"remark"`
 	baize.BaseEntity
 }
 type JobDQL struct {
@@ -37,7 +36,6 @@ type JobDML struct {
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
 	CronExpression string      `json:"cronExpression" db:"cron_expression"`
 	Status         string      `json:"status" db:"status"`
-	Remark         *string     `json:"remark" db:"remark"`
 	baize.BaseEntity
 }
 

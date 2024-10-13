@@ -21,7 +21,8 @@ func (l *List) UnmarshalJSON(b []byte) error {
 }
 
 func (l *List) Value() (driver.Value, error) {
-	return strings.Join(l.Data, ","), nil
+	join := strings.Join(l.Data, ",")
+	return join, nil
 
 }
 
@@ -30,8 +31,10 @@ func (l *List) Scan(v interface{}) error {
 	if ok {
 		if len(value) == 0 {
 			l.Data = make([]string, 0)
+		} else {
+			l.Data = strings.Split(string(value), ",")
 		}
-		l.Data = strings.Split(string(value), ",")
+
 		return nil
 	}
 	return fmt.Errorf("can not convert %v to string", v)

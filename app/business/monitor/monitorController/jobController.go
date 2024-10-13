@@ -153,14 +153,14 @@ func (j *Job) JobRemove(c *gin.Context) {
 
 }
 
-// GetFunList 获取方法列表
+// FunList 获取方法列表
 // @Summary 获取方法列表
 // @Description 获取方法列表
 // @Tags 定时任务
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData "成功"
-// @Router /monitor/job/getFunList  [get]
-func (j *Job) GetFunList(c *gin.Context) {
+// @Router /monitor/job/funList  [get]
+func (j *Job) FunList(c *gin.Context) {
 	baizeContext.SuccessData(c, j.ls.GetFunList())
 }

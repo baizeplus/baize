@@ -10,7 +10,7 @@ import (
 
 func NewJobDao() *JobDao {
 	return &JobDao{
-		selectSql:    "select job_id, job_name,job_params, invoke_target, cron_expression,status, create_by, create_time, remark  from sys_job",
+		selectSql:    "select job_id, job_name,job_params, invoke_target, cron_expression,status, create_by, create_time  from sys_job",
 		selectLogSql: "select job_log_id,job_id, job_name,job_params, invoke_target,status, create_time ,cost_time  from sys_job_log",
 	}
 }
@@ -88,15 +88,12 @@ func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monit
 		updateSQL += ",job_name = :job_name"
 	}
 
-	if job.JobParams.Data != nil {
+	if job.JobParams != nil {
 		updateSQL += ",job_params = :job_params"
 	}
 
 	if job.Status != "" {
 		updateSQL += ",status = :status"
-	}
-	if job.Remark != nil {
-		updateSQL += ",remark = :remark"
 	}
 
 	updateSQL += " where job_id = :job_id"
@@ -108,8 +105,8 @@ func (jd *JobDao) UpdateJob(ctx context.Context, db sqly.SqlyContext, job *monit
 	return
 }
 func (jd *JobDao) InsertJob(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDML) {
-	insertSQL := `insert into sys_job(job_id,job_name,job_params,invoke_target,cron_expression,status,create_by,create_time,update_by,update_time ,remark)
-					values(:job_id,:job_name,:job_params,:invoke_target,:cron_expression,:status,:create_by,now(),:update_by,now() ,:remark)`
+	insertSQL := `insert into sys_job(job_id,job_name,job_params,invoke_target,cron_expression,status,create_by,create_time,update_by,update_time)
+					values(:job_id,:job_name,:job_params,:invoke_target,:cron_expression,:status,:create_by,now(),:update_by,now())`
 	_, err := db.NamedExecContext(ctx, insertSQL, job)
 	if err != nil {
 		panic(err)
