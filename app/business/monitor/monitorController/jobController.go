@@ -164,3 +164,50 @@ func (j *Job) JobRemove(c *gin.Context) {
 func (j *Job) FunList(c *gin.Context) {
 	baizeContext.SuccessData(c, j.ls.GetFunList())
 }
+
+// JobLogList 查询定时任务日志列表
+// @Summary 查询定时任务日志列表
+// @Description 查询定时任务日志列表
+// @Tags 定时任务
+// @Param  object query monitorModels.JobLogDql true "查询信息"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]monitorModels.JobLog}}  "成功"
+// @Router /monitor/job/log/list  [get]
+func (j *Job) JobLogList(c *gin.Context) {
+	job := new(monitorModels.JobLogDql)
+	_ = c.ShouldBind(job)
+	list, total := j.ls.SelectJobLogList(c, job)
+	baizeContext.SuccessListData(c, list, total)
+}
+
+// JobLogGetInfo 查询定时任务日志信息
+// @Summary 查询定时任务日志信息
+// @Description 查询定时任务日志信息
+// @Tags 定时任务
+// @Param  jobLogId path int true "jobLogId"
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=monitorModels.JobLog}  "成功"
+// @Router /monitor/job/log/{jobLogId}  [get]
+func (j *Job) JobLogGetInfo(c *gin.Context) {
+	jobLogId := baizeContext.ParamInt64(c, "jobLogId")
+	if jobLogId == 0 {
+		baizeContext.ParameterError(c)
+		return
+	}
+	menu := j.ls.SelectJobLogById(c, jobLogId)
+	baizeContext.SuccessData(c, menu)
+}
+
+// JobIdAndNameAll 查询定时任务id和名称
+// @Summary 查询定时任务id和名称
+// @Description 查询定时任务id和名称
+// @Tags 定时任务
+// @Security BearerAuth
+// @Produce application/json
+// @Success 200 {object}  response.ResponseData{data=[]monitorModels.JobIdAndName}  "成功"
+// @Router /monitor/job/idAndNameAll  [get]
+func (j *Job) JobIdAndNameAll(c *gin.Context) {
+	baizeContext.SuccessData(c, j.ls.SelectJobIdAndNameAll(c))
+}

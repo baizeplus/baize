@@ -16,6 +16,7 @@ type IJobDao interface {
 	InsertJob(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDML)
 	DeleteJobByIds(ctx context.Context, db sqly.SqlyContext, id []int64)
 	InsertJobLog(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobLog)
-	SelectJobLogList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDQL) (list []*monitorModels.JobLog, total int64)
+	SelectJobLogList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64)
 	SelectJobLogById(ctx context.Context, db sqly.SqlyContext, id int64) (vo *monitorModels.JobLog)
+	SelectJobIdAndNameAll(ctx context.Context, db sqly.SqlyContext) (list []*monitorModels.JobIdAndName)
 }

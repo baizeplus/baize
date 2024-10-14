@@ -242,3 +242,15 @@ func (js *JobService) DeleteRunCron(c context.Context, jo *monitorModels.JobRedi
 		delete(js.cronMap, jo.Id)
 	}
 }
+
+func (js *JobService) SelectJobLogList(c *gin.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64) {
+	return js.jd.SelectJobLogList(c, js.data, job)
+}
+
+func (js *JobService) SelectJobLogById(c *gin.Context, id int64) (vo *monitorModels.JobLog) {
+	return js.jd.SelectJobLogById(c, js.data, id)
+}
+
+func (js *JobService) SelectJobIdAndNameAll(c *gin.Context) (list []*monitorModels.JobIdAndName) {
+	return js.jd.SelectJobIdAndNameAll(c, js.data)
+}

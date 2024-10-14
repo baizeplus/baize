@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+type JobIdAndName struct {
+	JobId   int64  `json:"jobId,string" db:"job_id"`
+	JobName string `json:"jobName" db:"job_name"`
+}
+
 type JobVo struct {
 	JobId          int64       `json:"jobId,string" db:"job_id"`
 	JobName        string      `json:"jobName" db:"job_name"`
@@ -50,6 +55,12 @@ type JobLog struct {
 	CreateTime    time.Time   `json:"createTime" db:"create_time"`
 	CostTime      int64       `json:"costTime" db:"cost_time"`
 }
+type JobLogDql struct {
+	JobId  int64  `json:"jobId,string" db:"job_id"`
+	Status string `json:"status" db:"status"`
+	baize.BaseEntityDQL
+}
+
 type JobStatus struct {
 	JobId  int64  `json:"jobId,string" db:"job_id" binding:"required"`
 	Status string `json:"status" db:"status"`

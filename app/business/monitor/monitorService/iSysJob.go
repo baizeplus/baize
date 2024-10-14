@@ -15,4 +15,7 @@ type IJobService interface {
 	UpdateJob(c *gin.Context, job *monitorModels.JobDML)
 	FunIsExist(invokeTarget string) bool
 	GetFunList() []string
+	SelectJobLogList(c *gin.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64)
+	SelectJobLogById(c *gin.Context, id int64) (vo *monitorModels.JobLog)
+	SelectJobIdAndNameAll(c *gin.Context) (list []*monitorModels.JobIdAndName)
 }

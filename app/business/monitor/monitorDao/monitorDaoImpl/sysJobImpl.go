@@ -50,6 +50,14 @@ func (jd *JobDao) SelectJobAll(ctx context.Context, db sqly.SqlyContext) (list [
 	}
 	return
 }
+func (jd *JobDao) SelectJobIdAndNameAll(ctx context.Context, db sqly.SqlyContext) (list []*monitorModels.JobIdAndName) {
+	list = make([]*monitorModels.JobIdAndName, 0)
+	err := db.SelectContext(ctx, &list, "select job_id, job_name from sys_job")
+	if err != nil {
+		panic(err)
+	}
+	return
+}
 func (jd *JobDao) SelectJobById(ctx context.Context, db sqly.SqlyContext, id int64) (job *monitorModels.JobVo) {
 	job = new(monitorModels.JobVo)
 	err := db.GetContext(ctx, job, jd.selectSql+" where job_id = ?", id)
@@ -133,15 +141,14 @@ func (jd *JobDao) InsertJobLog(ctx context.Context, db sqly.SqlyContext, job *mo
 	}
 	return
 }
-func (jd *JobDao) SelectJobLogList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobDQL) (list []*monitorModels.JobLog, total int64) {
+func (jd *JobDao) SelectJobLogList(ctx context.Context, db sqly.SqlyContext, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64) {
 	whereSql := ``
+	if job.JobId != 0 {
+		whereSql += " AND job_id = :job_id"
+	}
 	if job.Status != "" {
 		whereSql += " AND status = :status"
 	}
-	if job.InvokeTarget != "" {
-		whereSql += " AND invoke_target like concat('%', :invoke_target, '%')"
-	}
-
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
