@@ -56,8 +56,8 @@ type JobLog struct {
 	CostTime      int64       `json:"costTime" db:"cost_time"`
 }
 type JobLogDql struct {
-	JobId  int64  `json:"jobId,string" db:"job_id"`
-	Status string `json:"status" db:"status"`
+	JobId  int64  `form:"jobId,string" db:"job_id"`
+	Status string `form:"status" db:"status"`
 	baize.BaseEntityDQL
 }
 

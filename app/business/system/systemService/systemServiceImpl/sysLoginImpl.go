@@ -9,14 +9,14 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/constant/dataScopeAspect"
-	"baize/app/utils/bCryptPasswordEncoder"
-	"baize/app/utils/ipUtils"
-	"encoding/json"
-
 	"baize/app/constant/sessionStatus"
+	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/ipUtils"
 	"baize/app/utils/session"
 	"context"
+	"encoding/json"
+	"time"
 
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
@@ -24,7 +24,6 @@ import (
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
 	"image/color"
-	"time"
 )
 
 type LoginService struct {
@@ -50,21 +49,10 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 	l.Msg = "登录成功"
 	manager := session.NewManger()
 	session, _ := manager.InitSession(c, user.UserId)
-	roles := loginService.roleDao.SelectBasicRolesByUserId(c, loginService.data, user.UserId)
-	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
-	rb, _ := json.Marshal(byRoles)
-	session.Set(c, sessionStatus.Role, loginRoles)
-	session.Set(c, sessionStatus.RolePerms, rb)
-	permission := loginService.getPermission(c, user.UserId)
-	session.Set(c, sessionStatus.Permission, permission)
-	session.Set(c, sessionStatus.IpAddr, c.ClientIP())
-	session.Set(c, sessionStatus.LoginTime, time.Now().Unix())
 	session.Set(c, sessionStatus.Os, l.Os)
 	session.Set(c, sessionStatus.Browser, l.Browser)
 	session.Set(c, sessionStatus.UserName, user.UserName)
 	session.Set(c, sessionStatus.Avatar, user.Avatar)
-	session.Set(c, sessionStatus.DeptId, user.DeptId)
-	session.Set(c, sessionStatus.DataScopeAspect, user.DataScope)
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
@@ -151,13 +139,29 @@ func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.Sy
 	return
 }
 func (loginService *LoginService) GetInfo(c *gin.Context) *systemModels.GetInfo {
+	userId := baizeContext.GetUserId(c)
+	roles := loginService.roleDao.SelectBasicRolesByUserId(c, loginService.data, userId)
+	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
+	rb, _ := json.Marshal(byRoles)
+	session := baizeContext.GetSession(c)
+	session.Set(c, sessionStatus.Role, loginRoles)
+	session.Set(c, sessionStatus.RolePerms, rb)
+	permission := loginService.getPermission(c, userId)
+	session.Set(c, sessionStatus.Permission, permission)
+	session.Set(c, sessionStatus.IpAddr, c.ClientIP())
+	session.Set(c, sessionStatus.LoginTime, time.Now().Unix())
+	user := loginService.userDao.SelectUserById(c, loginService.data, userId)
+	session.Set(c, sessionStatus.UserName, user.UserName)
+	session.Set(c, sessionStatus.Avatar, user.Avatar)
+	session.Set(c, sessionStatus.DeptId, user.DeptId)
+	session.Set(c, sessionStatus.DataScopeAspect, user.DataScope)
 	getInfo := new(systemModels.GetInfo)
 	u := new(systemModels.User)
 	u.UserId = baizeContext.GetUserId(c)
 	u.UserName = baizeContext.GetUserName(c)
 	u.Avatar = baizeContext.GetAvatar(c)
 	getInfo.User = u
-	getInfo.Roles = baizeContext.GetRolesPerms(c)
-	getInfo.Permissions = baizeContext.GetPermission(c)
+	//getInfo.Roles = loginRoles
+	getInfo.Permissions = permission
 	return getInfo
 }
