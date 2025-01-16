@@ -2,55 +2,45 @@ package monitorServiceImpl
 
 import (
 	"baize/app/business/monitor/monitorDao"
-	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/business/monitor/monitorService"
 	"baize/app/business/monitor/task"
+	"baize/app/datasource/cache"
 	"baize/app/setting"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/cache"
 	"baize/app/utils/snowflake"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 	"time"
 )
 
-var job *JobService
-
-func GetJobService() *JobService {
-	return job
-}
-
 type JobService struct {
-	data        *sqly.DB
-	redisClient *redis.Client
-	jd          monitorDao.IJobDao
-	funMap      map[string]func(...string)
-	cronMap     map[int64]*cron.Cron
-	normal      string
-	pause       string
-	quartzKey   string
+	cache     cache.Cache
+	jd        monitorDao.IJobDao
+	funMap    map[string]func(...string)
+	cronMap   map[int64]*cron.Cron
+	normal    string
+	pause     string
+	quartzKey string
 }
 
-func NewJobService(data *sqly.DB, jd *monitorDaoImpl.JobDao) *JobService {
+func NewJobService(cache cache.Cache, jd monitorDao.IJobDao) monitorService.IJobService {
 	funMap := make(map[string]func(...string))
 	funMap["NoParams"] = task.NoParams
 	funMap["Params"] = task.Params
-	job = &JobService{data: data, redisClient: cache.RedisClient, jd: jd, funMap: funMap, cronMap: make(map[int64]*cron.Cron),
+	return &JobService{cache: cache, jd: jd, funMap: funMap, cronMap: make(map[int64]*cron.Cron),
 		normal: "0", pause: "1", quartzKey: "quartz:"}
-	return job
 }
 
 func (js *JobService) SelectJobList(c *gin.Context, job *monitorModels.JobDQL) (list []*monitorModels.JobVo, total int64) {
-	list, total = js.jd.SelectJobList(c, js.data, job)
+	list, total = js.jd.SelectJobList(c, job)
 	return
 }
 func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModels.JobVo) {
-	job = js.jd.SelectJobById(c, js.data, id)
+	job = js.jd.SelectJobById(c, id)
 	if job != nil {
 		schedule, err := cron.ParseStandard(job.CronExpression)
 		if err != nil {
@@ -69,7 +59,7 @@ func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64) {
 		m.Id = id
 		js.DeleteRunCron(c, m)
 	}
-	js.jd.DeleteJobByIds(c, js.data, jobIds)
+	js.jd.DeleteJobByIds(c, jobIds)
 }
 
 func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus) {
@@ -83,11 +73,11 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus)
 	d.JobId = job.JobId
 	d.Status = job.Status
 	d.SetUpdateBy(baizeContext.GetUserId(c))
-	js.jd.UpdateJob(c, js.data, d)
+	js.jd.UpdateJob(c, d)
 
 }
 func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
-	vo := js.jd.SelectJobById(c, js.data, job.JobId)
+	vo := js.jd.SelectJobById(c, job.JobId)
 	jr := new(monitorModels.JobRun)
 	jr.JobId = vo.JobId
 	jr.JobName = vo.JobName
@@ -98,7 +88,7 @@ func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	job.JobId = snowflake.GenID()
-	js.jd.InsertJob(c, js.data, job)
+	js.jd.InsertJob(c, job)
 	if job.Status == js.normal {
 		m := new(monitorModels.JobRedis)
 		m.Id = job.JobId
@@ -123,12 +113,12 @@ func (js *JobService) UpdateJob(c *gin.Context, job *monitorModels.JobDML) {
 	if job.Status == js.normal {
 		js.StartRunCron(c, m)
 	}
-	js.jd.UpdateJob(c, js.data, job)
+	js.jd.UpdateJob(c, job)
 }
 
 func (js *JobService) InitJobRun() {
 	ctx := context.Background()
-	list := js.jd.SelectJobAll(ctx, js.data)
+	list := js.jd.SelectJobAll(ctx)
 	for _, vo := range list {
 		_, ok := js.funMap[vo.InvokeTarget]
 		if !ok {
@@ -163,11 +153,7 @@ func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
 			}
 			now := time.Now()
 			nextTime := schedule.Next(now).Unix()
-			success, err := cache.RedisClient.SetNX(ctx, fmt.Sprintf("scheduled_task_lock:%s:%d", job.JobName, nextTime), "locked", time.Minute).Result()
-			if err != nil {
-				fmt.Println("Error connecting to Redis:", err)
-				return
-			}
+			success := js.cache.SetNX(ctx, fmt.Sprintf("scheduled_task_lock:%s:%d", job.JobName, nextTime), "locked", time.Minute)
 			if !success {
 				return
 			}
@@ -188,7 +174,7 @@ func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
 			} else {
 				m.Status = "0"
 			}
-			js.jd.InsertJobLog(ctx, js.data, m)
+			js.jd.InsertJobLog(ctx, m)
 		}()
 		f := js.funMap[job.InvokeTarget]
 		f(job.JobParams.Data...)
@@ -202,7 +188,7 @@ func (js *JobService) StartRunCron(c context.Context, jo *monitorModels.JobRedis
 		if err != nil {
 			panic(err)
 		}
-		js.redisClient.Publish(c, "job", marshal)
+		js.cache.Publish(c, "job", marshal)
 		return
 	}
 	cr, ok := js.cronMap[jo.Id]
@@ -210,7 +196,7 @@ func (js *JobService) StartRunCron(c context.Context, jo *monitorModels.JobRedis
 		cr.Stop()
 		delete(js.cronMap, jo.Id)
 	}
-	vo := js.jd.SelectJobById(c, js.data, jo.Id)
+	vo := js.jd.SelectJobById(c, jo.Id)
 	cr = cron.New()
 	jr := new(monitorModels.JobRun)
 	jr.JobId = vo.JobId
@@ -233,7 +219,7 @@ func (js *JobService) DeleteRunCron(c context.Context, jo *monitorModels.JobRedi
 		if err != nil {
 			panic(err)
 		}
-		js.redisClient.Publish(c, "job", marshal)
+		js.cache.Publish(c, "job", marshal)
 		return
 	}
 	cr, ok := js.cronMap[jo.Id]
@@ -244,13 +230,13 @@ func (js *JobService) DeleteRunCron(c context.Context, jo *monitorModels.JobRedi
 }
 
 func (js *JobService) SelectJobLogList(c *gin.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64) {
-	return js.jd.SelectJobLogList(c, js.data, job)
+	return js.jd.SelectJobLogList(c, job)
 }
 
 func (js *JobService) SelectJobLogById(c *gin.Context, id int64) (vo *monitorModels.JobLog) {
-	return js.jd.SelectJobLogById(c, js.data, id)
+	return js.jd.SelectJobLogById(c, id)
 }
 
 func (js *JobService) SelectJobIdAndNameAll(c *gin.Context) (list []*monitorModels.JobIdAndName) {
-	return js.jd.SelectJobIdAndNameAll(c, js.data)
+	return js.jd.SelectJobIdAndNameAll(c)
 }

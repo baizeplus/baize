@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -14,11 +14,22 @@ type DictType struct {
 	dds systemService.IDictDataService
 }
 
-func NewDictType(dts *systemServiceImpl.DictTypeService, dds *systemServiceImpl.DictDataService) *DictType {
+func NewDictType(dts systemService.IDictTypeService, dds systemService.IDictDataService) *DictType {
 	return &DictType{
 		dts: dts,
 		dds: dds,
 	}
+}
+func (dtc *DictType) PrivateRoutes(router *gin.RouterGroup) {
+	systemDictType := router.Group("/system/dict/type")
+	systemDictType.GET("/list", middlewares.HasPermission("system:dict:list"), dtc.DictTypeList)
+	systemDictType.POST("/export", middlewares.HasPermission("system:dict:export"), dtc.DictTypeExport)
+	systemDictType.GET("/:dictId", middlewares.HasPermission("system:dict:query"), dtc.DictTypeGetInfo)
+	systemDictType.POST("", middlewares.SetLog("字典管理", middlewares.Insert), middlewares.HasPermission("system:dict:add"), dtc.DictTypeAdd)
+	systemDictType.PUT("", middlewares.SetLog("字典管理", middlewares.Update), middlewares.HasPermission("system:dict:edit"), dtc.DictTypeEdit)
+	systemDictType.DELETE("/:dictIds", middlewares.SetLog("字典管理", middlewares.Delete), middlewares.HasPermission("system:dict:remove"), dtc.DictTypeRemove)
+	systemDictType.DELETE("/refreshCache", middlewares.SetLog("字典管理", middlewares.Clear), middlewares.HasPermission("system:dict:remove"), dtc.DictTypeClearCache)
+	systemDictType.GET("/optionSelect", dtc.DictTypeOptionSelect)
 }
 
 // DictTypeList 查询字典类型列表

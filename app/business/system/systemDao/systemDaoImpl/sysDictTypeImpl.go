@@ -1,6 +1,7 @@
 package systemDaoImpl
 
 import (
+	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
@@ -8,17 +9,19 @@ import (
 	"github.com/baizeplus/sqly"
 )
 
-type SysDictTypeDao struct {
+type sysDictTypeDao struct {
+	ms          sqly.SqlyContext
 	dictTypeSql string
 }
 
-func NewSysDictTypeDao() *SysDictTypeDao {
-	return &SysDictTypeDao{
+func NewSysDictTypeDao(ms sqly.SqlyContext) systemDao.IDictTypeDao {
+	return &sysDictTypeDao{
+		ms:          ms,
 		dictTypeSql: `select dict_id, dict_name, dict_type, status, create_by, create_time, remark   from sys_dict_type`,
 	}
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeList(ctx context.Context, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64) {
 	whereSql := ``
 	if dictType.DictName != "" {
 		whereSql += " AND dict_name like concat('%', :dictName, '%')"
@@ -33,14 +36,14 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeList(ctx context.Context, db
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, sysDictTypeDao.dictTypeSql+whereSql, dictType)
+	err := sysDictTypeDao.ms.NamedSelectPageContext(ctx, &list, &total, sysDictTypeDao.dictTypeSql+whereSql, dictType)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeAll(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeAll(ctx context.Context, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo) {
 	whereSql := ``
 	if dictType.DictName != "" {
 		whereSql += " AND dict_name like concat('%', :dictName, '%')"
@@ -56,49 +59,49 @@ func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeAll(ctx context.Context, db 
 		whereSql = " where " + whereSql[4:]
 	}
 	list = make([]*systemModels.SysDictTypeVo, 0)
-	err := db.SelectContext(ctx, &list, sysDictTypeDao.dictTypeSql+whereSql)
+	err := sysDictTypeDao.ms.SelectContext(ctx, &list, sysDictTypeDao.dictTypeSql+whereSql)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeById(ctx context.Context, db sqly.SqlyContext, dictId int64) (dictType *systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeById(ctx context.Context, dictId int64) (dictType *systemModels.SysDictTypeVo) {
 
 	dictType = new(systemModels.SysDictTypeVo)
-	err := db.GetContext(ctx, dictType, sysDictTypeDao.dictTypeSql+" where dict_id = ?", dictId)
+	err := sysDictTypeDao.ms.GetContext(ctx, dictType, sysDictTypeDao.dictTypeSql+" where dict_id = ?", dictId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) SelectDictTypeByIds(ctx context.Context, db sqly.SqlyContext, dictId []int64) (dictTypes []string) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeByIds(ctx context.Context, dictId []int64) (dictTypes []string) {
 	dictTypes = make([]string, 0)
 	query, args, err := sqly.In("select dict_type from sys_dict_type where dict_id in(?)", dictId)
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.SelectContext(ctx, &dictTypes, query, args...)
+	err = sysDictTypeDao.ms.SelectContext(ctx, &dictTypes, query, args...)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) InsertDictType(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *sysDictTypeDao) InsertDictType(ctx context.Context, dictType *systemModels.SysDictTypeVo) {
 	insertSQL := `insert into sys_dict_type(dict_id,dict_name,dict_type,status,remark,create_by,create_time,update_by,update_time )
 					values(:dict_id,:dict_name,:dict_type,:status,:remark,:create_by,now(),:update_by,now() )`
 
-	_, err := db.NamedExecContext(ctx, insertSQL, dictType)
+	_, err := sysDictTypeDao.ms.NamedExecContext(ctx, insertSQL, dictType)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) UpdateDictType(ctx context.Context, db sqly.SqlyContext, dictType *systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *sysDictTypeDao) UpdateDictType(ctx context.Context, dictType *systemModels.SysDictTypeVo) {
 	updateSQL := `update sys_dict_type set update_time = now() , update_by = :update_by`
 
 	if dictType.DictName != "" {
@@ -116,27 +119,27 @@ func (sysDictTypeDao *SysDictTypeDao) UpdateDictType(ctx context.Context, db sql
 
 	updateSQL += " where dict_id = :dict_id"
 
-	_, err := db.NamedExecContext(ctx, updateSQL, dictType)
+	_, err := sysDictTypeDao.ms.NamedExecContext(ctx, updateSQL, dictType)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
 
-func (sysDictTypeDao *SysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, db sqly.SqlyContext, dictIds []int64) {
+func (sysDictTypeDao *sysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, dictIds []int64) {
 	query, i, err := sqly.In("delete from sys_dict_type where dict_id in (?)", dictIds)
 	if err != nil {
 		panic(err)
 	}
-	_, err = db.ExecContext(ctx, query, i...)
+	_, err = sysDictTypeDao.ms.ExecContext(ctx, query, i...)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
-func (sysDictTypeDao *SysDictTypeDao) CheckDictTypeUnique(ctx context.Context, db sqly.SqlyContext, dictType string) int64 {
+func (sysDictTypeDao *sysDictTypeDao) CheckDictTypeUnique(ctx context.Context, dictType string) int64 {
 	var dictId int64 = 0
-	err := db.GetContext(ctx, &dictId, "select dict_id from sys_dict_type where dict_type = ?", dictType)
+	err := sysDictTypeDao.ms.GetContext(ctx, &dictId, "select dict_id from sys_dict_type where dict_type = ?", dictType)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}

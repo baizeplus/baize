@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,23 @@ type Role struct {
 	rs systemService.IRoleService
 }
 
-func NewRole(rs *systemServiceImpl.RoleService) *Role {
+func NewRole(rs systemService.IRoleService) *Role {
 	return &Role{rs: rs}
+}
+func (rc *Role) PrivateRoutes(router *gin.RouterGroup) {
+	rr := router.Group("/system/role")
+	rr.GET("/list", middlewares.HasPermission("system:role:list"), rc.RoleList)
+	rr.POST("/export", middlewares.HasPermission("system:role:export"), rc.RoleExport)
+	rr.GET("/:roleId", middlewares.HasPermission("system:role:query"), rc.RoleGetInfo)
+	rr.POST("", middlewares.SetLog("角色管理", middlewares.Insert), middlewares.HasPermission("system:role:add"), rc.RoleAdd)
+	rr.PUT("", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.RoleEdit)
+	rr.PUT("/changeStatus", middlewares.HasPermission("system:role:edit"), rc.RoleChangeStatus)
+	rr.DELETE("/:rolesIds", middlewares.SetLog("角色管理", middlewares.Delete), middlewares.HasPermission("system:role:remove"), rc.RoleRemove)
+	rr.GET("/authUser/allocatedList", middlewares.HasPermission("system:role:list"), rc.AllocatedList)
+	rr.GET("/authUser/unallocatedList", middlewares.HasPermission("system:role:list"), rc.UnallocatedList)
+	rr.PUT("/authUser/selectAll", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.InsertAuthUser)
+	rr.PUT("/authUser/cancelAll", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.CancelAuthUserAll)
+	rr.PUT("/authUser/cancel", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.CancelAuthUser)
 }
 
 // RoleList 查询角色列表查询

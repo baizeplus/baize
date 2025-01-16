@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,10 +12,21 @@ type DictData struct {
 	dds systemService.IDictDataService
 }
 
-func NewDictData(dds *systemServiceImpl.DictDataService) *DictData {
+func NewDictData(dds systemService.IDictDataService) *DictData {
 	return &DictData{
 		dds: dds,
 	}
+}
+func (ddc *DictData) PrivateRoutes(router *gin.RouterGroup) {
+	systemDictData := router.Group("/system/dict/data")
+	systemDictData.GET("/list", middlewares.HasPermission("system:dict:list"), ddc.DictDataList)
+	systemDictData.GET("/export", middlewares.HasPermission("system:dict:export"), ddc.DictDataExport)
+	systemDictData.GET("/:dictCode", middlewares.HasPermission("system:dict:query"), ddc.DictDataGetInfo)
+	systemDictData.GET("/type/:dictType", ddc.DictDataType)
+	systemDictData.POST("", middlewares.SetLog("字典数据管理", middlewares.Insert), middlewares.HasPermission("system:dict:add"), ddc.DictDataAdd)
+	systemDictData.PUT("", middlewares.SetLog("字典数据管理", middlewares.Update), middlewares.HasPermission("system:dict:edit"), ddc.DictDataEdit)
+	systemDictData.DELETE("/:dictCodes", middlewares.SetLog("字典数据管理", middlewares.Delete), middlewares.HasPermission("system:dict:remove"), ddc.DictDataRemove)
+
 }
 
 // DictDataList 查询字典列表

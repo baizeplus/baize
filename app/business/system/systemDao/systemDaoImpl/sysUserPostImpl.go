@@ -1,40 +1,42 @@
 package systemDaoImpl
 
 import (
+	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
 	"github.com/baizeplus/sqly"
 )
 
-type SysUserPostDao struct {
+type sysUserPostDao struct {
+	ms sqly.SqlyContext
 }
 
-func NewSysUserPostDao() *SysUserPostDao {
-	return &SysUserPostDao{}
+func NewSysUserPostDao(ms sqly.SqlyContext) systemDao.IUserPostDao {
+	return &sysUserPostDao{ms: ms}
 }
 
-func (sysUserPostDao *SysUserPostDao) BatchUserPost(ctx context.Context, db sqly.SqlyContext, users []*systemModels.SysUserPost) {
+func (sysUserPostDao *sysUserPostDao) BatchUserPost(ctx context.Context, users []*systemModels.SysUserPost) {
 
-	_, err := db.NamedExecContext(ctx, "insert into sys_user_post(user_id, post_id) values (:user_id,:post_id)", users)
+	_, err := sysUserPostDao.ms.NamedExecContext(ctx, "insert into sys_user_post(user_id, post_id) values (:user_id,:post_id)", users)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (sysUserPostDao *SysUserPostDao) DeleteUserPostByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) {
+func (sysUserPostDao *sysUserPostDao) DeleteUserPostByUserId(ctx context.Context, userId int64) {
 
-	_, err := db.ExecContext(ctx, "delete from sys_user_post where user_id= ?", userId)
+	_, err := sysUserPostDao.ms.ExecContext(ctx, "delete from sys_user_post where user_id= ?", userId)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (sysUserPostDao *SysUserPostDao) DeleteUserPost(ctx context.Context, db sqly.SqlyContext, ids []int64) {
+func (sysUserPostDao *sysUserPostDao) DeleteUserPost(ctx context.Context, ids []int64) {
 	query, i, err := sqly.In("delete from sys_user_post where user_id in(?)", ids)
 	if err != nil {
 		panic(err)
 	}
-	_, err = db.ExecContext(ctx, query, i...)
+	_, err = sysUserPostDao.ms.ExecContext(ctx, query, i...)
 	if err != nil {
 		panic(err)
 	}

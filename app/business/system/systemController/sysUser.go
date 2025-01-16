@@ -3,8 +3,8 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/constant/dataScopeAspect"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/response"
 	"github.com/gin-gonic/gin"
@@ -17,15 +17,33 @@ type User struct {
 }
 
 func NewUser(
-	us *systemServiceImpl.UserService,
-	ps *systemServiceImpl.PostService,
-	rs *systemServiceImpl.RoleService,
+	us systemService.IUserService,
+	ps systemService.IPostService,
+	rs systemService.IRoleService,
 ) *User {
 	return &User{
 		us: us,
 		ps: ps,
 		rs: rs,
 	}
+}
+func (uc *User) PrivateRoutes(router *gin.RouterGroup) {
+	systemUser := router.Group("/system/user")
+	systemUser.GET("/list", middlewares.HasPermission("system:user:list"), uc.UserList)
+	systemUser.GET("/", middlewares.HasPermission("system:user:query"), uc.UserGetInfo)
+	systemUser.GET("/authRole/:userId", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.UserAuthRole)
+	systemUser.GET("/:userId", middlewares.HasPermission("system:user:query"), uc.UserGetInfoById)
+	systemUser.POST("", middlewares.SetLog("用户管理", middlewares.Insert), middlewares.HasPermission("system:user:add"), uc.UserAdd)
+	systemUser.GET("/dataScope/:userId", middlewares.HasPermission("system:user:query"), uc.SelectUserDataScope)
+	systemUser.PUT("/dataScope", middlewares.SetLog("用户管理", middlewares.Other), middlewares.HasPermission("system:user:edit"), uc.UpdateUserDataScope)
+	systemUser.PUT("", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.UserEdit)
+	systemUser.PUT("/resetPwd", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.ResetPwd)
+	systemUser.PUT("/changeStatus", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.ChangeStatus)
+	systemUser.DELETE("/:userIds", middlewares.SetLog("用户管理", middlewares.Delete), middlewares.HasPermission("system:user:remove"), uc.UserRemove)
+	systemUser.POST("/importData", middlewares.HasPermission("system:user:import"), uc.UserImportData)
+	systemUser.POST("/importTemplate", middlewares.HasPermission("system:user:add"), uc.ImportTemplate)
+	systemUser.POST("/export", middlewares.HasPermission("system:user:export"), uc.UserExport)
+	systemUser.PUT("/authRole", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.InsertAuthRole)
 }
 
 // ChangeStatus 修改用户状态

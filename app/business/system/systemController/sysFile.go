@@ -2,7 +2,6 @@ package systemController
 
 import (
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -11,8 +10,16 @@ type File struct {
 	fs systemService.IFileService
 }
 
-func NewFile(fs *systemServiceImpl.FileService) *File {
+func NewFile(fs systemService.IFileService) *File {
 	return &File{fs: fs}
+}
+func (fc *File) PrivateRoutes(router *gin.RouterGroup) {
+	systemDictType := router.Group("/file")
+	systemDictType.POST("/uploadFileRandomName", fc.UploadFileRandomName)
+	systemDictType.POST("/uploadFileOriginalName", fc.UploadFileOriginalName)
+	systemDictType.POST("/uploadFiles", fc.UploadFiles)
+	systemDictType.POST("/uploadPrivateFileOriginalName", fc.UploadPrivateFileOriginalName)
+	systemDictType.GET("/downloadPrivateFile", fc.DownloadPrivateFile)
 }
 
 // UploadFileRandomName 上传文件

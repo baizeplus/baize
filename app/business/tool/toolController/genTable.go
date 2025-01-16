@@ -3,7 +3,7 @@ package toolController
 import (
 	"baize/app/business/tool/toolModels"
 	"baize/app/business/tool/toolService"
-	"baize/app/business/tool/toolService/toolServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -13,8 +13,21 @@ type GenTable struct {
 	gt toolService.IGenTableService
 }
 
-func NewGenTable(gt *toolServiceImpl.GenTabletService) *GenTable {
+func NewGenTable(gt toolService.IGenTableService) *GenTable {
 	return &GenTable{gt: gt}
+}
+
+func (gc *GenTable) PrivateRoutes(router *gin.RouterGroup) {
+	genTable := router.Group("/tool/gen")
+	genTable.GET("/list", middlewares.HasPermission("tool:gen:list"), gc.GenTableList)
+	genTable.GET(":tableId", middlewares.HasPermission("tool:gen:query"), gc.GenTableGetInfo)
+	genTable.GET("/db/list", middlewares.HasPermission("tool:gen:list"), gc.DataList)
+	genTable.GET("/column/:talbleId", middlewares.HasPermission("tool:gen:list"), gc.ColumnList)
+	genTable.POST("/importTable", middlewares.HasPermission("tool:gen:list"), gc.ImportTable)
+	genTable.PUT("", middlewares.HasPermission("tool:gen:edit"), gc.EditSave)
+	genTable.DELETE("/:tableIds", middlewares.HasPermission("tool:gen:remove"), gc.GenTableRemove)
+	genTable.GET("/preview/:tableId", middlewares.HasPermission("tool:gen:code"), gc.Preview)
+	genTable.GET("/genCode/:tableId", middlewares.HasPermission("tool:gen:code"), gc.GenCode)
 }
 
 func (gc *GenTable) GenTableList(c *gin.Context) {

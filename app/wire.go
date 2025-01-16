@@ -15,12 +15,11 @@ import (
 	"baize/app/business/tool/toolService/toolServiceImpl"
 	"baize/app/datasource"
 	"baize/app/routes"
-	"baize/app/setting"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
 
-func wireApp(*setting.Datasource) (*gin.Engine, func(), error) {
+func wireApp() (*gin.Engine, func(), error) {
 	panic(wire.Build(
 		toolDaoImpl.ProviderSet,
 		toolServiceImpl.ProviderSet,

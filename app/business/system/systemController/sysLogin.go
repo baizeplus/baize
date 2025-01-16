@@ -4,11 +4,9 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/constant/userStatus"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/session"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -20,8 +18,19 @@ type Login struct {
 	cs systemService.IConfigService
 }
 
-func NewLogin(ls *systemServiceImpl.LoginService, us *systemServiceImpl.UserService, ms *systemServiceImpl.MenuService, cs *systemServiceImpl.ConfigService) *Login {
+func NewLogin(ls systemService.ILoginService, us systemService.IUserService, ms systemService.IMenuService, cs systemService.IConfigService) *Login {
 	return &Login{ls: ls, us: us, ms: ms, cs: cs}
+}
+
+func (lc *Login) PrivateRoutes(router *gin.RouterGroup) {
+	router.GET("/getInfo", lc.GetInfo)
+	router.GET("/getRouters", lc.GetRouters)
+}
+func (lc *Login) PublicRoutes(router *gin.RouterGroup) {
+	router.GET("/captchaImage", lc.GetCode) //获取验证码
+	router.POST("/login", lc.Login)         //登录
+	router.POST("/register", lc.Register)   //登录
+	router.POST("/logout", lc.Logout)
 }
 
 // Login 用户登录
@@ -131,8 +140,8 @@ func (lc *Login) GetInfo(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "退出成功"
 // @Router /logout [post]
 func (lc *Login) Logout(c *gin.Context) {
-	manager := session.NewManger()
-	manager.RemoveSession(c)
+	//manager := session.NewManger()
+	//manager.RemoveSession(c)
 	baizeContext.Success(c)
 }
 

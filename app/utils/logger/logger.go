@@ -1,15 +1,15 @@
 package logger
 
 import (
+	"baize/app/baize"
 	"baize/app/setting"
 	"baize/app/utils/response"
 	"fmt"
 	"github.com/spf13/viper"
-
 	"net/http"
+	"runtime/debug"
 
 	"os"
-	"runtime/debug"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -75,32 +75,27 @@ func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.Write
 	return zapcore.AddSync(lumberJackLogger)
 }
 
-// GinLogger 接收gin框架默认的日志
-func GinLogger() gin.HandlerFunc {
+type loggerMiddlewareBuilder struct {
+	paths baize.Set[string]
+}
+
+func NewLoggerMiddlewareBuilder() *loggerMiddlewareBuilder {
+	return &loggerMiddlewareBuilder{
+		paths: baize.Set[string]{},
+	}
+}
+
+func (l *loggerMiddlewareBuilder) IgnorePaths(path string) *loggerMiddlewareBuilder {
+	l.paths.Add(path)
+	return l
+}
+
+func (l *loggerMiddlewareBuilder) Build() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery
-		c.Next()
-		cost := time.Since(start)
-		if path != "/" {
-			zap.L().Info(path,
-				zap.Int("status", c.Writer.Status()),
-				zap.String("method", c.Request.Method),
-				zap.String("path", path),
-				zap.String("query", query),
-				zap.String("ip", c.ClientIP()),
-				zap.String("user-agent", c.Request.UserAgent()),
-				zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
-				zap.Duration("cost", cost),
-			)
-		}
-	}
-}
 
-// GinRecovery recover掉项目可能出现的panic，并使用zap记录相关日志
-func GinRecovery() gin.HandlerFunc {
-	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
 				zap.L().Error("[Recovery from panic]",
@@ -119,7 +114,21 @@ func GinRecovery() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, response.ResponseData{Code: response.Error, Msg: response.Error.Msg()})
 			}
 		}()
+
 		c.Next()
+		cost := time.Since(start)
+		if !l.paths.Contains(c.Request.RequestURI) {
+			zap.L().Info(path,
+				zap.Int("status", c.Writer.Status()),
+				zap.String("method", c.Request.Method),
+				zap.String("path", path),
+				zap.String("query", query),
+				zap.String("ip", c.ClientIP()),
+				zap.String("user-agent", c.Request.UserAgent()),
+				zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
+				zap.Duration("cost", cost),
+			)
+		}
 	}
 }
 

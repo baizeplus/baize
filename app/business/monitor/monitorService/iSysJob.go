@@ -2,6 +2,7 @@ package monitorService
 
 import (
 	"baize/app/business/monitor/monitorModels"
+	"context"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +14,8 @@ type IJobService interface {
 	Run(c *gin.Context, job *monitorModels.JobStatus)
 	InsertJob(c *gin.Context, job *monitorModels.JobDML)
 	UpdateJob(c *gin.Context, job *monitorModels.JobDML)
+	StartRunCron(c context.Context, jo *monitorModels.JobRedis)
+	DeleteRunCron(c context.Context, jo *monitorModels.JobRedis)
 	FunIsExist(invokeTarget string) bool
 	GetFunList() []string
 	SelectJobLogList(c *gin.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64)

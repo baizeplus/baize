@@ -2,29 +2,29 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemDao"
-	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
-	"baize/app/utils/cache"
+	"baize/app/business/system/systemService"
+	"baize/app/datasource/cache"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 )
 
 type ConfigService struct {
-	data *sqly.DB
-	cd   systemDao.IConfigDao
+	cache cache.Cache
+	cd    systemDao.IConfigDao
 }
 
-func NewConfigService(data *sqly.DB, cd *systemDaoImpl.SysConfigDao) *ConfigService {
-	return &ConfigService{data: data, cd: cd}
+func NewConfigService(cd systemDao.IConfigDao,
+	cache cache.Cache) systemService.IConfigService {
+	return &ConfigService{cache: cache, cd: cd}
 }
 
 func (cs *ConfigService) SelectConfigList(c *gin.Context, config *systemModels.SysConfigDQL) (sysConfigList []*systemModels.SysConfigVo, total int64) {
-	return cs.cd.SelectConfigList(c, cs.data, config)
+	return cs.cd.SelectConfigList(c, config)
 }
 func (cs *ConfigService) ConfigExport(c *gin.Context, config *systemModels.SysConfigDQL) (data []byte) {
-	list := cs.cd.SelectConfigListAll(c, cs.data, config)
+	list := cs.cd.SelectConfigListAll(c, config)
 	toExcel, err := excel.SliceToExcel(list)
 	if err != nil {
 		panic(err)
@@ -37,27 +37,27 @@ func (cs *ConfigService) ConfigExport(c *gin.Context, config *systemModels.SysCo
 }
 
 func (cs *ConfigService) SelectConfigById(c *gin.Context, configId int64) (Config *systemModels.SysConfigVo) {
-	return cs.cd.SelectConfigById(c, cs.data, configId)
+	return cs.cd.SelectConfigById(c, configId)
 }
 
 func (cs *ConfigService) InsertConfig(c *gin.Context, config *systemModels.SysConfigVo) {
 	config.ConfigId = snowflake.GenID()
-	cs.cd.InsertConfig(c, cs.data, config)
+	cs.cd.InsertConfig(c, config)
 }
 
 func (cs *ConfigService) UpdateConfig(c *gin.Context, config *systemModels.SysConfigVo) {
-	cs.cd.UpdateConfig(c, cs.data, config)
-	cache.GetCache().Del(c, cs.getCacheKey(config.ConfigKey))
+	cs.cd.UpdateConfig(c, config)
+	cs.cache.Del(c, cs.getCacheKey(config.ConfigKey))
 }
 
 func (cs *ConfigService) DeleteConfigById(c *gin.Context, configId int64) {
-	key := cs.cd.SelectConfigById(c, cs.data, configId).ConfigKey
-	cs.cd.DeleteConfigById(c, cs.data, configId)
-	cache.GetCache().Del(c, cs.getCacheKey(key))
+	key := cs.cd.SelectConfigById(c, configId).ConfigKey
+	cs.cd.DeleteConfigById(c, configId)
+	cs.cache.Del(c, cs.getCacheKey(key))
 }
 
 func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, configKey string) bool {
-	id := cs.cd.SelectConfigIdByConfigKey(c, cs.data, configKey)
+	id := cs.cd.SelectConfigIdByConfigKey(c, configKey)
 	if id == configId {
 		return false
 	}
@@ -65,13 +65,14 @@ func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, co
 }
 
 func (cs *ConfigService) SelectConfigValueByKey(c *gin.Context, configKey string) string {
-	v, _ := cache.GetCache().Get(c, cs.getCacheKey(configKey))
-	if v != "" {
+	v, err := cs.cache.Get(c, cs.getCacheKey(configKey))
+	if err == nil {
 		return v
 	}
-	value := cs.cd.SelectConfigValueByConfigKey(c, cs.data, configKey)
+
+	value := cs.cd.SelectConfigValueByConfigKey(c, configKey)
 	if value != "" {
-		cache.GetCache().Set(c, cs.getCacheKey(configKey), value, 0)
+		cs.cache.Set(c, cs.getCacheKey(configKey), value, 0)
 	}
 	return value
 }

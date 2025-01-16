@@ -2,29 +2,27 @@ package monitorServiceImpl
 
 import (
 	"baize/app/business/monitor/monitorDao"
-	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/business/monitor/monitorService"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 )
 
 type LogininforService struct {
-	data *sqly.DB
-	ld   monitorDao.ILogininforDao
+	ld monitorDao.ILogininforDao
 }
 
-func NewLogininforService(data *sqly.DB, ld *monitorDaoImpl.LogininforDao) *LogininforService {
-	return &LogininforService{data: data, ld: ld}
+func NewLogininforService(ld monitorDao.ILogininforDao) monitorService.ILogininforService {
+	return &LogininforService{ld: ld}
 }
 
 func (ls *LogininforService) SelectLogininforList(c *gin.Context, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total int64) {
-	return ls.ld.SelectLogininforList(c, ls.data, logininfor)
+	return ls.ld.SelectLogininforList(c, logininfor)
 
 }
 func (ls *LogininforService) ExportLogininfor(c *gin.Context, logininfor *monitorModels.LogininforDQL) (data []byte) {
-	list := ls.ld.SelectLogininforListAll(c, ls.data, logininfor)
+	list := ls.ld.SelectLogininforListAll(c, logininfor)
 	toExcel, err := excel.SliceToExcel(list)
 	if err != nil {
 		panic(err)
@@ -36,17 +34,17 @@ func (ls *LogininforService) ExportLogininfor(c *gin.Context, logininfor *monito
 	return buffer.Bytes()
 }
 
-func (ls *LogininforService) InserLogininfor(c *gin.Context, loginUser *monitorModels.Logininfor) {
+func (ls *LogininforService) InsertLogininfor(c *gin.Context, loginUser *monitorModels.Logininfor) {
 	loginUser.InfoId = snowflake.GenID()
-	ls.ld.InserLogininfor(c, ls.data, loginUser)
+	ls.ld.InserLogininfor(c, loginUser)
 }
 
 func (ls *LogininforService) DeleteLogininforByIds(c *gin.Context, infoIds []int64) {
-	ls.ld.DeleteLogininforByIds(c, ls.data, infoIds)
+	ls.ld.DeleteLogininforByIds(c, infoIds)
 
 }
 
 func (ls *LogininforService) CleanLogininfor(c *gin.Context) {
-	ls.ld.CleanLogininfor(c, ls.data)
+	ls.ld.CleanLogininfor(c)
 
 }

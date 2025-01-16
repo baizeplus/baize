@@ -2,19 +2,21 @@ package monitorServiceImpl
 
 import (
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/business/monitor/monitorService"
 	"baize/app/constant/sessionStatus"
-	"baize/app/utils/cache"
-	"baize/app/utils/session/sessionCache"
+	"baize/app/datasource/cache"
+	"baize/app/middlewares/session/sessionCache"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
 )
 
 type UserOnlineService struct {
+	cache cache.Cache
 }
 
-func NewUserOnlineService() *UserOnlineService {
-	return new(UserOnlineService)
+func NewUserOnlineService(cache cache.Cache) monitorService.IUserOnlineService {
+	return &UserOnlineService{cache: cache}
 }
 
 func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context, ol *monitorModels.SysUserOnlineDQL) (list []*monitorModels.SysUserOnline, total int64) {
@@ -22,10 +24,7 @@ func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context,
 	var cursor uint64 = 0
 	keyAll := make([]string, 0, 16)
 	for {
-		keys, newCursor, err := cache.GetCache().Scan(c, cursor, sessionCache.SessionKey+":*", 10)
-		if err != nil {
-			panic(err)
-		}
+		keys, newCursor := userOnlineService.cache.Scan(c, cursor, sessionCache.SessionKey+":*", 10)
 		// 处理从Scan中返回的键值对集合
 		for _, key := range keys {
 			keyAll = append(keyAll, key)
@@ -41,7 +40,7 @@ func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context,
 	list = make([]*monitorModels.SysUserOnline, 0, len(keyAll))
 	for _, key := range keyAll {
 		sk := strings.TrimPrefix(key, sessionCache.SessionKey+":")
-		newSession := sessionCache.NewSession(sk)
+		newSession := sessionCache.NewSession(sk, userOnlineService.cache)
 		oui := new(monitorModels.SysUserOnline)
 		oui.TokenId = sk
 		oui.UserName = newSession.Get(c, sessionStatus.UserName)
@@ -63,5 +62,5 @@ func (userOnlineService *UserOnlineService) SelectUserOnlineList(c *gin.Context,
 }
 
 func (userOnlineService *UserOnlineService) ForceLogout(c *gin.Context, tokenId string) {
-	cache.GetCache().Del(c, sessionCache.SessionKey+":"+tokenId)
+	userOnlineService.cache.Del(c, sessionCache.SessionKey+":"+tokenId)
 }

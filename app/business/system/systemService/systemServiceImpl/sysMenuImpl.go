@@ -2,11 +2,10 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemDao"
-	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
 	"baize/app/constant/userConstants"
 	"baize/app/utils/baizeContext"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 
 	"baize/app/utils/snowflake"
@@ -14,15 +13,13 @@ import (
 )
 
 type MenuService struct {
-	data        *sqly.DB
 	menuDao     systemDao.IMenuDao
 	roleMenuDao systemDao.IRoleMenuDao
 	roleDao     systemDao.IRoleDao
 }
 
-func NewMenuService(data *sqly.DB, md *systemDaoImpl.SysMenuDao, rmd *systemDaoImpl.SysRoleMenuDao, rd *systemDaoImpl.SysRoleDao) *MenuService {
+func NewMenuService(md systemDao.IMenuDao, rmd systemDao.IRoleMenuDao, rd systemDao.IRoleDao) systemService.IMenuService {
 	return &MenuService{
-		data:        data,
 		menuDao:     md,
 		roleMenuDao: rmd,
 		roleDao:     rd,
@@ -31,33 +28,33 @@ func NewMenuService(data *sqly.DB, md *systemDaoImpl.SysMenuDao, rmd *systemDaoI
 
 func (menuService *MenuService) SelectMenuList(c *gin.Context, menu *systemModels.SysMenuDQL) (list []*systemModels.SysMenuVo) {
 	if baizeContext.IsAdmin(c) {
-		list = menuService.menuDao.SelectMenuList(c, menuService.data, menu)
+		list = menuService.menuDao.SelectMenuList(c, menu)
 	} else {
-		list = menuService.menuDao.SelectMenuListByUserId(c, menuService.data, menu)
+		list = menuService.menuDao.SelectMenuListByUserId(c, menu)
 	}
 	return
 }
 
 func (menuService *MenuService) SelectMenuById(c *gin.Context, menuId int64) (menu *systemModels.SysMenuVo) {
-	return menuService.menuDao.SelectMenuById(c, menuService.data, menuId)
+	return menuService.menuDao.SelectMenuById(c, menuId)
 
 }
 func (menuService *MenuService) InsertMenu(c *gin.Context, menu *systemModels.SysMenuVo) {
 	menu.MenuId = snowflake.GenID()
-	menuService.menuDao.InsertMenu(c, menuService.data, menu)
+	menuService.menuDao.InsertMenu(c, menu)
 }
 func (menuService *MenuService) UpdateMenu(c *gin.Context, menu *systemModels.SysMenuVo) {
-	menuService.menuDao.UpdateMenu(c, menuService.data, menu)
+	menuService.menuDao.UpdateMenu(c, menu)
 }
 func (menuService *MenuService) DeleteMenuById(c *gin.Context, menuId int64) {
-	menuService.menuDao.DeleteMenuById(c, menuService.data, menuId)
+	menuService.menuDao.DeleteMenuById(c, menuId)
 }
 
 func (menuService *MenuService) SelectMenuTreeByUserId(c *gin.Context, userId int64) (sysMenu []*systemModels.SysMenuVo) {
 	if baizeContext.IsAdmin(c) {
-		sysMenu = menuService.menuDao.SelectMenuTreeAll(c, menuService.data)
+		sysMenu = menuService.menuDao.SelectMenuTreeAll(c)
 	} else {
-		sysMenu = menuService.menuDao.SelectMenuTreeByUserId(c, menuService.data, userId)
+		sysMenu = menuService.menuDao.SelectMenuTreeByUserId(c, userId)
 	}
 	sysMenu = getChildPerms(sysMenu, 0)
 	return
@@ -97,7 +94,7 @@ func (menuService *MenuService) BuildMenus(c *gin.Context, sysMenus []*systemMod
 }
 
 func (menuService *MenuService) CheckMenuNameUnique(c *gin.Context, menu *systemModels.SysMenuVo) bool {
-	RoleId := menuService.menuDao.CheckMenuNameUnique(c, menuService.data, menu.MenuName, menu.ParentId)
+	RoleId := menuService.menuDao.CheckMenuNameUnique(c, menu.MenuName, menu.ParentId)
 	if RoleId == menu.MenuId || RoleId == 0 {
 		return false
 	}
@@ -105,17 +102,17 @@ func (menuService *MenuService) CheckMenuNameUnique(c *gin.Context, menu *system
 }
 
 func (menuService *MenuService) HasChildByMenuId(c *gin.Context, menuId int64) bool {
-	return menuService.menuDao.HasChildByMenuId(c, menuService.data, menuId) > 0
+	return menuService.menuDao.HasChildByMenuId(c, menuId) > 0
 }
 
 func (menuService *MenuService) CheckMenuExistRole(c *gin.Context, menuId int64) bool {
-	return menuService.roleMenuDao.CheckMenuExistRole(c, menuService.data, menuId) > 0
+	return menuService.roleMenuDao.CheckMenuExistRole(c, menuId) > 0
 }
 func (menuService *MenuService) SelectMenuListByRoleId(c *gin.Context, roleId int64) []string {
 	// TODO
 	//role := menuService.roleDao.SelectRoleById(menuService.data,roleId)
 	//return menuService.menuDao.SelectMenuListByRoleId(menuService.data,roleId, role.MenuCheckStrictly)
-	return menuService.menuDao.SelectMenuListByRoleId(c, menuService.data, roleId, false)
+	return menuService.menuDao.SelectMenuListByRoleId(c, roleId, false)
 }
 
 func getChildPerms(menu []*systemModels.SysMenuVo, parentId int64) []*systemModels.SysMenuVo {

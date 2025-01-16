@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -13,8 +13,18 @@ type Dept struct {
 	ds systemService.IDeptService
 }
 
-func NewDept(ds *systemServiceImpl.DeptService) *Dept {
+func NewDept(ds systemService.IDeptService) *Dept {
 	return &Dept{ds: ds}
+}
+
+func (dc *Dept) PrivateRoutes(router *gin.RouterGroup) {
+	systemDept := router.Group("/system/dept")
+	systemDept.GET("/list", middlewares.HasPermissions([]string{"system:dept:list", "system:user:list"}), dc.DeptList)
+	systemDept.GET("/:deptId", middlewares.HasPermission("system:dept:query"), dc.DeptGetInfo)
+	systemDept.GET("/roleDeptTreeSelect/:roleId", middlewares.HasPermission("system:dept:query"), dc.RoleDeptTreeSelect)
+	systemDept.POST("", middlewares.SetLog("部门管理", middlewares.Insert), middlewares.HasPermission("system:dept:add"), dc.DeptAdd)
+	systemDept.PUT("", middlewares.SetLog("部门管理", middlewares.Update), middlewares.HasPermission("system:dept:edit"), dc.DeptEdit)
+	systemDept.DELETE("/:deptId", middlewares.SetLog("部门管理", middlewares.Delete), middlewares.HasPermission("system:dept:remove"), dc.DeptRemove)
 }
 
 // DeptList 查询部门列表查询

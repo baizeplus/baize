@@ -3,7 +3,7 @@ package monitorController
 import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,16 @@ type Logininfor struct {
 	ls monitorService.ILogininforService
 }
 
-func NewLogininfor(ls *monitorServiceImpl.LogininforService) *Logininfor {
+func NewLogininfor(ls monitorService.ILogininforService) *Logininfor {
 	return &Logininfor{ls: ls}
+}
+
+func (lc *Logininfor) PrivateRoutes(router *gin.RouterGroup) {
+	logininfor := router.Group("/monitor/logininfor")
+	logininfor.GET("/list", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforList)
+	logininfor.GET("/export", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforExport)
+	logininfor.DELETE("/:infoIds", middlewares.SetLog("登录日志", middlewares.Delete), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforRemove)
+	logininfor.DELETE("/clean", middlewares.SetLog("登录日志", middlewares.Clear), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforClean)
 }
 
 func (lc *Logininfor) LogininforList(c *gin.Context) {

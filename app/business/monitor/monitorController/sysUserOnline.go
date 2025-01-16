@@ -3,7 +3,7 @@ package monitorController
 import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,10 +12,16 @@ type UserOnline struct {
 	uos monitorService.IUserOnlineService
 }
 
-func NewUserOnline(uos *monitorServiceImpl.UserOnlineService) *UserOnline {
+func NewUserOnline(uos monitorService.IUserOnlineService) *UserOnline {
 	return &UserOnline{
 		uos: uos,
 	}
+}
+
+func (uoc *UserOnline) PrivateRoutes(router *gin.RouterGroup) {
+	online := router.Group("/monitor/online")
+	online.GET("/list", middlewares.HasPermission("monitor:online:list"), uoc.UserOnlineList)
+	online.DELETE("/:tokenId", middlewares.SetLog("在线用户", middlewares.ForcedRetreat), middlewares.HasPermission("monitor:online:forceLogout"), uoc.ForceLogout)
 }
 
 // UserOnlineList 查询在线用户列表查询

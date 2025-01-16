@@ -1,8 +1,10 @@
 package systemServiceImpl
 
 import (
-	"baize/app/utils/IOFile"
+	"baize/app/business/system/systemService"
+	"baize/app/datasource/objectFile"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/fileUtils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"mime/multipart"
@@ -11,17 +13,20 @@ import (
 )
 
 type FileService struct {
+	of objectFile.ObjectFile
 }
 
-func NewFileService() *FileService {
-	return &FileService{}
+func NewFileService(of objectFile.ObjectFile) systemService.IFileService {
+	return &FileService{
+		of: of,
+	}
 }
 
 func (fs *FileService) UploadFileRandomName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
-	url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
+	name := fileUtils.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	url, err := fs.of.PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
 	}
@@ -44,8 +49,8 @@ func (fs *FileService) UploadFilesRandomName(c *gin.Context, files []*multipart.
 			if err != nil {
 				panic(err)
 			}
-			name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(f.Filename))
-			url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
+			name := fileUtils.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(f.Filename))
+			url, err := fs.of.PublicUploadFile(c, open, name)
 			if err != nil {
 				panic(err)
 			}
@@ -61,8 +66,8 @@ func (fs *FileService) UploadFilesRandomName(c *gin.Context, files []*multipart.
 func (fs *FileService) UploadFileOriginalName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetRandomPath(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
-	url, err := IOFile.GetConfig().PublicUploadFile(c, open, name)
+	name := fileUtils.GetRandomPath(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	url, err := fs.of.PublicUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
 	}
@@ -72,8 +77,8 @@ func (fs *FileService) UploadFileOriginalName(c *gin.Context, file *multipart.Fi
 func (fs *FileService) UploadPrivateFileOriginalName(c *gin.Context, file *multipart.FileHeader) string {
 	open, _ := file.Open()
 	defer open.Close()
-	name := IOFile.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
-	url, err := IOFile.GetConfig().PrivateUploadFile(c, open, name)
+	name := fileUtils.GetRandomName(baizeContext.GetUserId(c), filepath.Ext(file.Filename))
+	url, err := fs.of.PrivateUploadFile(c, open, name)
 	if err != nil {
 		panic(err)
 	}

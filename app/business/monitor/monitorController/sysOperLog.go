@@ -3,7 +3,7 @@ package monitorController
 import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,17 @@ type OperLog struct {
 	ls monitorService.ISysOperLogService
 }
 
-func NewOperLog(ls *monitorServiceImpl.OperLogService) *OperLog {
+func NewOperLog(ls monitorService.ISysOperLogService) *OperLog {
 	return &OperLog{ls: ls}
+}
+
+func (ol *OperLog) PrivateRoutes(router *gin.RouterGroup) {
+	operlog := router.Group("/monitor/operlog")
+	operlog.GET("/list", middlewares.HasPermission("monitor:operlog:list"), ol.OperLogList)
+	operlog.POST("/export", middlewares.HasPermission("monitor:operlog:list"), ol.OperLogExport)
+	operlog.DELETE("/:operIds", middlewares.SetLog("操作日志", middlewares.Delete), middlewares.HasPermission("monitor:operlog:remove"), ol.OperLogRemove)
+	operlog.DELETE("/clean", middlewares.SetLog("操作日志", middlewares.Clear), middlewares.HasPermission("monitor:operlog:remove"), ol.OperLogClean)
+
 }
 
 func (ol *OperLog) OperLogList(c *gin.Context) {

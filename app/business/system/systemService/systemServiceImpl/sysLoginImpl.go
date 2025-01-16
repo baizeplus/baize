@@ -2,24 +2,21 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/monitor/monitorDao"
-	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/system/systemDao"
-	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
+	"baize/app/datasource/cache"
+	"baize/app/middlewares/session"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/ipUtils"
-	"baize/app/utils/session"
 	"context"
-	"encoding/json"
 	"time"
 
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
@@ -27,7 +24,7 @@ import (
 )
 
 type LoginService struct {
-	data        *sqly.DB
+	cache       cache.Cache
 	userDao     systemDao.IUserDao
 	menuDao     systemDao.IMenuDao
 	roleDao     systemDao.IRoleDao
@@ -37,8 +34,8 @@ type LoginService struct {
 	cs          systemService.IConfigService
 }
 
-func NewLoginService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, md *systemDaoImpl.SysMenuDao, rd *systemDaoImpl.SysRoleDao, ld *monitorDaoImpl.LogininforDao, cs *ConfigService) *LoginService {
-	return &LoginService{data: data, userDao: ud, menuDao: md, roleDao: rd, loginforDao: ld, cs: cs,
+func NewLoginService(cache cache.Cache, ud systemDao.IUserDao, md systemDao.IMenuDao, rd systemDao.IRoleDao, ld monitorDao.ILogininforDao, cs systemService.IConfigService) systemService.ILoginService {
+	return &LoginService{cache: cache, userDao: ud, menuDao: md, roleDao: rd, loginforDao: ld, cs: cs,
 		driver: base64Captcha.NewDriverMath(38, 106, 0, 0, &color.RGBA{0, 0, 0, 0}, nil, []string{"wqy-microhei.ttc"}),
 		store:  base64Captcha.DefaultMemStore,
 	}
@@ -47,7 +44,7 @@ func NewLoginService(data *sqly.DB, ud *systemDaoImpl.SysUserDao, md *systemDaoI
 func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User, l *monitorModels.Logininfor) string {
 	l.Status = 0
 	l.Msg = "登录成功"
-	manager := session.NewManger()
+	manager := session.NewManger(loginService.cache)
 	session, _ := manager.InitSession(c, user.UserId)
 	session.Set(c, sessionStatus.Os, l.Os)
 	session.Set(c, sessionStatus.Browser, l.Browser)
@@ -60,7 +57,7 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 			}
 		}()
 		l.LoginLocation = ipUtils.GetRealAddressByIP(l.IpAddr)
-		loginService.loginforDao.InserLogininfor(context.Background(), loginService.data, l)
+		loginService.loginforDao.InserLogininfor(context.Background(), l)
 	}()
 	return session.Id()
 }
@@ -75,7 +72,7 @@ func (loginService *LoginService) Register(c *gin.Context, user *systemModels.Lo
 	u.Status = "0"
 	u.DeptId = 100
 	u.SetCreateBy(u.UserId)
-	loginService.userDao.InsertUser(c, loginService.data, u)
+	loginService.userDao.InsertUser(c, u)
 }
 
 func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *monitorModels.Logininfor) {
@@ -86,7 +83,7 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 			}
 		}()
 		loginUser.InfoId = snowflake.GenID()
-		loginService.loginforDao.InserLogininfor(c, loginService.data, loginUser)
+		loginService.loginforDao.InserLogininfor(c, loginUser)
 	}()
 
 }
@@ -94,9 +91,9 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 func (loginService *LoginService) getPermission(c *gin.Context, userId int64) []string {
 	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
-		perms = loginService.menuDao.SelectMenuPermsAll(c, loginService.data)
+		perms = loginService.menuDao.SelectMenuPermsAll(c)
 	} else {
-		perms = loginService.menuDao.SelectMenuPermsByUserId(c, loginService.data, userId)
+		perms = loginService.menuDao.SelectMenuPermsByUserId(c, userId)
 	}
 	return perms
 }
@@ -129,28 +126,25 @@ func (loginService *LoginService) ForceLogout(c *gin.Context, token string) {
 	panic("等待补充")
 }
 
-func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (rolePerms []string, loginRoles []int64) {
+func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (loginRoles []int64) {
 	loginRoles = make([]int64, 0, len(roles))
-	rolePerms = make([]string, 0, len(roles))
 	for _, role := range roles {
-		rolePerms = append(rolePerms, role.RoleKey)
 		loginRoles = append(loginRoles, role.RoleId)
 	}
 	return
 }
 func (loginService *LoginService) GetInfo(c *gin.Context) *systemModels.GetInfo {
 	userId := baizeContext.GetUserId(c)
-	roles := loginService.roleDao.SelectBasicRolesByUserId(c, loginService.data, userId)
-	byRoles, loginRoles := loginService.RolePermissionByRoles(roles)
-	rb, _ := json.Marshal(byRoles)
+	roles := loginService.roleDao.SelectBasicRolesByUserId(c, userId)
+	loginRoles := loginService.RolePermissionByRoles(roles)
+
 	session := baizeContext.GetSession(c)
 	session.Set(c, sessionStatus.Role, loginRoles)
-	session.Set(c, sessionStatus.RolePerms, rb)
 	permission := loginService.getPermission(c, userId)
 	session.Set(c, sessionStatus.Permission, permission)
 	session.Set(c, sessionStatus.IpAddr, c.ClientIP())
 	session.Set(c, sessionStatus.LoginTime, time.Now().Unix())
-	user := loginService.userDao.SelectUserById(c, loginService.data, userId)
+	user := loginService.userDao.SelectUserById(c, userId)
 	session.Set(c, sessionStatus.UserName, user.UserName)
 	session.Set(c, sessionStatus.Avatar, user.Avatar)
 	session.Set(c, sessionStatus.DeptId, user.DeptId)

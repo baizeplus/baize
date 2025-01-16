@@ -4,7 +4,7 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
-	"baize/app/utils/session/sessionCache"
+	"baize/app/middlewares/session/sessionCache"
 	"baize/app/utils/snowflake"
 	"encoding/json"
 	"fmt"

@@ -4,24 +4,25 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
 	"baize/app/utils/excel"
+	"github.com/baizeplus/sqly"
 
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
 type RoleService struct {
-	data        *sqly.DB
+	ms          sqly.SqlyContext
 	roleDao     systemDao.IRoleDao
 	roleMenuDao systemDao.IRoleMenuDao
 	userRoleDao systemDao.IUserRoleDao
 }
 
-func NewRoleService(data *sqly.DB, rd *systemDaoImpl.SysRoleDao, rmd *systemDaoImpl.SysRoleMenuDao, urd *systemDaoImpl.SysUserRoleDao) *RoleService {
+func NewRoleService(ms sqly.SqlyContext, rd systemDao.IRoleDao, rmd systemDao.IRoleMenuDao, urd systemDao.IUserRoleDao) systemService.IRoleService {
 	return &RoleService{
-		data:        data,
+		ms:          ms,
 		roleDao:     rd,
 		roleMenuDao: rmd,
 		userRoleDao: urd,
@@ -29,12 +30,12 @@ func NewRoleService(data *sqly.DB, rd *systemDaoImpl.SysRoleDao, rmd *systemDaoI
 }
 
 func (roleService *RoleService) SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64) {
-	return roleService.roleDao.SelectRoleList(c, roleService.data, role)
+	return roleService.roleDao.SelectRoleList(c, role)
 
 }
 func (roleService *RoleService) RoleExport(c *gin.Context, role *systemModels.SysRoleDQL) (data []byte) {
 
-	list := roleService.roleDao.SelectRoleAll(c, roleService.data, role)
+	list := roleService.roleDao.SelectRoleAll(c, role)
 	toExcel, err := excel.SliceToExcel(list)
 	if err != nil {
 		panic(err)
@@ -47,25 +48,24 @@ func (roleService *RoleService) RoleExport(c *gin.Context, role *systemModels.Sy
 }
 
 func (roleService *RoleService) SelectRoleById(c *gin.Context, roseId int64) (role *systemModels.SysRoleVo) {
-	return roleService.roleDao.SelectRoleById(c, roleService.data, roseId)
+	return roleService.roleDao.SelectRoleById(c, roseId)
 
 }
 
 func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML) {
 	sysRole.RoleId = snowflake.GenID()
-	tx, err := roleService.data.Beginx()
-	if err != nil {
-		panic(err)
-	}
+	tx := roleService.ms.MustBeginTx(c, nil)
+
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
 			panic(p)
 		} else {
-			err = tx.Commit()
+			tx.Commit()
 		}
 	}()
-	roleService.roleDao.InsertRole(c, tx, sysRole)
+	rd := systemDaoImpl.NewSysRoleDao(tx)
+	rd.InsertRole(c, sysRole)
 	menuIds := sysRole.MenuIds
 	l := len(menuIds)
 	if l != 0 {
@@ -74,27 +74,30 @@ func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels
 			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
 			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
 		}
-		roleService.insertRolePermission(c, tx, list)
+		if len(list) != 0 {
+			md := systemDaoImpl.NewSysRoleMenuDao(tx)
+			md.BatchRoleMenu(c, list)
+		}
 	}
 
 	return
 }
 
 func (roleService *RoleService) UpdateRole(c *gin.Context, sysRole *systemModels.SysRoleDML) {
-	tx, err := roleService.data.Beginx()
-	if err != nil {
-		panic(err)
-	}
+	tx := roleService.ms.MustBeginTx(c, nil)
+
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
 			panic(p)
 		} else {
-			err = tx.Commit()
+			tx.Commit()
 		}
 	}()
-	roleService.roleDao.UpdateRole(c, tx, sysRole)
-	roleService.roleMenuDao.DeleteRoleMenuByRoleId(c, tx, sysRole.RoleId)
+	rd := systemDaoImpl.NewSysRoleDao(tx)
+	rd.UpdateRole(c, sysRole)
+	md := systemDaoImpl.NewSysRoleMenuDao(tx)
+	md.DeleteRoleMenuByRoleId(c, sysRole.RoleId)
 	menuIds := sysRole.MenuIds
 	l := len(menuIds)
 	if l != 0 {
@@ -103,38 +106,39 @@ func (roleService *RoleService) UpdateRole(c *gin.Context, sysRole *systemModels
 			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
 			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
 		}
-		roleService.insertRolePermission(c, tx, list)
+		if len(list) != 0 {
+			md.BatchRoleMenu(c, list)
+		}
 	}
 	return
 }
 
 func (roleService *RoleService) UpdateRoleStatus(c *gin.Context, sysRole *systemModels.SysRoleDML) {
-	roleService.roleDao.UpdateRole(c, roleService.data, sysRole)
+	roleService.roleDao.UpdateRole(c, sysRole)
 	return
 }
 
 func (roleService *RoleService) DeleteRoleByIds(c *gin.Context, ids []int64) {
-	tx, err := roleService.data.Beginx()
-	if err != nil {
-		panic(err)
-	}
+	tx := roleService.ms.MustBeginTx(c, nil)
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
 			panic(p)
 		} else {
-			err = tx.Commit()
+			tx.Commit()
 		}
 	}()
-	roleService.roleMenuDao.DeleteRoleMenu(c, tx, ids)
-	roleService.roleDao.DeleteRoleByIds(c, tx, ids)
+	rd := systemDaoImpl.NewSysRoleDao(tx)
+	md := systemDaoImpl.NewSysRoleMenuDao(tx)
+	md.DeleteRoleMenu(c, ids)
+	rd.DeleteRoleByIds(c, ids)
 }
 func (roleService *RoleService) CountUserRoleByRoleId(c *gin.Context, ids []int64) bool {
-	return roleService.userRoleDao.CountUserRoleByRoleId(c, roleService.data, ids) > 0
+	return roleService.userRoleDao.CountUserRoleByRoleId(c, ids) > 0
 }
 
 func (roleService *RoleService) SelectBasicRolesByUserId(c *gin.Context, userId int64) (roles []*systemModels.SysRole) {
-	return roleService.roleDao.SelectBasicRolesByUserId(c, roleService.data, userId)
+	return roleService.roleDao.SelectBasicRolesByUserId(c, userId)
 
 }
 
@@ -148,15 +152,8 @@ func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*s
 	return
 }
 
-func (roleService *RoleService) insertRolePermission(c *gin.Context, db sqly.SqlyContext, list []*systemModels.SysRoleMenu) {
-	if len(list) != 0 {
-		roleService.roleMenuDao.BatchRoleMenu(c, db, list)
-	}
-	return
-}
-
 func (roleService *RoleService) CheckRoleNameUnique(c *gin.Context, id int64, roleName string) bool {
-	RoleId := roleService.roleDao.CheckRoleNameUnique(c, roleService.data, roleName)
+	RoleId := roleService.roleDao.CheckRoleNameUnique(c, roleName)
 	if RoleId == id || RoleId == 0 {
 		return false
 	}
@@ -164,7 +161,7 @@ func (roleService *RoleService) CheckRoleNameUnique(c *gin.Context, id int64, ro
 }
 
 func (roleService *RoleService) CheckRoleKeyUnique(c *gin.Context, id int64, roleKey string) bool {
-	RoleId := roleService.roleDao.CheckRoleKeyUnique(c, roleService.data, roleKey)
+	RoleId := roleService.roleDao.CheckRoleKeyUnique(c, roleKey)
 	if RoleId == id || RoleId == 0 {
 		return false
 	}
@@ -172,11 +169,11 @@ func (roleService *RoleService) CheckRoleKeyUnique(c *gin.Context, id int64, rol
 }
 
 func (roleService *RoleService) SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
-	return roleService.roleDao.SelectAllocatedList(c, roleService.data, user)
+	return roleService.roleDao.SelectAllocatedList(c, user)
 }
 
 func (roleService *RoleService) SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64) {
-	return roleService.roleDao.SelectUnallocatedList(c, roleService.data, user)
+	return roleService.roleDao.SelectUnallocatedList(c, user)
 
 }
 
@@ -187,12 +184,12 @@ func (roleService *RoleService) InsertAuthUsers(c *gin.Context, roleId int64, us
 			role := systemModels.NewSysUserRole(userId, roleId)
 			list = append(list, role)
 		}
-		roleService.userRoleDao.BatchUserRole(c, roleService.data, list)
+		roleService.userRoleDao.BatchUserRole(c, list)
 	}
 }
 func (roleService *RoleService) DeleteAuthUsers(c *gin.Context, roleId int64, userIds []int64) {
-	roleService.userRoleDao.DeleteUserRoleInfos(c, roleService.data, roleId, userIds)
+	roleService.userRoleDao.DeleteUserRoleInfos(c, roleId, userIds)
 }
 func (roleService *RoleService) DeleteAuthUserRole(c *gin.Context, userRole *systemModels.SysUserRole) {
-	roleService.userRoleDao.DeleteUserRoleInfo(c, roleService.data, userRole)
+	roleService.userRoleDao.DeleteUserRoleInfo(c, userRole)
 }

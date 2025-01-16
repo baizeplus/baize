@@ -2,32 +2,29 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemDao"
-	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 )
 
 type PostService struct {
-	data    *sqly.DB
 	postDao systemDao.IPostDao
 }
 
-func NewPostService(data *sqly.DB, pd *systemDaoImpl.SysPostDao) *PostService {
+func NewPostService(pd systemDao.IPostDao) systemService.IPostService {
 	return &PostService{
-		data:    data,
 		postDao: pd,
 	}
 }
 
 func (postService *PostService) SelectPostList(c *gin.Context, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, total int64) {
-	return postService.postDao.SelectPostList(c, postService.data, post)
+	return postService.postDao.SelectPostList(c, post)
 
 }
 func (postService *PostService) PostExport(c *gin.Context, post *systemModels.SysPostDQL) (data []byte) {
-	list := postService.postDao.SelectPostListAll(c, postService.data, post)
+	list := postService.postDao.SelectPostListAll(c, post)
 	toExcel, err := excel.SliceToExcel(list)
 	if err != nil {
 		panic(err)
@@ -40,19 +37,19 @@ func (postService *PostService) PostExport(c *gin.Context, post *systemModels.Sy
 }
 
 func (postService *PostService) SelectPostById(c *gin.Context, postId int64) (Post *systemModels.SysPostVo) {
-	return postService.postDao.SelectPostById(c, postService.data, postId)
+	return postService.postDao.SelectPostById(c, postId)
 
 }
 
 func (postService *PostService) InsertPost(c *gin.Context, post *systemModels.SysPostVo) {
 	post.PostId = snowflake.GenID()
-	postService.postDao.InsertPost(c, postService.data, post)
+	postService.postDao.InsertPost(c, post)
 }
 
 func (postService *PostService) UpdatePost(c *gin.Context, post *systemModels.SysPostVo) {
-	postService.postDao.UpdatePost(c, postService.data, post)
+	postService.postDao.UpdatePost(c, post)
 }
 func (postService *PostService) DeletePostByIds(c *gin.Context, postId []int64) {
-	postService.postDao.DeletePostByIds(c, postService.data, postId)
+	postService.postDao.DeletePostByIds(c, postId)
 	return
 }

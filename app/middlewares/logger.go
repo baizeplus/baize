@@ -2,11 +2,9 @@ package middlewares
 
 import (
 	"baize/app/business/monitor/monitorModels"
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
 	"bytes"
-	"context"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -74,7 +72,8 @@ func SetLog(title string, businessTy BusinessType) func(c *gin.Context) {
 					zap.L().Error("操作日志错误", zap.Any("error", err))
 				}
 			}()
-			monitorServiceImpl.OperLog.InsertOperLog(context.Background(), ol)
+			//monitorServiceImpl.OperLog.InsertOperLog(context.Background(), ol)
+			//Todo
 		}()
 	}
 }

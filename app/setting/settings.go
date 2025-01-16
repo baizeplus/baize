@@ -2,6 +2,7 @@ package setting
 
 import (
 	"fmt"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -11,14 +12,11 @@ type AppConfig struct {
 	Name         string `mapstructure:"name"`
 	Mode         string `mapstructure:"mode"`
 	Version      string `mapstructure:"version"`
-	StartTime    string `mapstructure:"start_time"`
 	Port         int    `mapstructure:"port"`
 	Host         string `mapstructure:"host"`
 	Cluster      bool   `mapstructure:"cluster"`
 	*TokenConfig `mapstructure:"token"`
 	*LogConfig   `mapstructure:"log"`
-	*Datasource  `mapstructure:"datasource"`
-	*UploadFile  `mapstructure:"upload_file"`
 }
 
 type TokenConfig struct {
@@ -35,22 +33,11 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-type Datasource struct {
-	Mysql *Mysql `mapstructure:"mysql"`
-}
-type Mysql struct {
-	Host         string `mapstructure:"host"`
-	User         string `mapstructure:"user"`
-	Password     string `mapstructure:"password"`
-	DB           string `mapstructure:"dbname"`
-	Port         int    `mapstructure:"port"`
-	MaxOpenConns int    `mapstructure:"max_open_conns"`
-	MaxIdleConns int    `mapstructure:"max_idle_conns"`
-}
-
 func init() {
-
-	viper.SetConfigFile("./config/config.yaml")
+	// go run /app/. --config=config/config.yaml
+	path := pflag.String("config", "./config/config.yaml", "配置文件路径")
+	pflag.Parse()
+	viper.SetConfigFile(*path)
 
 	err := viper.ReadInConfig() // 读取配置信息
 	if err != nil {
@@ -65,9 +52,7 @@ func init() {
 		fmt.Printf("viper.Unmarshal failed, err:%v\n", err)
 		panic(err)
 	}
-
 	if Conf.Cluster && viper.GetString("cache.type") != "redis" {
-
 		panic("cluster mode must use redis")
 
 	}

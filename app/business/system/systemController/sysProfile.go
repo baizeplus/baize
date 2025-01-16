@@ -3,7 +3,6 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +11,15 @@ type Profile struct {
 	us systemService.IUserService
 }
 
-func NewProfile(us *systemServiceImpl.UserService) *Profile {
+func NewProfile(us systemService.IUserService) *Profile {
 	return &Profile{us: us}
+}
+func (pc *Profile) PrivateRoutes(router *gin.RouterGroup) {
+	systemProfile := router.Group("/system/user/profile")
+	systemProfile.GET("", pc.Profile)
+	systemProfile.PUT("", pc.ProfileUpdateProfile)
+	systemProfile.PUT("/updatePwd", pc.ProfileUpdatePwd)
+	systemProfile.POST("/avatar", pc.ProfileAvatar)
 }
 
 // Profile 查看个人资料

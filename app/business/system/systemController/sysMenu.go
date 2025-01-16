@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -13,8 +13,19 @@ type Menu struct {
 	ms systemService.IMenuService
 }
 
-func NewMenu(ms *systemServiceImpl.MenuService) *Menu {
+func NewMenu(ms systemService.IMenuService) *Menu {
 	return &Menu{ms: ms}
+}
+
+func (mc *Menu) PrivateRoutes(router *gin.RouterGroup) {
+	rm := router.Group("/system/menu")
+	rm.GET("/list", middlewares.HasPermission("system:menu:list"), mc.MenuList)
+	rm.GET("/:menuId", middlewares.HasPermission("system:menu:query"), mc.MenuGetInfo)
+	rm.GET("/treeSelect", mc.MenuTreeSelect)
+	rm.POST("", middlewares.SetLog("菜单管理", middlewares.Insert), middlewares.HasPermission("system:menu:add"), mc.MenuAdd)
+	rm.PUT("", middlewares.SetLog("菜单管理", middlewares.Update), middlewares.HasPermission("system:menu:edit"), mc.MenuEdit)
+	rm.DELETE("/:menuId", middlewares.SetLog("菜单管理", middlewares.Delete), middlewares.HasPermission("system:menu:remove"), mc.MenuRemove)
+	rm.GET("/roleMenuTreeSelect/:roleId", mc.RoleMenuTreeSelect)
 }
 
 // MenuList 查询菜单列表查询

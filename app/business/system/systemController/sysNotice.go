@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,22 @@ type Notice struct {
 	ns systemService.ISysNoticeService
 }
 
-func NewNotice(ns *systemServiceImpl.NoticeService) *Notice {
+func NewNotice(ns systemService.ISysNoticeService) *Notice {
 	return &Notice{ns: ns}
+}
+func (nc *Notice) PrivateRoutes(router *gin.RouterGroup) {
+	systemNoticeData := router.Group("/system/notice")
+	systemNoticeData.GET("/list", middlewares.HasPermission("system:notice:list"), nc.NoticeList)
+	systemNoticeData.GET("/:id", middlewares.HasPermission("system:notice:query"), nc.NoticeGetInfo)
+	systemNoticeData.POST("", middlewares.HasPermission("system:notice:add"), nc.NoticeAdd)
+	systemConsumptionData := router.Group("/system/consumption")
+	systemConsumptionData.GET("/newMessage", nc.NewMessage)
+	systemConsumptionData.GET("/:id", nc.UserNoticeGetInfo)
+	systemConsumptionData.GET("/userNoticeList", nc.UserNoticeList)
+	systemConsumptionData.PUT("/noticeRead/:id", nc.NoticeRead)
+	systemConsumptionData.PUT("/noticeReadAll", nc.NoticeReadAll)
+	systemConsumptionData.DELETE("/noticeDelete/:ids", nc.NoticeDelete)
+
 }
 
 // NoticeList 消息通知列表

@@ -1,7 +1,7 @@
 package snowflake
 
 import (
-	"baize/app/setting"
+	"github.com/spf13/viper"
 	"time"
 
 	sf "github.com/bwmarrin/snowflake"
@@ -12,7 +12,7 @@ var sfNode *sf.Node
 func init() {
 	var id int64 = 1
 	var st time.Time
-	st, err := time.Parse("2006-01-02", setting.Conf.StartTime)
+	st, err := time.Parse("2006-01-02", viper.GetString("start_time"))
 	if err != nil {
 		panic(err)
 	}

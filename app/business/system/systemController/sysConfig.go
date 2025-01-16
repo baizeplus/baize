@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,18 @@ type Config struct {
 	cs systemService.IConfigService
 }
 
-func NewConfig(cs *systemServiceImpl.ConfigService) *Config {
+func NewConfig(cs systemService.IConfigService) *Config {
 	return &Config{cs: cs}
+}
+
+func (cc *Config) PrivateRoutes(router *gin.RouterGroup) {
+	systemConfig := router.Group("/system/config")
+	systemConfig.GET("/list", middlewares.HasPermission("system:config:list"), cc.ConfigList)
+	systemConfig.POST("/export", middlewares.HasPermission("system:config:export"), cc.ConfigExport)
+	systemConfig.GET("/:configId", middlewares.HasPermission("system:config:query"), cc.ConfigGetInfo)
+	systemConfig.POST("", middlewares.SetLog("配置管理", middlewares.Insert), middlewares.HasPermission("system:config:add"), cc.ConfigAdd)
+	systemConfig.PUT("", middlewares.SetLog("配置管理", middlewares.Update), middlewares.HasPermission("system:config:edit"), cc.ConfigEdit)
+	systemConfig.DELETE("/:configId", middlewares.SetLog("配置管理", middlewares.Delete), middlewares.HasPermission("system:config:remove"), cc.ConfigRemove)
 }
 
 // ConfigList 查询配置列表查询

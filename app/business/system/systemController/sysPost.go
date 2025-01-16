@@ -3,7 +3,7 @@ package systemController
 import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/business/system/systemService/systemServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,18 @@ type Post struct {
 	ps systemService.IPostService
 }
 
-func NewPost(ps *systemServiceImpl.PostService) *Post {
+func NewPost(ps systemService.IPostService) *Post {
 	return &Post{ps: ps}
+}
+func (pc *Post) PrivateRoutes(router *gin.RouterGroup) {
+	systemPost := router.Group("/system/post")
+	systemPost.GET("/list", middlewares.HasPermission("system:post:list"), pc.PostList)
+	systemPost.POST("/export", middlewares.HasPermission("system:post:export"), pc.PostExport)
+	systemPost.GET("/:postId", middlewares.HasPermission("system:post:query"), pc.PostGetInfo)
+	systemPost.POST("", middlewares.SetLog("岗位管理", middlewares.Insert), middlewares.HasPermission("system:post:add"), pc.PostAdd)
+	systemPost.PUT("", middlewares.SetLog("岗位管理", middlewares.Update), middlewares.HasPermission("system:post:edit"), pc.PostEdit)
+	systemPost.DELETE("/:postIds", middlewares.SetLog("岗位管理", middlewares.Delete), middlewares.HasPermission("system:post:remove"), pc.PostRemove)
+
 }
 
 // PostList 查询岗位列表查询

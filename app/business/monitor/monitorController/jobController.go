@@ -3,7 +3,7 @@ package monitorController
 import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
+	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +12,22 @@ type Job struct {
 	ls monitorService.IJobService
 }
 
-func NewJob(ls *monitorServiceImpl.JobService) *Job {
+func NewJob(ls monitorService.IJobService) *Job {
 	return &Job{ls: ls}
+}
+func (j *Job) PrivateRoutes(router *gin.RouterGroup) {
+	job := router.Group("/monitor/job")
+	job.GET("/list", middlewares.HasPermission("monitor:job:list"), j.JobList)
+	job.GET("/:jobId", middlewares.HasPermission("monitor:job:query"), j.JobGetInfo)
+	job.POST("", middlewares.HasPermission("monitor:job:add"), j.JobAdd)
+	job.PUT("", middlewares.HasPermission("monitor:job:edit"), j.JobEdit)
+	job.PUT("/changeStatus", middlewares.HasPermission("monitor:job:changeStatus"), j.JobChangeStatus)
+	job.PUT("/run", middlewares.HasPermission("monitor:job:changeStatus"), j.JobRun)
+	job.DELETE("/:jobIds", middlewares.HasPermission("monitor:job:remove"), j.JobRemove)
+	job.GET("/funList", middlewares.HasPermission("monitor:job:list"), j.FunList)
+	job.GET("/log/list", j.JobLogList)
+	job.GET("/log/:logId", j.JobLogGetInfo)
+	job.GET("/jobIdAndName", j.JobIdAndNameAll)
 }
 
 // JobList 查询定时任务列表

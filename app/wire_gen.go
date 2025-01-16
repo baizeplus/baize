@@ -16,58 +16,61 @@ import (
 	"baize/app/business/tool/toolController"
 	"baize/app/business/tool/toolDao/toolDaoImpl"
 	"baize/app/business/tool/toolService/toolServiceImpl"
-	"baize/app/datasource"
+	"baize/app/datasource/cache"
+	"baize/app/datasource/mysql"
+	"baize/app/datasource/objectFile"
 	"baize/app/routes"
-	"baize/app/setting"
 	"github.com/gin-gonic/gin"
 )
 
 // Injectors from wire.go:
 
-func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error) {
-	db, cleanup, err := datasource.NewData(settingDatasource)
+func wireApp() (*gin.Engine, func(), error) {
+	cacheCache := cache.NewCache()
+	sqlyContext, cleanup, err := mysql.NewData()
 	if err != nil {
 		return nil, nil, err
 	}
-	sysUserDao := systemDaoImpl.NewSysUserDao()
-	sysMenuDao := systemDaoImpl.NewSysMenuDao()
-	sysRoleDao := systemDaoImpl.NewSysRoleDao()
-	logininforDao := monitorDaoImpl.NewLogininforDao()
-	sysConfigDao := systemDaoImpl.NewSysConfigDao()
-	configService := systemServiceImpl.NewConfigService(db, sysConfigDao)
-	loginService := systemServiceImpl.NewLoginService(db, sysUserDao, sysMenuDao, sysRoleDao, logininforDao, configService)
-	sysUserPostDao := systemDaoImpl.NewSysUserPostDao()
-	sysUserRoleDao := systemDaoImpl.NewSysUserRoleDao()
-	sysDeptDao := systemDaoImpl.NewSysDeptDao()
-	sysPostDao := systemDaoImpl.NewSysPostDao()
-	sysUserDeptScopeDao := systemDaoImpl.NewSysUserDeptScopeDao()
-	userService := systemServiceImpl.NewUserService(db, sysUserDao, sysUserPostDao, sysUserRoleDao, sysDeptDao, sysRoleDao, sysPostDao, sysUserDeptScopeDao, configService)
-	sysRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao()
-	menuService := systemServiceImpl.NewMenuService(db, sysMenuDao, sysRoleMenuDao, sysRoleDao)
-	login := systemController.NewLogin(loginService, userService, menuService, configService)
-	postService := systemServiceImpl.NewPostService(db, sysPostDao)
-	roleService := systemServiceImpl.NewRoleService(db, sysRoleDao, sysRoleMenuDao, sysUserRoleDao)
-	user := systemController.NewUser(userService, postService, roleService)
-	deptService := systemServiceImpl.NewDeptService(db, sysDeptDao, sysRoleDao)
-	dept := systemController.NewDept(deptService)
-	sysDictTypeDao := systemDaoImpl.NewSysDictTypeDao()
-	dictTypeService := systemServiceImpl.NewDictTypeService(db, sysDictTypeDao)
-	sysDictDataDao := systemDaoImpl.NewSysDictDataDao()
-	dictDataService := systemServiceImpl.NewDictDataService(db, sysDictDataDao)
-	dictType := systemController.NewDictType(dictTypeService, dictDataService)
-	dictData := systemController.NewDictData(dictDataService)
-	menu := systemController.NewMenu(menuService)
-	role := systemController.NewRole(roleService)
-	post := systemController.NewPost(postService)
-	profile := systemController.NewProfile(userService)
-	config := systemController.NewConfig(configService)
-	fileService := systemServiceImpl.NewFileService()
-	file := systemController.NewFile(fileService)
-	sseService := systemServiceImpl.NewSseService()
-	sse := systemController.NewSse(sseService)
-	sysNoticeDao := systemDaoImpl.NewSysNoticeDao()
-	noticeService := systemServiceImpl.NewNoticeService(db, sysNoticeDao, sysUserDao, sseService)
-	notice := systemController.NewNotice(noticeService)
+	iUserDao := systemDaoImpl.NewSysUserDao(sqlyContext)
+	iMenuDao := systemDaoImpl.NewSysMenuDao(sqlyContext)
+	iRoleDao := systemDaoImpl.NewSysRoleDao(sqlyContext)
+	iLogininforDao := monitorDaoImpl.NewLogininforDao(sqlyContext)
+	iConfigDao := systemDaoImpl.NewSysConfigDao(sqlyContext)
+	iConfigService := systemServiceImpl.NewConfigService(iConfigDao, cacheCache)
+	iLoginService := systemServiceImpl.NewLoginService(cacheCache, iUserDao, iMenuDao, iRoleDao, iLogininforDao, iConfigService)
+	iUserPostDao := systemDaoImpl.NewSysUserPostDao(sqlyContext)
+	iUserRoleDao := systemDaoImpl.NewSysUserRoleDao(sqlyContext)
+	objectFileObjectFile := objectFile.NewConfig()
+	iDeptDao := systemDaoImpl.NewSysDeptDao(sqlyContext)
+	iPostDao := systemDaoImpl.NewSysPostDao(sqlyContext)
+	iUserDeptScopeDao := systemDaoImpl.NewSysUserDeptScopeDao(sqlyContext)
+	iUserService := systemServiceImpl.NewUserService(sqlyContext, iUserDao, iUserPostDao, iUserRoleDao, objectFileObjectFile, iDeptDao, iRoleDao, iPostDao, iUserDeptScopeDao, iConfigService)
+	iRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao(sqlyContext)
+	iMenuService := systemServiceImpl.NewMenuService(iMenuDao, iRoleMenuDao, iRoleDao)
+	login := systemController.NewLogin(iLoginService, iUserService, iMenuService, iConfigService)
+	iPostService := systemServiceImpl.NewPostService(iPostDao)
+	iRoleService := systemServiceImpl.NewRoleService(sqlyContext, iRoleDao, iRoleMenuDao, iUserRoleDao)
+	user := systemController.NewUser(iUserService, iPostService, iRoleService)
+	iDeptService := systemServiceImpl.NewDeptService(iDeptDao, iRoleDao)
+	dept := systemController.NewDept(iDeptService)
+	iDictTypeDao := systemDaoImpl.NewSysDictTypeDao(sqlyContext)
+	iDictTypeService := systemServiceImpl.NewDictTypeService(iDictTypeDao, cacheCache)
+	iDictDataDao := systemDaoImpl.NewSysDictDataDao(sqlyContext)
+	iDictDataService := systemServiceImpl.NewDictDataService(iDictDataDao, cacheCache)
+	dictType := systemController.NewDictType(iDictTypeService, iDictDataService)
+	dictData := systemController.NewDictData(iDictDataService)
+	menu := systemController.NewMenu(iMenuService)
+	role := systemController.NewRole(iRoleService)
+	post := systemController.NewPost(iPostService)
+	profile := systemController.NewProfile(iUserService)
+	config := systemController.NewConfig(iConfigService)
+	iFileService := systemServiceImpl.NewFileService(objectFileObjectFile)
+	file := systemController.NewFile(iFileService)
+	iSseService := systemServiceImpl.NewSseService(cacheCache)
+	sse := systemController.NewSse(iSseService)
+	iSysNoticeDao := systemDaoImpl.NewSysNoticeDao(sqlyContext)
+	iSysNoticeService := systemServiceImpl.NewNoticeService(iSysNoticeDao, iUserDao, iSseService)
+	notice := systemController.NewNotice(iSysNoticeService)
 	system := &systemController.System{
 		Login:    login,
 		User:     user,
@@ -84,16 +87,16 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 		Notice:   notice,
 	}
 	infoServer := monitorController.NewInfoServer()
-	userOnlineService := monitorServiceImpl.NewUserOnlineService()
-	userOnline := monitorController.NewUserOnline(userOnlineService)
-	logininforService := monitorServiceImpl.NewLogininforService(db, logininforDao)
-	logininfor := monitorController.NewLogininfor(logininforService)
-	operLogDao := monitorDaoImpl.NewOperLog()
-	operLogService := monitorServiceImpl.NewOperLog(db, operLogDao)
-	operLog := monitorController.NewOperLog(operLogService)
-	jobDao := monitorDaoImpl.NewJobDao()
-	jobService := monitorServiceImpl.NewJobService(db, jobDao)
-	job := monitorController.NewJob(jobService)
+	iUserOnlineService := monitorServiceImpl.NewUserOnlineService(cacheCache)
+	userOnline := monitorController.NewUserOnline(iUserOnlineService)
+	iLogininforService := monitorServiceImpl.NewLogininforService(iLogininforDao)
+	logininfor := monitorController.NewLogininfor(iLogininforService)
+	iOperLog := monitorDaoImpl.NewOperLog(sqlyContext)
+	iSysOperLogService := monitorServiceImpl.NewOperLog(iOperLog)
+	operLog := monitorController.NewOperLog(iSysOperLogService)
+	iJobDao := monitorDaoImpl.NewJobDao(sqlyContext)
+	iJobService := monitorServiceImpl.NewJobService(cacheCache, iJobDao)
+	job := monitorController.NewJob(iJobService)
 	monitor := &monitorController.Monitor{
 		Server:     infoServer,
 		UserOnline: userOnline,
@@ -101,14 +104,14 @@ func wireApp(settingDatasource *setting.Datasource) (*gin.Engine, func(), error)
 		Oper:       operLog,
 		Job:        job,
 	}
-	genTableColumnDao := toolDaoImpl.NewGenTableColumnDao()
-	genTableDao := toolDaoImpl.GetGenTableDao()
-	genTabletService := toolServiceImpl.NewGenTabletService(db, genTableColumnDao, genTableDao)
-	genTable := toolController.NewGenTable(genTabletService)
+	iGenTableColumn := toolDaoImpl.NewGenTableColumnDao(sqlyContext)
+	iGenTable := toolDaoImpl.GetGenTableDao(sqlyContext)
+	iGenTableService := toolServiceImpl.NewGenTabletService(iGenTableColumn, iGenTable)
+	genTable := toolController.NewGenTable(iGenTableService)
 	tool := &toolController.Tool{
 		GenTable: genTable,
 	}
-	engine := routes.NewGinEngine(system, monitor, tool)
+	engine := routes.NewGinEngine(cacheCache, system, monitor, tool)
 	return engine, func() {
 		cleanup()
 	}, nil

@@ -1,6 +1,7 @@
 package systemDaoImpl
 
 import (
+	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
 	"database/sql"
@@ -10,52 +11,53 @@ import (
 	"github.com/baizeplus/sqly"
 )
 
-type SysUserDao struct {
+type sysUserDao struct {
+	ms sqly.SqlyContext
 }
 
-func NewSysUserDao() *SysUserDao {
-	return &SysUserDao{}
+func NewSysUserDao(ms sqly.SqlyContext) systemDao.IUserDao {
+	return &sysUserDao{ms: ms}
 }
 
-func (userDao *SysUserDao) SelectUserNameByUserName(ctx context.Context, db sqly.SqlyContext, userName []string) []string {
+func (userDao *sysUserDao) SelectUserNameByUserName(ctx context.Context, userName []string) []string {
 	query, i, err := sqly.In("select user_name from sys_user where user_name in(?)", userName)
 	if err != nil {
 		panic(err)
 	}
 	list := make([]string, 0)
-	err = db.SelectContext(ctx, &list, query, i...)
+	err = userDao.ms.SelectContext(ctx, &list, query, i...)
 	if err != nil {
 		panic(err)
 	}
 	return list
 }
-func (userDao *SysUserDao) CheckUserNameUnique(ctx context.Context, db sqly.SqlyContext, userName string) int {
+func (userDao *sysUserDao) CheckUserNameUnique(ctx context.Context, userName string) int {
 	var count = 0
-	err := db.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_user WHERE user_name =?)", userName)
+	err := userDao.ms.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_user WHERE user_name =?)", userName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return count
 }
-func (userDao *SysUserDao) CheckPhoneUnique(ctx context.Context, db sqly.SqlyContext, phonenumber string) int64 {
+func (userDao *sysUserDao) CheckPhoneUnique(ctx context.Context, phonenumber string) int64 {
 	var userId int64 = 0
-	err := db.GetContext(ctx, &userId, "select user_id from sys_user where phonenumber = ?", phonenumber)
+	err := userDao.ms.GetContext(ctx, &userId, "select user_id from sys_user where phonenumber = ?", phonenumber)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return userId
 }
 
-func (userDao *SysUserDao) CheckEmailUnique(ctx context.Context, db sqly.SqlyContext, email string) int64 {
+func (userDao *sysUserDao) CheckEmailUnique(ctx context.Context, email string) int64 {
 	var userId int64 = 0
-	err := db.GetContext(ctx, &userId, "select user_id from sys_user where email = ?", email)
+	err := userDao.ms.GetContext(ctx, &userId, "select user_id from sys_user where email = ?", email)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return userId
 }
 
-func (userDao *SysUserDao) InsertUser(ctx context.Context, db sqly.SqlyContext, sysUser *systemModels.SysUserDML) {
+func (userDao *sysUserDao) InsertUser(ctx context.Context, sysUser *systemModels.SysUserDML) {
 	insertSQL := `insert into sys_user(user_id,user_name,nick_name,sex,password,data_scope,status,create_by,create_time,update_by,update_time %s)
 					values(:user_id,:user_name,:nick_name,:sex,:password,:data_scope,:status,:create_by,now(),:update_by,now() %s)`
 	key := ""
@@ -82,23 +84,23 @@ func (userDao *SysUserDao) InsertUser(ctx context.Context, db sqly.SqlyContext, 
 	}
 	insertStr := fmt.Sprintf(insertSQL, key, value)
 
-	_, err := db.NamedExecContext(ctx, insertStr, sysUser)
+	_, err := userDao.ms.NamedExecContext(ctx, insertStr, sysUser)
 
 	if err != nil {
 		panic(err)
 	}
 }
-func (userDao *SysUserDao) BatchInsertUser(ctx context.Context, db sqly.SqlyContext, sysUser []*systemModels.SysUserDML) {
+func (userDao *sysUserDao) BatchInsertUser(ctx context.Context, sysUser []*systemModels.SysUserDML) {
 	insertSQL := `insert into sys_user(user_id,user_name,nick_name,email,phonenumber,sex,password,data_scope,status,dept_id,create_by,create_time,update_by,update_time)
 					values(:user_id,:user_name,:nick_name,:email,:phonenumber,:sex,:password,:data_scope,:status,:dept_id,:create_by,now(),:update_by,now())`
-	_, err := db.NamedExecContext(ctx, insertSQL, sysUser)
+	_, err := userDao.ms.NamedExecContext(ctx, insertSQL, sysUser)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, sysUser *systemModels.SysUserDML) {
+func (userDao *sysUserDao) UpdateUser(ctx context.Context, sysUser *systemModels.SysUserDML) {
 	updateSQL := `update sys_user set update_time = now() , update_by = :update_by`
 
 	if sysUser.Email != "" {
@@ -131,26 +133,26 @@ func (userDao *SysUserDao) UpdateUser(ctx context.Context, db sqly.SqlyContext, 
 	}
 	updateSQL += " where user_id = :user_id"
 
-	_, err := db.NamedExecContext(ctx, updateSQL, sysUser)
+	_, err := userDao.ms.NamedExecContext(ctx, updateSQL, sysUser)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (userDao *SysUserDao) SelectUserByUserName(ctx context.Context, db sqly.SqlyContext, userName string) (loginUser *systemModels.User) {
+func (userDao *sysUserDao) SelectUserByUserName(ctx context.Context, userName string) (loginUser *systemModels.User) {
 	sqlStr := `select u.user_id, u.dept_id, u.user_name,  u.avatar, u.password, u.status, u.del_flag,u.data_scope
         from sys_user u
 		where u.user_name = ?			
 			`
 
 	loginUser = new(systemModels.User)
-	err := db.GetContext(ctx, loginUser, sqlStr, userName)
+	err := userDao.ms.GetContext(ctx, loginUser, sqlStr, userName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
 }
-func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyContext, userId int64) (sysUser *systemModels.SysUserVo) {
+func (userDao *sysUserDao) SelectUserById(ctx context.Context, userId int64) (sysUser *systemModels.SysUserVo) {
 	sqlStr := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag,  u.create_by, u.create_time, u.remark, d.dept_name, d.leader,  u.data_scope,  r.role_id
         from sys_user u
 		    left join sys_dept d on u.dept_id = d.dept_id
@@ -160,14 +162,14 @@ func (userDao *SysUserDao) SelectUserById(ctx context.Context, db sqly.SqlyConte
 			`
 
 	sysUser = new(systemModels.SysUserVo)
-	err := db.GetContext(ctx, sysUser, sqlStr, userId)
+	err := userDao.ms.GetContext(ctx, sysUser, sqlStr, userId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return
 }
 
-func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo, total int64) {
+func (userDao *sysUserDao) SelectUserList(ctx context.Context, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo, total int64) {
 	sql := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
 			 from sys_user u left join sys_dept d on u.dept_id = d.dept_id where u.del_flag = '0'`
 	if user.UserName != "" {
@@ -191,7 +193,7 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 	if user.DataScope != "" {
 		sql += " AND " + user.DataScope
 	}
-	err := db.NamedSelectPageContext(ctx, &list, &total, sql, user)
+	err := userDao.ms.NamedSelectPageContext(ctx, &list, &total, sql, user)
 	if err != nil {
 		panic(err)
 	}
@@ -199,7 +201,7 @@ func (userDao *SysUserDao) SelectUserList(ctx context.Context, db sqly.SqlyConte
 
 }
 
-func (userDao *SysUserDao) SelectUserListAll(ctx context.Context, db sqly.SqlyContext, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo) {
+func (userDao *sysUserDao) SelectUserListAll(ctx context.Context, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo) {
 	sql := `select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark, d.dept_name, d.leader
 			 from sys_user u left join sys_dept d on u.dept_id = d.dept_id where u.del_flag = '0'`
 	if user.UserName != "" {
@@ -221,7 +223,7 @@ func (userDao *SysUserDao) SelectUserListAll(ctx context.Context, db sqly.SqlyCo
 		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
 	}
 
-	err := db.NamedSelectContext(ctx, &list, sql, user)
+	err := userDao.ms.NamedSelectContext(ctx, &list, sql, user)
 	if err != nil {
 		panic(err)
 	}
@@ -229,56 +231,56 @@ func (userDao *SysUserDao) SelectUserListAll(ctx context.Context, db sqly.SqlyCo
 
 }
 
-func (userDao *SysUserDao) DeleteUserByIds(ctx context.Context, db sqly.SqlyContext, ids []int64) {
+func (userDao *sysUserDao) DeleteUserByIds(ctx context.Context, ids []int64) {
 	query, i, err := sqly.In("update sys_user set del_flag = '2' where user_id in(?)", ids)
 	if err != nil {
 		panic(err)
 	}
-	_, err = db.ExecContext(ctx, query, i...)
+	_, err = userDao.ms.ExecContext(ctx, query, i...)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
-func (userDao *SysUserDao) UpdateLoginInformation(ctx context.Context, db sqly.SqlyContext, userId int64, ip string) {
-	_, err := db.ExecContext(ctx, `update sys_user set login_date = now() , login_ip = ?  where user_id = ?`, ip, userId)
+func (userDao *sysUserDao) UpdateLoginInformation(ctx context.Context, userId int64, ip string) {
+	_, err := userDao.ms.ExecContext(ctx, `update sys_user set login_date = now() , login_ip = ?  where user_id = ?`, ip, userId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (userDao *SysUserDao) UpdateUserAvatar(ctx context.Context, db sqly.SqlyContext, userId int64, avatar string) {
-	_, err := db.ExecContext(ctx, `update sys_user set avatar = ?  where user_id = ?`, avatar, userId)
+func (userDao *sysUserDao) UpdateUserAvatar(ctx context.Context, userId int64, avatar string) {
+	_, err := userDao.ms.ExecContext(ctx, `update sys_user set avatar = ?  where user_id = ?`, avatar, userId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (userDao *SysUserDao) ResetUserPwd(ctx context.Context, db sqly.SqlyContext, userId int64, password string) {
-	_, err := db.ExecContext(ctx, `update sys_user set password = ?  where user_id = ?`, password, userId)
+func (userDao *sysUserDao) ResetUserPwd(ctx context.Context, userId int64, password string) {
+	_, err := userDao.ms.ExecContext(ctx, `update sys_user set password = ?  where user_id = ?`, password, userId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (userDao *SysUserDao) SelectPasswordByUserId(ctx context.Context, db sqly.SqlyContext, userId int64) string {
+func (userDao *sysUserDao) SelectPasswordByUserId(ctx context.Context, userId int64) string {
 	sqlStr := `select password
         from sys_user 
 			where user_id = ?			
 			`
 
 	password := new(string)
-	err := db.GetContext(ctx, password, sqlStr, userId)
+	err := userDao.ms.GetContext(ctx, password, sqlStr, userId)
 	if err != nil {
 		panic(err)
 	}
 	return *password
 }
 
-func (userDao *SysUserDao) SelectUserIdsByDeptIds(ctx context.Context, db sqly.SqlyContext, deptIds []int64) []int64 {
+func (userDao *sysUserDao) SelectUserIdsByDeptIds(ctx context.Context, deptIds []int64) []int64 {
 	query, i, err := sqly.In("select user_id from sys_user where dept_id in(?)", deptIds)
 	if err != nil {
 		panic(err)
 	}
 	list := make([]int64, 0)
-	err = db.SelectContext(ctx, &list, query, i...)
+	err = userDao.ms.SelectContext(ctx, &list, query, i...)
 	if err != nil {
 		panic(err)
 	}

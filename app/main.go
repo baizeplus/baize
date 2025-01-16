@@ -1,9 +1,7 @@
 package main
 
 import (
-	"baize/app/business/monitor/monitorService/monitorServiceImpl"
 	"baize/app/setting"
-	"baize/app/utils/cache/redisListener"
 	"fmt"
 	"time"
 )
@@ -25,13 +23,13 @@ func main() {
 	}
 	// 设置为中国时区
 	time.Local = location
-	app, cleanup, err := wireApp(setting.Conf.Datasource)
+	app, cleanup, err := wireApp()
 	if err != nil {
 		panic(err)
 	}
 	defer cleanup()
-	redisListener.StartRedisListener()
-	monitorServiceImpl.GetJobService().InitJobRun()
+	//redisListener.StartRedisListener()
+	//monitorServiceImpl.GetJobService().InitJobRun()
 	app.Run(fmt.Sprintf(":%d", setting.Conf.Port))
 
 }

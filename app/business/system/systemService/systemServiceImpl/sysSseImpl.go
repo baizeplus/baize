@@ -2,42 +2,43 @@ package systemServiceImpl
 
 import (
 	"baize/app/business/system/systemModels"
+	"baize/app/business/system/systemService"
+	"baize/app/constant/sessionStatus"
+	"baize/app/datasource/cache"
+	"baize/app/middlewares/session"
 	"baize/app/setting"
 	"baize/app/utils/arrayUtils"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/cache"
 	"context"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"io"
 	"sync"
 )
 
-var sseService *SseService
-
-func GetSeeService() *SseService {
-	return sseService
-}
-
 type SseService struct {
 	ChannelsMap map[string]chan *systemModels.SseType
 	userMap     map[int64][]string
 	mutex       sync.RWMutex
-	redisClient *redis.Client
+	cache       cache.Cache
 }
 
-func NewSseService() *SseService {
-	sseService = &SseService{
+func NewSseService(cache cache.Cache) systemService.ISseService {
+	return &SseService{
 		ChannelsMap: make(map[string]chan *systemModels.SseType),
 		userMap:     make(map[int64][]string),
-		redisClient: cache.RedisClient,
+		cache:       cache,
 	}
-	return sseService
 }
 
 func (s *SseService) BuildNotificationChannel(c *gin.Context) {
+	manager := session.NewManger(s.cache)
+	sess, err := manager.Get(c, c.Param("token"))
+	if err != nil {
+		baizeContext.InvalidToken(c)
+	}
+	c.Set(sessionStatus.SessionKey, sess)
 	closeNotify := c.Request.Context().Done()
 	id := baizeContext.GetSession(c).Id()
 	userId := baizeContext.GetUserId(c)
@@ -94,7 +95,7 @@ func (s *SseService) SendNotification(c context.Context, ss *systemModels.Sse) {
 		if err != nil {
 			panic(err)
 		}
-		s.redisClient.Publish(c, "notification", marshal)
+		s.cache.Publish(c, "notification", marshal)
 		return
 	}
 
