@@ -1,5 +1,5 @@
 
-FROM 114698169285.dkr.ecr.ap-southeast-1.amazonaws.com/ubuntu:latest
+FROM public.ecr.aws/l9s2p5c4/baizeplus/ubuntu:latest
 
 WORKDIR /build
 COPY baize /build/baize
