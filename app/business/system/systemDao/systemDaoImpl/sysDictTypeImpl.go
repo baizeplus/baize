@@ -92,7 +92,7 @@ func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeByIds(ctx context.Context, d
 
 func (sysDictTypeDao *sysDictTypeDao) InsertDictType(ctx context.Context, dictType *systemModels.SysDictTypeVo) {
 	insertSQL := `insert into sys_dict_type(dict_id,dict_name,dict_type,status,remark,create_by,create_time,update_by,update_time )
-					values(:dict_id,:dict_name,:dict_type,:status,:remark,:create_by,now(),:update_by,now() )`
+					values(:dict_id,:dict_name,:dict_type,:status,:remark,:create_by,:create_time,:update_by,:update_time )`
 
 	_, err := sysDictTypeDao.ms.NamedExecContext(ctx, insertSQL, dictType)
 	if err != nil {
@@ -102,7 +102,7 @@ func (sysDictTypeDao *sysDictTypeDao) InsertDictType(ctx context.Context, dictTy
 }
 
 func (sysDictTypeDao *sysDictTypeDao) UpdateDictType(ctx context.Context, dictType *systemModels.SysDictTypeVo) {
-	updateSQL := `update sys_dict_type set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_dict_type set update_time = :update_time , update_by = :update_by`
 
 	if dictType.DictName != "" {
 		updateSQL += ",dict_name = :dict_name"

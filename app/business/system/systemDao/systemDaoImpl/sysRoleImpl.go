@@ -126,7 +126,7 @@ func (rd *sysRoleDao) SelectRoleListByUserId(ctx context.Context, userId int64) 
 
 func (rd *sysRoleDao) InsertRole(ctx context.Context, sysRole *systemModels.SysRoleDML) {
 	insertSQL := `insert into sys_role(role_id,role_name,role_key,role_sort,status,remark,create_by,create_time,update_by,update_time )
-					values(:role_id,:role_name,:role_key,:role_sort,:status,:remark,:create_by,now(),:update_by,now())`
+					values(:role_id,:role_name,:role_key,:role_sort,:status,:remark,:create_by,:create_time,:update_by,:update_time)`
 	_, err := rd.ms.NamedExecContext(ctx, insertSQL, sysRole)
 	if err != nil {
 		panic(err)
@@ -135,7 +135,7 @@ func (rd *sysRoleDao) InsertRole(ctx context.Context, sysRole *systemModels.SysR
 }
 
 func (rd *sysRoleDao) UpdateRole(ctx context.Context, sysRole *systemModels.SysRoleDML) {
-	updateSQL := `update sys_role set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_role set update_time = :update_time , update_by = :update_by`
 
 	if sysRole.RoleName != "" {
 		updateSQL += ",role_name = :role_name"

@@ -77,7 +77,7 @@ func (s *sysConfigDao) SelectConfigById(ctx context.Context, configId int64) (co
 
 func (s *sysConfigDao) InsertConfig(ctx context.Context, config *systemModels.SysConfigVo) {
 	insertSQL := `insert into sys_config (config_id,config_name,config_key,config_value,config_type,remark,create_by,create_time,update_by,update_time)
-					values (:config_id,:config_name,:config_key,:config_value,:config_type,:remark,:create_by,now(),:update_by,now())`
+					values (:config_id,:config_name,:config_key,:config_value,:config_type,:remark,:create_by,:create_time,:update_by,:update_time)`
 	_, err := s.ms.NamedExecContext(ctx, insertSQL, config)
 	if err != nil {
 		panic(err)
@@ -86,7 +86,7 @@ func (s *sysConfigDao) InsertConfig(ctx context.Context, config *systemModels.Sy
 }
 
 func (s *sysConfigDao) UpdateConfig(ctx context.Context, config *systemModels.SysConfigVo) {
-	updateSQL := `update sys_config set  update_time = now() , update_by = :update_by `
+	updateSQL := `update sys_config set  update_time =:update_time , update_by = :update_by `
 
 	if config.ConfigName != "" {
 		updateSQL += ",config_name = :config_name"

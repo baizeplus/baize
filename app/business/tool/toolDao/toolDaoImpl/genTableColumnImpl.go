@@ -38,7 +38,7 @@ func (genTableColumnDao *GenTableColumnDao) SelectGenTableColumnListByTableId(ct
 
 func (genTableColumnDao *GenTableColumnDao) BatchInsertGenTableColumn(ctx context.Context, genTables []*toolModels.GenTableColumnDML) {
 	_, err := genTableColumnDao.ms.NamedExecContext(ctx, `insert into gen_table_column(column_id,table_id,column_name,column_comment,column_type,go_type,go_field,html_field,is_pk,is_required,is_insert,is_edit,is_list, is_query,query_type, html_type, dict_type, sort,create_by,create_time,update_by,update_time)
-							values(:column_id,:table_id,:column_name,:column_comment,:column_type,:go_type,:go_field,:html_field,:is_pk,:is_required,:is_insert,:is_edit,:is_list, :is_query,  :query_type, :html_type, :dict_type, :sort,:create_by,now(),:update_by,now())`,
+							values(:column_id,:table_id,:column_name,:column_comment,:column_type,:go_type,:go_field,:html_field,:is_pk,:is_required,:is_insert,:is_edit,:is_list, :is_query,  :query_type, :html_type, :dict_type, :sort,:create_by,:create_time,:update_by,:update_time)`,
 		genTables)
 	if err != nil {
 		panic(err)
@@ -46,7 +46,7 @@ func (genTableColumnDao *GenTableColumnDao) BatchInsertGenTableColumn(ctx contex
 }
 
 func (genTableColumnDao *GenTableColumnDao) UpdateGenTableColumn(ctx context.Context, column *toolModels.GenTableColumnDML) {
-	_, err := genTableColumnDao.ms.NamedExecContext(ctx, "update gen_table_column set column_comment=:column_comment,go_type=:go_type,go_field=:go_field,html_field=:html_field,is_insert=:is_insert, is_edit=:is_edit,is_list=:is_list,is_query=:is_query,is_required=:is_required,query_type=:query_type,html_type=:html_type,dict_type=:dict_type,sort=:sort, update_by = :update_by,update_time = now()  where column_id = :column_id", column)
+	_, err := genTableColumnDao.ms.NamedExecContext(ctx, "update gen_table_column set column_comment=:column_comment,go_type=:go_type,go_field=:go_field,html_field=:html_field,is_insert=:is_insert, is_edit=:is_edit,is_list=:is_list,is_query=:is_query,is_required=:is_required,query_type=:query_type,html_type=:html_type,dict_type=:dict_type,sort=:sort, update_by = :update_by,update_time = :update_time  where column_id = :column_id", column)
 	if err != nil {
 		panic(err)
 	}

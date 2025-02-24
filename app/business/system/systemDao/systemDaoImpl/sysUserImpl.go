@@ -59,7 +59,7 @@ func (userDao *sysUserDao) CheckEmailUnique(ctx context.Context, email string) i
 
 func (userDao *sysUserDao) InsertUser(ctx context.Context, sysUser *systemModels.SysUserDML) {
 	insertSQL := `insert into sys_user(user_id,user_name,nick_name,sex,password,data_scope,status,create_by,create_time,update_by,update_time %s)
-					values(:user_id,:user_name,:nick_name,:sex,:password,:data_scope,:status,:create_by,now(),:update_by,now() %s)`
+					values(:user_id,:user_name,:nick_name,:sex,:password,:data_scope,:status,:create_by,:create_time,:update_by,:update_time %s)`
 	key := ""
 	value := ""
 	if sysUser.DeptId != 0 {
@@ -92,7 +92,7 @@ func (userDao *sysUserDao) InsertUser(ctx context.Context, sysUser *systemModels
 }
 func (userDao *sysUserDao) BatchInsertUser(ctx context.Context, sysUser []*systemModels.SysUserDML) {
 	insertSQL := `insert into sys_user(user_id,user_name,nick_name,email,phonenumber,sex,password,data_scope,status,dept_id,create_by,create_time,update_by,update_time)
-					values(:user_id,:user_name,:nick_name,:email,:phonenumber,:sex,:password,:data_scope,:status,:dept_id,:create_by,now(),:update_by,now())`
+					values(:user_id,:user_name,:nick_name,:email,:phonenumber,:sex,:password,:data_scope,:status,:dept_id,:create_by,:create_time,:update_by,:update_time)`
 	_, err := userDao.ms.NamedExecContext(ctx, insertSQL, sysUser)
 
 	if err != nil {
@@ -101,7 +101,7 @@ func (userDao *sysUserDao) BatchInsertUser(ctx context.Context, sysUser []*syste
 }
 
 func (userDao *sysUserDao) UpdateUser(ctx context.Context, sysUser *systemModels.SysUserDML) {
-	updateSQL := `update sys_user set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_user set update_time = :update_time , update_by = :update_by`
 
 	if sysUser.Email != "" {
 		updateSQL += ",email = :email"
@@ -242,12 +242,7 @@ func (userDao *sysUserDao) DeleteUserByIds(ctx context.Context, ids []int64) {
 	}
 	return
 }
-func (userDao *sysUserDao) UpdateLoginInformation(ctx context.Context, userId int64, ip string) {
-	_, err := userDao.ms.ExecContext(ctx, `update sys_user set login_date = now() , login_ip = ?  where user_id = ?`, ip, userId)
-	if err != nil {
-		panic(err)
-	}
-}
+
 func (userDao *sysUserDao) UpdateUserAvatar(ctx context.Context, userId int64, avatar string) {
 	_, err := userDao.ms.ExecContext(ctx, `update sys_user set avatar = ?  where user_id = ?`, avatar, userId)
 	if err != nil {

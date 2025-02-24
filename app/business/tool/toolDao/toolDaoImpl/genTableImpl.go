@@ -112,7 +112,7 @@ func (genTableDao *GenTableDao) SelectGenTableAll(ctx context.Context) (list []*
 func (genTableDao *GenTableDao) BatchInsertGenTable(ctx context.Context, genTables []*toolModels.GenTableDML) {
 
 	_, err := genTableDao.ms.NamedExecContext(ctx, `insert into gen_table(table_id,table_name,table_comment,struct_name,tpl_category,package_name,module_name,business_name,function_name,function_author,create_by,create_time,update_by,update_time,remark)
-							values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,now(),:update_by,now(),:remark)`,
+							values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,:create_time,:update_by,:update_time,:remark)`,
 		genTables)
 	if err != nil {
 		panic(err)
@@ -122,7 +122,7 @@ func (genTableDao *GenTableDao) BatchInsertGenTable(ctx context.Context, genTabl
 
 func (genTableDao *GenTableDao) InsertGenTable(ctx context.Context, genTable *toolModels.GenTableDML) {
 	insertSQL := `insert into gen_table(table_id,table_name,table_comment,struct_name,tpl_category,package_name,module_name,business_name,function_name,function_author,create_by,create_time,update_by,update_time,remark)
-					values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,now(),:update_by,now(),:remark)`
+					values(:table_id,:table_name,:table_comment,:struct_name,:tpl_category,:package_name,:module_name,:business_name,:function_name,:function_author,:create_by,:create_time,:update_by,:update_time,:remark)`
 
 	_, err := genTableDao.ms.NamedExecContext(ctx, insertSQL, genTable)
 	if err != nil {
@@ -132,7 +132,7 @@ func (genTableDao *GenTableDao) InsertGenTable(ctx context.Context, genTable *to
 }
 
 func (genTableDao *GenTableDao) UpdateGenTable(ctx context.Context, genTable *toolModels.GenTableDML) {
-	updateSQL := `update gen_table set update_time = now() , update_by = :update_by`
+	updateSQL := `update gen_table set update_time = :update_time , update_by = :update_by`
 	if genTable.TableName != "" {
 		updateSQL += ",table_name = :table_name"
 	}

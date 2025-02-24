@@ -85,7 +85,7 @@ func (sysMenuDao *sysMenuDao) SelectMenuListByUserId(ctx context.Context, menu *
 
 func (sysMenuDao *sysMenuDao) InsertMenu(ctx context.Context, menu *systemModels.SysMenuVo) {
 	insertSQL := `insert into sys_menu(menu_id,menu_name,parent_id,create_by,create_time,update_by,update_time,order_num,path,component,is_frame,is_cache,menu_type,icon,status,perms,visible,remark)
-					values(:menu_id,:menu_name,:parent_id,:create_by,now(),:update_by,now() ,:order_num,:path,:component,:is_frame,:is_cache,:menu_type,:icon,:status,:perms,:visible,:remark)`
+					values(:menu_id,:menu_name,:parent_id,:create_by,:create_time,:update_by,:update_time ,:order_num,:path,:component,:is_frame,:is_cache,:menu_type,:icon,:status,:perms,:visible,:remark)`
 	_, err := sysMenuDao.ms.NamedExecContext(ctx, insertSQL, menu)
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func (sysMenuDao *sysMenuDao) InsertMenu(ctx context.Context, menu *systemModels
 }
 
 func (sysMenuDao *sysMenuDao) UpdateMenu(ctx context.Context, menu *systemModels.SysMenuVo) {
-	updateSQL := `update sys_menu set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_menu set update_time = :update_time , update_by = :update_by`
 
 	if menu.ParentId != 0 {
 		updateSQL += ",parent_id = :parent_id"

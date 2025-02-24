@@ -18,7 +18,6 @@ type IUserDao interface {
 	SelectUserList(ctx context.Context, user *systemModels.SysUserDQL) (sysUserList []*systemModels.SysUserVo, total int64)
 	SelectUserListAll(ctx context.Context, user *systemModels.SysUserDQL) (list []*systemModels.SysUserVo)
 	DeleteUserByIds(ctx context.Context, ids []int64)
-	UpdateLoginInformation(ctx context.Context, userId int64, ip string)
 	UpdateUserAvatar(ctx context.Context, userId int64, avatar string)
 	ResetUserPwd(ctx context.Context, userId int64, password string)
 	SelectPasswordByUserId(ctx context.Context, userId int64) string

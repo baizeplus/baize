@@ -67,7 +67,7 @@ func (sysDictDataDao *sysDictDataDao) SelectDictDataById(ctx context.Context, di
 
 func (sysDictDataDao *sysDictDataDao) InsertDictData(ctx context.Context, dictData *systemModels.SysDictDataVo) {
 	insertSQL := `insert into sys_dict_data(dict_code,dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,remark,create_by,create_time,update_by,update_time )
-					values(:dict_code,:dict_sort,:dict_label,:dict_value,:dict_type,:css_class,:list_class,:is_default,:status,:remark,:create_by,now(),:update_by,now() )`
+					values(:dict_code,:dict_sort,:dict_label,:dict_value,:dict_type,:css_class,:list_class,:is_default,:status,:remark,:create_by,:create_time,:update_by,:update_time )`
 	_, err := sysDictDataDao.ms.NamedExecContext(ctx, insertSQL, dictData)
 	if err != nil {
 		panic(err)
@@ -76,7 +76,7 @@ func (sysDictDataDao *sysDictDataDao) InsertDictData(ctx context.Context, dictDa
 }
 
 func (sysDictDataDao *sysDictDataDao) UpdateDictData(ctx context.Context, dictData *systemModels.SysDictDataVo) {
-	updateSQL := `update sys_dict_data set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_dict_data set update_time = :update_time , update_by = :update_by`
 
 	if dictData.DictSort != 0 {
 		updateSQL += ",dict_sort = :dict_sort"

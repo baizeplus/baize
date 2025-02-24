@@ -23,7 +23,6 @@ type IUserService interface {
 	CheckEmailUnique(c *gin.Context, id int64, email string) bool
 	DeleteUserByIds(c *gin.Context, ids []int64)
 	UserImportData(c *gin.Context, file *multipart.FileHeader) (msg string, failureNum int)
-	UpdateLoginInformation(c *gin.Context, userId int64, ip string)
 	UpdateUserAvatar(c *gin.Context, file *multipart.FileHeader) string
 	ResetUserPwd(c *gin.Context, userId int64, password string)
 	UpdateUserProfile(c *gin.Context, sysUser *systemModels.SysUserDML)

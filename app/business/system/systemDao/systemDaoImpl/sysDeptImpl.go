@@ -57,7 +57,7 @@ func (sysDeptDao *sysDeptDao) SelectDeptById(ctx context.Context, deptId int64) 
 
 func (sysDeptDao *sysDeptDao) InsertDept(ctx context.Context, dept *systemModels.SysDeptVo) {
 	insertSQL := `insert into sys_dept(dept_id,parent_id,dept_name,order_num,create_by,create_time,update_by,update_time %s)
-					values(:dept_id,:parent_id,:dept_name,:order_num,:create_by,now(),:update_by,now() %s)`
+					values(:dept_id,:parent_id,:dept_name,:order_num,:create_by,:create_time,:update_by,:update_time %s)`
 	key := ""
 	value := ""
 	if dept.Ancestors != "" {
@@ -90,7 +90,7 @@ func (sysDeptDao *sysDeptDao) InsertDept(ctx context.Context, dept *systemModels
 }
 
 func (sysDeptDao *sysDeptDao) UpdateDept(ctx context.Context, dept *systemModels.SysDeptVo) {
-	updateSQL := `update sys_dept set order_num=:order_num , update_time = now() , update_by = :update_by `
+	updateSQL := `update sys_dept set order_num=:order_num , update_time = :update_time , update_by = :update_by `
 	if dept.ParentId != 0 {
 		updateSQL += ",parent_id = :parent_id"
 	}

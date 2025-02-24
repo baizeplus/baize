@@ -22,7 +22,7 @@ func NewOperLog(ms sqly.SqlyContext) monitorDao.IOperLog {
 }
 
 func (operLogDao *OperLogDao) InsertOperLog(ctx context.Context, operLog *monitorModels.SysOperLog) {
-	_, err := operLogDao.ms.NamedExecContext(ctx, "insert into sys_oper_log(oper_id,title, business_type, method, request_method, user_id, oper_name, oper_url, oper_ip, oper_param, json_result, status,  oper_time,cost_time)  values (:oper_id,:title, :business_type, :method, :request_method, :user_id, :oper_name, :oper_url, :oper_ip,  :oper_param, :json_result, :status, now(),:cost_time)", operLog)
+	_, err := operLogDao.ms.NamedExecContext(ctx, "insert into sys_oper_log(oper_id,title, business_type, method, request_method, user_id, oper_name, oper_url, oper_ip, oper_param, json_result, status,  oper_time,cost_time)  values (:oper_id,:title, :business_type, :method, :request_method, :user_id, :oper_name, :oper_url, :oper_ip,  :oper_param, :json_result, :status, :oper_time,:cost_time)", operLog)
 	if err != nil {
 		panic(err)
 	}

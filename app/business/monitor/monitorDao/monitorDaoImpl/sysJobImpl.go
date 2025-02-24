@@ -89,7 +89,7 @@ func (jd *JobDao) DeleteJobById(ctx context.Context, id int64) {
 	return
 }
 func (jd *JobDao) UpdateJob(ctx context.Context, job *monitorModels.JobDML) {
-	updateSQL := `update sys_job set invoke_target = :invoke_target,update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_job set invoke_target = :invoke_target,update_time = :update_time , update_by = :update_by`
 
 	if job.CronExpression != "" {
 		updateSQL += ",cron_expression = :cron_expression"
@@ -117,7 +117,7 @@ func (jd *JobDao) UpdateJob(ctx context.Context, job *monitorModels.JobDML) {
 }
 func (jd *JobDao) InsertJob(ctx context.Context, job *monitorModels.JobDML) {
 	insertSQL := `insert into sys_job(job_id,job_name,job_params,invoke_target,cron_expression,status,create_by,create_time,update_by,update_time)
-					values(:job_id,:job_name,:job_params,:invoke_target,:cron_expression,:status,:create_by,now(),:update_by,now())`
+					values(:job_id,:job_name,:job_params,:invoke_target,:cron_expression,:status,:create_by,:create_time,:update_by,:update_time)`
 	_, err := jd.ms.NamedExecContext(ctx, insertSQL, job)
 	if err != nil {
 		panic(err)

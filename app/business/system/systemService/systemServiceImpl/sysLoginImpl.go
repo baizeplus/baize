@@ -57,6 +57,7 @@ func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User,
 			}
 		}()
 		l.LoginLocation = ipUtils.GetRealAddressByIP(l.IpAddr)
+		l.LoginTime = time.Now()
 		loginService.loginforDao.InserLogininfor(context.Background(), l)
 	}()
 	return session.Id()
@@ -83,6 +84,7 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 			}
 		}()
 		loginUser.InfoId = snowflake.GenID()
+		loginUser.LoginTime = time.Now()
 		loginService.loginforDao.InserLogininfor(c, loginUser)
 	}()
 

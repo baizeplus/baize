@@ -20,7 +20,7 @@ func NewLogininforDao(ms sqly.SqlyContext) monitorDao.ILogininforDao {
 }
 
 func (ld *LogininforDao) InserLogininfor(ctx context.Context, logininfor *monitorModels.Logininfor) {
-	_, err := ld.ms.NamedExecContext(ctx, "insert into sys_logininfor (info_id,user_name, status, ipaddr, login_location, browser, os, msg, login_time) values (:info_id,:user_name, :status, :ipaddr, :login_location, :browser, :os, :msg, sysdate())", logininfor)
+	_, err := ld.ms.NamedExecContext(ctx, "insert into sys_logininfor (info_id,user_name, status, ipaddr, login_location, browser, os, msg, login_time) values (:info_id,:user_name, :status, :ipaddr, :login_location, :browser, :os, :msg, :login_time)", logininfor)
 	if err != nil {
 		panic(err)
 	}

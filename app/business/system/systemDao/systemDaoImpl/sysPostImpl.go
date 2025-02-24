@@ -100,7 +100,7 @@ func (postDao *sysPostDao) SelectPostById(ctx context.Context, postId int64) (di
 
 func (postDao *sysPostDao) InsertPost(ctx context.Context, post *systemModels.SysPostVo) {
 	insertSQL := `insert into sys_post(post_id,post_code,post_name,post_sort,status,remark,create_by,create_time,update_by,update_time )
-					values(:post_id,:post_code,:post_name,:post_sort,:status,:remark,:create_by,now(),:update_by,now() )`
+					values(:post_id,:post_code,:post_name,:post_sort,:status,:remark,:create_by,:create_time,:update_by,:update_time )`
 	_, err := postDao.ms.NamedExecContext(ctx, insertSQL, post)
 	if err != nil {
 		panic(err)
@@ -109,7 +109,7 @@ func (postDao *sysPostDao) InsertPost(ctx context.Context, post *systemModels.Sy
 }
 
 func (postDao *sysPostDao) UpdatePost(ctx context.Context, post *systemModels.SysPostVo) {
-	updateSQL := `update sys_post set update_time = now() , update_by = :update_by`
+	updateSQL := `update sys_post set update_time = :update_time , update_by = :update_by`
 
 	if post.PostCode != "" {
 		updateSQL += ",post_code = :post_code"

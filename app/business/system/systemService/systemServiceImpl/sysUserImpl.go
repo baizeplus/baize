@@ -336,9 +336,6 @@ func (userService *UserService) UserImportData(c *gin.Context, fileHeader *multi
 	userService.userDao.BatchInsertUser(c, list)
 	return "恭喜您，数据已全部导入成功！共 " + strconv.Itoa(len(list)) + " 条。", 0
 }
-func (userService *UserService) UpdateLoginInformation(c *gin.Context, userId int64, ip string) {
-	userService.userDao.UpdateLoginInformation(c, userId, ip)
-}
 
 func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart.FileHeader) string {
 	userId := baizeContext.GetUserId(c)
