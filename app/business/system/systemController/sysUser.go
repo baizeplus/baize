@@ -29,7 +29,7 @@ func NewUser(
 }
 func (uc *User) PrivateRoutes(router *gin.RouterGroup) {
 	systemUser := router.Group("/system/user")
-	systemUser.GET("/list", middlewares.HasPermission("system:user:list"), uc.UserList)
+	systemUser.GET("/list", middlewares.HasPermission("system:user"), uc.UserList)
 	systemUser.GET("/", middlewares.HasPermission("system:user:query"), uc.UserGetInfo)
 	systemUser.GET("/authRole/:userId", middlewares.SetLog("用户管理", middlewares.Update), middlewares.HasPermission("system:user:edit"), uc.UserAuthRole)
 	systemUser.GET("/:userId", middlewares.HasPermission("system:user:query"), uc.UserGetInfoById)

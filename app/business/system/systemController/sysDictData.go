@@ -19,7 +19,7 @@ func NewDictData(dds systemService.IDictDataService) *DictData {
 }
 func (ddc *DictData) PrivateRoutes(router *gin.RouterGroup) {
 	systemDictData := router.Group("/system/dict/data")
-	systemDictData.GET("/list", middlewares.HasPermission("system:dict:list"), ddc.DictDataList)
+	systemDictData.GET("/list", middlewares.HasPermission("system:dict"), ddc.DictDataList)
 	systemDictData.GET("/export", middlewares.HasPermission("system:dict:export"), ddc.DictDataExport)
 	systemDictData.GET("/:dictCode", middlewares.HasPermission("system:dict:query"), ddc.DictDataGetInfo)
 	systemDictData.GET("/type/:dictType", ddc.DictDataType)

@@ -17,7 +17,7 @@ func NewPost(ps systemService.IPostService) *Post {
 }
 func (pc *Post) PrivateRoutes(router *gin.RouterGroup) {
 	systemPost := router.Group("/system/post")
-	systemPost.GET("/list", middlewares.HasPermission("system:post:list"), pc.PostList)
+	systemPost.GET("/list", middlewares.HasPermission("system:post"), pc.PostList)
 	systemPost.POST("/export", middlewares.HasPermission("system:post:export"), pc.PostExport)
 	systemPost.GET("/:postId", middlewares.HasPermission("system:post:query"), pc.PostGetInfo)
 	systemPost.POST("", middlewares.SetLog("岗位管理", middlewares.Insert), middlewares.HasPermission("system:post:add"), pc.PostAdd)

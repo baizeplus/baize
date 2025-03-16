@@ -254,53 +254,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/getRouters": {
-            "get": {
-                "description": "获取路由",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "登录"
-                ],
-                "summary": "获取路由",
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ListData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/systemModels.RouterVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
                 "description": "用户登录",
@@ -473,7 +426,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/monitor/job/getFunList": {
+        "/monitor/job/funList": {
             "get": {
                 "security": [
                     {
@@ -493,6 +446,46 @@ const docTemplate = `{
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/idAndNameAll": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询定时任务id和名称",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "查询定时任务id和名称",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/monitorModels.JobIdAndName"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -584,6 +577,142 @@ const docTemplate = `{
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/log/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询定时任务日志列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "查询定时任务日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "排序规则  降序desc   asc升序",
+                        "name": "isAsc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "jobId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "第几页",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10000,
+                        "description": "数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.ListData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Rows": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitorModels.JobLog"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/monitor/job/log/{jobLogId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "查询定时任务日志信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "定时任务"
+                ],
+                "summary": "查询定时任务日志信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "jobLogId",
+                        "name": "jobLogId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/monitorModels.JobLog"
                                         }
                                     }
                                 }
@@ -2351,254 +2480,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/menu": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "修改菜单",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "修改菜单",
-                "parameters": [
-                    {
-                        "description": "公司信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/systemModels.SysMenuVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "添加菜单",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "添加菜单",
-                "parameters": [
-                    {
-                        "description": "菜单信息",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/systemModels.SysMenuVo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/system/menu/list": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "查询菜单列表查询",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "查询菜单列表查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "排序规则  降序desc   asc升序",
-                        "name": "isAsc",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "menuName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段",
-                        "name": "orderBy",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "第几页",
-                        "name": "pageNum",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10000,
-                        "description": "数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "visible",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.ListData"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "Rows": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/systemModels.SysMenuVo"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/system/menu/treeSelect": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据菜单ID获取菜单信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "根据菜单ID获取菜单信息",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/systemModels.SysMenuVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/system/menu/{menuId}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "根据菜单ID获取菜单信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "根据菜单ID获取菜单信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "menuId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/systemModels.SysMenuVo"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/system/notice": {
             "post": {
                 "security": [
@@ -2771,6 +2652,275 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/permission": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改系统权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "修改系统权限",
+                "parameters": [
+                    {
+                        "description": "系统权限",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysPermissionEdit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "新增系统权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "新增系统权限",
+                "parameters": [
+                    {
+                        "description": "系统权限",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/systemModels.SysPermissionAdd"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/permission/byRoleIds/{roleIds}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据id查询系统权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "根据id查询系统权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "roleIds",
+                        "name": "roleIds",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/systemModels.SysPermissionVo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/permission/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "系统权限列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "系统权限列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "createBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "createTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "修改人",
+                        "name": "updateBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "修改时间",
+                        "name": "updateTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/systemModels.SysPermissionVo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/permission/{permissionId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据id查询系统权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "根据id查询系统权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "permissionId",
+                        "name": "permissionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SysPermissionVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除系统权限",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "系统权限"
+                ],
+                "summary": "删除系统权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "permissionId",
+                        "name": "permissionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
                         }
                     }
                 }
@@ -3007,86 +3157,6 @@ const docTemplate = `{
                                     }
                                 }
                             ]
-                        }
-                    }
-                }
-            }
-        },
-        "/system/post/roleMenuTreeSelect/{roleId}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除菜单",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "删除菜单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "postId",
-                        "name": "ids",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/systemModels.MenusAndKeys"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/system/post/{menuId}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "删除菜单",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "菜单相关"
-                ],
-                "summary": "删除菜单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "postId",
-                        "name": "ids",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseData"
                         }
                     }
                 }
@@ -4681,7 +4751,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "cronExpression": {
                     "type": "string"
@@ -4699,9 +4769,6 @@ const docTemplate = `{
                 "jobParams": {
                     "$ref": "#/definitions/baize.List"
                 },
-                "remark": {
-                    "type": "string"
-                },
                 "status": {
                     "type": "string"
                 },
@@ -4711,7 +4778,53 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
+                    "type": "string"
+                }
+            }
+        },
+        "monitorModels.JobIdAndName": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "jobName": {
+                    "type": "string"
+                }
+            }
+        },
+        "monitorModels.JobLog": {
+            "type": "object",
+            "properties": {
+                "costTime": {
                     "type": "integer"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "exceptionInfo": {
+                    "type": "string"
+                },
+                "invokeTarget": {
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "jobLogId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "jobName": {
+                    "type": "string"
+                },
+                "jobParams": {
+                    "$ref": "#/definitions/baize.List"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -4724,7 +4837,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "cronExpression": {
                     "type": "string"
@@ -4745,9 +4858,6 @@ const docTemplate = `{
                 "nextValidTime": {
                     "type": "string"
                 },
-                "remark": {
-                    "type": "string"
-                },
                 "status": {
                     "type": "string"
                 },
@@ -4757,7 +4867,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -4910,7 +5020,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "status": {
                     "description": "状态",
@@ -4922,7 +5032,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "userId": {
                     "description": "用户id",
@@ -4976,37 +5086,6 @@ const docTemplate = `{
                 }
             }
         },
-        "systemModels.MenusAndKeys": {
-            "type": "object",
-            "properties": {
-                "checkedKeys": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "menus": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/systemModels.SysMenuVo"
-                    }
-                }
-            }
-        },
-        "systemModels.MetaVo": {
-            "type": "object",
-            "properties": {
-                "icon": {
-                    "type": "string"
-                },
-                "noCache": {
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "systemModels.ResetPwd": {
             "type": "object",
             "required": [
@@ -5044,42 +5123,6 @@ const docTemplate = `{
                 }
             }
         },
-        "systemModels.RouterVo": {
-            "type": "object",
-            "properties": {
-                "alwaysShow": {
-                    "type": "boolean"
-                },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/systemModels.RouterVo"
-                    }
-                },
-                "component": {
-                    "type": "string"
-                },
-                "hidden": {
-                    "description": "是否隐藏路由，当设置 true 的时候该路由不会再侧边栏出现",
-                    "type": "boolean"
-                },
-                "meta": {
-                    "$ref": "#/definitions/systemModels.MetaVo"
-                },
-                "name": {
-                    "description": "路由名字",
-                    "type": "string"
-                },
-                "path": {
-                    "description": "路由地址",
-                    "type": "string"
-                },
-                "redirect": {
-                    "description": "重定向地址，当设置 noRedirect 的时候该路由在面包屑导航中不可被点击",
-                    "type": "string"
-                }
-            }
-        },
         "systemModels.SysConfigVo": {
             "type": "object",
             "properties": {
@@ -5110,7 +5153,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "remark": {
                     "description": "备注",
@@ -5122,7 +5165,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5139,7 +5182,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "delFag": {
                     "description": "删除标志",
@@ -5185,7 +5228,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5198,7 +5241,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "cssClass": {
                     "type": "string"
@@ -5237,80 +5280,6 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
-                }
-            }
-        },
-        "systemModels.SysMenuVo": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/systemModels.SysMenuVo"
-                    }
-                },
-                "component": {
-                    "type": "string"
-                },
-                "createBy": {
-                    "description": "创建人",
-                    "type": "integer"
-                },
-                "createTime": {
-                    "description": "创建时间",
-                    "type": "integer"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "isCache": {
-                    "type": "string"
-                },
-                "isFrame": {
-                    "type": "string"
-                },
-                "menuId": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "menuName": {
-                    "type": "string"
-                },
-                "menuType": {
-                    "type": "string"
-                },
-                "orderNum": {
-                    "type": "integer"
-                },
-                "parentId": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "parentName": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "perms": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updateBy": {
-                    "description": "修改人",
-                    "type": "integer"
-                },
-                "updateTime": {
-                    "description": "修改时间",
-                    "type": "integer"
-                },
-                "visible": {
                     "type": "string"
                 }
             }
@@ -5333,7 +5302,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "deptIds": {
                     "description": "接收部门列表",
@@ -5366,7 +5335,150 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
+                    "type": "string"
+                }
+            }
+        },
+        "systemModels.SysPermissionAdd": {
+            "type": "object",
+            "required": [
+                "parentId",
+                "permission"
+            ],
+            "properties": {
+                "createBy": {
+                    "description": "创建人",
                     "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父权限ID",
+                    "type": "string",
+                    "example": "0"
+                },
+                "permission": {
+                    "description": "权限标识符",
+                    "type": "string"
+                },
+                "permissionName": {
+                    "description": "权限名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "string"
+                }
+            }
+        },
+        "systemModels.SysPermissionEdit": {
+            "type": "object",
+            "required": [
+                "permissionId"
+            ],
+            "properties": {
+                "createBy": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父权限ID",
+                    "type": "string",
+                    "example": "0"
+                },
+                "permission": {
+                    "description": "权限标识符",
+                    "type": "string"
+                },
+                "permissionId": {
+                    "description": "权限ID",
+                    "type": "string",
+                    "example": "0"
+                },
+                "permissionName": {
+                    "description": "权限名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "string"
+                }
+            }
+        },
+        "systemModels.SysPermissionVo": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父权限ID",
+                    "type": "string",
+                    "example": "0"
+                },
+                "permission": {
+                    "description": "权限标识符",
+                    "type": "string"
+                },
+                "permissionId": {
+                    "description": "权限ID",
+                    "type": "string",
+                    "example": "0"
+                },
+                "permissionName": {
+                    "description": "权限名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "string"
+                },
+                "updateBy": {
+                    "description": "修改人",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "修改时间",
+                    "type": "string"
                 }
             }
         },
@@ -5379,7 +5491,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "postCode": {
                     "type": "string"
@@ -5406,7 +5518,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5423,7 +5535,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "menuIds": {
                     "type": "array",
@@ -5452,7 +5564,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5465,7 +5577,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "delFlag": {
                     "type": "string"
@@ -5495,7 +5607,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -5519,7 +5631,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "dataScope": {
                     "description": "权限范围",
@@ -5578,7 +5690,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "userName": {
                     "description": "用户名",
@@ -5636,7 +5748,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "dataScope": {
                     "type": "string"
@@ -5681,7 +5793,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "修改时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "userId": {
                     "type": "string",

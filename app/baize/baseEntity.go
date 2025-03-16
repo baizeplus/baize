@@ -6,10 +6,10 @@ import (
 )
 
 type BaseEntity struct {
-	CreateBy   int64      `json:"createBy" db:"create_by"`                           //创建人
-	CreateTime *time.Time `json:"createTime" db:"create_time" swaggertype:"integer"` //创建时间
-	UpdateBy   int64      `json:"updateBy" db:"update_by"`                           //修改人
-	UpdateTime *time.Time `json:"updateTime" db:"update_time" swaggertype:"integer"` //修改时间
+	CreateBy   int64      `json:"createBy" db:"create_by"`     //创建人
+	CreateTime *time.Time `json:"createTime" db:"create_time"` //创建时间
+	UpdateBy   int64      `json:"updateBy" db:"update_by"`     //修改人
+	UpdateTime *time.Time `json:"updateTime" db:"update_time"` //修改时间
 }
 
 func (b *BaseEntity) SetCreateBy(userId int64) {

@@ -19,7 +19,7 @@ func NewDept(ds systemService.IDeptService) *Dept {
 
 func (dc *Dept) PrivateRoutes(router *gin.RouterGroup) {
 	systemDept := router.Group("/system/dept")
-	systemDept.GET("/list", middlewares.HasPermissions([]string{"system:dept:list", "system:user:list"}), dc.DeptList)
+	systemDept.GET("/list", middlewares.HasPermissions([]string{"system:dept", "system:user"}), dc.DeptList)
 	systemDept.GET("/:deptId", middlewares.HasPermission("system:dept:query"), dc.DeptGetInfo)
 	systemDept.GET("/roleDeptTreeSelect/:roleId", middlewares.HasPermission("system:dept:query"), dc.RoleDeptTreeSelect)
 	systemDept.POST("", middlewares.SetLog("部门管理", middlewares.Insert), middlewares.HasPermission("system:dept:add"), dc.DeptAdd)

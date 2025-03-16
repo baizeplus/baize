@@ -191,120 +191,6 @@ CREATE TABLE `sys_logininfor` (
 ) ENGINE=InnoDB AUTO_INCREMENT=213842356678430721 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统访问记录';
 
 
--- ----------------------------
--- Table structure for sys_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_menu`;
-CREATE TABLE `sys_menu` (
-  `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-  `menu_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜单名称',
-  `parent_id` bigint DEFAULT '0' COMMENT '父菜单ID',
-  `order_num` int DEFAULT '0' COMMENT '显示顺序',
-  `path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '路由地址',
-  `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '组件路径',
-  `query` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '路由参数',
-  `is_frame` int DEFAULT '1' COMMENT '是否为外链（0是 1否）',
-  `is_cache` int DEFAULT '0' COMMENT '是否缓存（0缓存 1不缓存）',
-  `menu_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-  `visible` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
-  `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
-  `perms` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '权限标识',
-  `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '#' COMMENT '菜单图标',
-  `create_by` bigint DEFAULT NULL COMMENT '创建者',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` bigint DEFAULT NULL COMMENT '更新者',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '备注',
-  PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=200541012051890176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='菜单权限表';
-
--- ----------------------------
--- Records of sys_menu
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 1, 'system', '', '', 1, 0, 'M', '0', '0', '', 'system', 1, '2024-02-08 04:10:55', 1, NULL, '系统管理目录');
-INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 2, 'monitor', '', '', 1, 0, 'M', '0', '0', '', 'monitor', 1, '2024-02-08 04:10:55', 1, NULL, '系统监控目录');
-INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 3, 'tool', '', '', 1, 0, 'M', '0', '0', '', 'tool', 1, '2024-02-08 04:10:55', 1, NULL, '系统工具目录');
-INSERT INTO `sys_menu` VALUES (4, '白泽官网', 0, 4, 'http://www.ibaize.vip', '', '', 0, 0, 'M', '0', '0', '', 'guide', 1, '2024-02-08 04:10:55', 1, NULL, '白泽官网地址');
-INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', '', 1, 0, 'C', '0', '0', 'system:user:list', 'user', 1, '2024-02-08 04:10:55', 1, NULL, '用户管理菜单');
-INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', '', 1, 0, 'C', '0', '0', 'system:role:list', 'peoples', 1, '2024-02-08 04:10:55', 1, NULL, '角色管理菜单');
-INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', '', 1, 0, 'C', '0', '0', 'system:menu:list', 'tree-table', 1, '2024-02-08 04:10:55', 1, NULL, '菜单管理菜单');
-INSERT INTO `sys_menu` VALUES (103, '部门管理', 1, 4, 'dept', 'system/dept/index', '', 1, 0, 'C', '0', '0', 'system:dept:list', 'tree', 1, '2024-02-08 04:10:55', 1, NULL, '部门管理菜单');
-INSERT INTO `sys_menu` VALUES (104, '岗位管理', 1, 5, 'post', 'system/post/index', '', 1, 0, 'C', '0', '0', 'system:post:list', 'post', 1, '2024-02-08 04:10:55', 1, NULL, '岗位管理菜单');
-INSERT INTO `sys_menu` VALUES (105, '字典管理', 1, 6, 'dict', 'system/dict/index', '', 1, 0, 'C', '0', '0', 'system:dict:list', 'dict', 1, '2024-02-08 04:10:55', 1, NULL, '字典管理菜单');
-INSERT INTO `sys_menu` VALUES (106, '参数设置', 1, 7, 'config', 'system/config/index', '', 1, 0, 'C', '0', '0', 'system:config:list', 'edit', 1, '2024-02-08 04:10:55', 1, NULL, '参数设置菜单');
-INSERT INTO `sys_menu` VALUES (107, '通知公告', 1, 8, 'notice', 'system/notice/index', '', 1, 0, 'C', '0', '0', 'system:notice:list', 'message', 1, '2024-02-08 04:10:55', 1, NULL, '通知公告菜单');
-INSERT INTO `sys_menu` VALUES (108, '日志管理', 1, 9, 'log', '', '', 1, 0, 'M', '0', '0', '', 'log', 1, '2024-02-08 04:10:55', 1, NULL, '日志管理菜单');
-INSERT INTO `sys_menu` VALUES (109, '在线用户', 2, 1, 'online', 'monitor/online/index', '', 1, 0, 'C', '0', '0', 'monitor:online:list', 'online', 1, '2024-02-08 04:10:55', 1, NULL, '在线用户菜单');
-INSERT INTO `sys_menu` VALUES (110, '定时任务', 2, 2, 'job', 'monitor/job/index', '',1, 0, 'C', '0', '0', 'monitor:job:list', 'job', 1, '2021-08-15 12:02:06', 1, NULL, '定时任务菜单');
-INSERT INTO `sys_menu` VALUES (112, '服务监控', 2, 4, 'server', 'monitor/server/index', '', 1, 0, 'C', '0', '0', 'monitor:server:list', 'server', 1, '2024-02-08 04:10:55', 1, NULL, '服务监控菜单');
-INSERT INTO `sys_menu` VALUES (116, '代码生成', 3, 2, 'gen', 'tool/gen/index', '', 1, 0, 'C', '0', '0', 'tool:gen:list', 'code', 1, '2024-02-08 04:10:55', 1, NULL, '代码生成菜单');
-INSERT INTO `sys_menu` VALUES (117, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', '', 1, 0, 'C', '0', '0', 'tool:swagger:list', 'swagger', 1, '2024-02-08 04:10:55', 1, NULL, '系统接口菜单');
-INSERT INTO `sys_menu` VALUES (500, '操作日志', 108, 1, 'operlog', 'monitor/operlog/index', '', 1, 0, 'C', '0', '0', 'monitor:operlog:list', 'form', 1, '2024-02-08 04:10:55', 1, NULL, '操作日志菜单');
-INSERT INTO `sys_menu` VALUES (501, '登录日志', 108, 2, 'logininfor', 'monitor/logininfor/index', '', 1, 0, 'C', '0', '0', 'monitor:logininfor:list', 'logininfor', 1, '2024-02-08 04:10:55', 1, NULL, '登录日志菜单');
-INSERT INTO `sys_menu` VALUES (1000, '用户查询', 100, 1, '', '', '', 1, 0, 'F', '0', '0', 'system:user:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1001, '用户新增', 100, 2, '', '', '', 1, 0, 'F', '0', '0', 'system:user:add', '#', 1, '2024-02-08 04:10:55', 1, '2024-03-18 02:33:50', '');
-INSERT INTO `sys_menu` VALUES (1002, '用户修改', 100, 3, '', '', '', 1, 0, 'F', '0', '0', 'system:user:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1003, '用户删除', 100, 4, '', '', '', 1, 0, 'F', '0', '0', 'system:user:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1004, '用户导出', 100, 5, '', '', '', 1, 0, 'F', '0', '0', 'system:user:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1005, '用户导入', 100, 6, '', '', '', 1, 0, 'F', '0', '0', 'system:user:import', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1006, '重置密码', 100, 7, '', '', '', 1, 0, 'F', '0', '0', 'system:user:resetPwd', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1007, '角色查询', 101, 1, '', '', '', 1, 0, 'F', '0', '0', 'system:role:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1008, '角色新增', 101, 2, '', '', '', 1, 0, 'F', '0', '0', 'system:role:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1009, '角色修改', 101, 3, '', '', '', 1, 0, 'F', '0', '0', 'system:role:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1010, '角色删除', 101, 4, '', '', '', 1, 0, 'F', '0', '0', 'system:role:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1011, '角色导出', 101, 5, '', '', '', 1, 0, 'F', '0', '0', 'system:role:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1012, '菜单查询', 102, 1, '', '', '', 1, 0, 'F', '0', '0', 'system:menu:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1013, '菜单新增', 102, 2, '', '', '', 1, 0, 'F', '0', '0', 'system:menu:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1014, '菜单修改', 102, 3, '', '', '', 1, 0, 'F', '0', '0', 'system:menu:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1015, '菜单删除', 102, 4, '', '', '', 1, 0, 'F', '0', '0', 'system:menu:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1016, '部门查询', 103, 1, '', '', '', 1, 0, 'F', '0', '0', 'system:dept:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1017, '部门新增', 103, 2, '', '', '', 1, 0, 'F', '0', '0', 'system:dept:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1018, '部门修改', 103, 3, '', '', '', 1, 0, 'F', '0', '0', 'system:dept:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1019, '部门删除', 103, 4, '', '', '', 1, 0, 'F', '0', '0', 'system:dept:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1020, '岗位查询', 104, 1, '', '', '', 1, 0, 'F', '0', '0', 'system:post:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1021, '岗位新增', 104, 2, '', '', '', 1, 0, 'F', '0', '0', 'system:post:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1022, '岗位修改', 104, 3, '', '', '', 1, 0, 'F', '0', '0', 'system:post:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1023, '岗位删除', 104, 4, '', '', '', 1, 0, 'F', '0', '0', 'system:post:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1024, '岗位导出', 104, 5, '', '', '', 1, 0, 'F', '0', '0', 'system:post:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1025, '字典查询', 105, 1, '#', '', '', 1, 0, 'F', '0', '0', 'system:dict:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1026, '字典新增', 105, 2, '#', '', '', 1, 0, 'F', '0', '0', 'system:dict:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1027, '字典修改', 105, 3, '#', '', '', 1, 0, 'F', '0', '0', 'system:dict:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1028, '字典删除', 105, 4, '#', '', '', 1, 0, 'F', '0', '0', 'system:dict:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1029, '字典导出', 105, 5, '#', '', '', 1, 0, 'F', '0', '0', 'system:dict:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1030, '参数查询', 106, 1, '#', '', '', 1, 0, 'F', '0', '0', 'system:config:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1031, '参数新增', 106, 2, '#', '', '', 1, 0, 'F', '0', '0', 'system:config:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1032, '参数修改', 106, 3, '#', '', '', 1, 0, 'F', '0', '0', 'system:config:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1033, '参数删除', 106, 4, '#', '', '', 1, 0, 'F', '0', '0', 'system:config:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1034, '参数导出', 106, 5, '#', '', '', 1, 0, 'F', '0', '0', 'system:config:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1035, '公告查询', 107, 1, '#', '', '', 1, 0, 'F', '0', '0', 'system:notice:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1036, '公告新增', 107, 2, '#', '', '', 1, 0, 'F', '0', '0', 'system:notice:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1037, '公告修改', 107, 3, '#', '', '', 1, 0, 'F', '0', '0', 'system:notice:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1038, '公告删除', 107, 4, '#', '', '', 1, 0, 'F', '0', '0', 'system:notice:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1039, '操作查询', 500, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:operlog:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1040, '操作删除', 500, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:operlog:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1041, '日志导出', 500, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:operlog:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1042, '登录查询', 501, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1043, '登录删除', 501, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1044, '日志导出', 501, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:logininfor:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1046, '在线查询', 109, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1047, '批量强退', 109, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:batchLogout', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1048, '单条强退', 109, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:online:forceLogout', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1049, '任务查询', 110, 1, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1050, '任务新增', 110, 2, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:add', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1051, '任务修改', 110, 3, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1052, '任务删除', 110, 4, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1053, '状态修改', 110, 5, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:changeStatus', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1054, '任务导出', 110, 6, '#', '', '', 1, 0, 'F', '0', '0', 'monitor:job:export', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1055, '生成查询', 116, 1, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:query', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1056, '生成修改', 116, 2, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:edit', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1057, '生成删除', 116, 3, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:remove', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1058, '导入代码', 116, 4, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:import', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1059, '预览代码', 116, 5, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:preview', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-INSERT INTO `sys_menu` VALUES (1060, '生成代码', 116, 6, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code', '#', 1, '2024-02-08 04:10:55', 1, NULL, '');
-COMMIT;
-
-
 
 -- ----------------------------
 -- Table structure for sys_notice
@@ -412,105 +298,6 @@ INSERT INTO `sys_role` VALUES (1, '超级管理员', 'admin', 1, '0', '0', 1, '2
 INSERT INTO `sys_role` VALUES (2, '普通角色', 'common', 2, '0', '0', 1, '2024-02-08 04:10:55', 1, '2024-03-04 14:16:58', '普通角色');
 COMMIT;
 
--- ----------------------------
--- Table structure for sys_role_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role_menu`;
-CREATE TABLE `sys_role_menu` (
-  `role_id` bigint NOT NULL COMMENT '角色ID',
-  `menu_id` bigint NOT NULL COMMENT '菜单ID',
-  PRIMARY KEY (`role_id`,`menu_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色和菜单关联表';
-
--- ----------------------------
--- Records of sys_role_menu
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role_menu` VALUES (2, 1);
-INSERT INTO `sys_role_menu` VALUES (2, 2);
-INSERT INTO `sys_role_menu` VALUES (2, 3);
-INSERT INTO `sys_role_menu` VALUES (2, 4);
-INSERT INTO `sys_role_menu` VALUES (2, 100);
-INSERT INTO `sys_role_menu` VALUES (2, 101);
-INSERT INTO `sys_role_menu` VALUES (2, 102);
-INSERT INTO `sys_role_menu` VALUES (2, 103);
-INSERT INTO `sys_role_menu` VALUES (2, 104);
-INSERT INTO `sys_role_menu` VALUES (2, 105);
-INSERT INTO `sys_role_menu` VALUES (2, 106);
-INSERT INTO `sys_role_menu` VALUES (2, 107);
-INSERT INTO `sys_role_menu` VALUES (2, 108);
-INSERT INTO `sys_role_menu` VALUES (2, 109);
-INSERT INTO `sys_role_menu` VALUES (2, 110);
-INSERT INTO `sys_role_menu` VALUES (2, 111);
-INSERT INTO `sys_role_menu` VALUES (2, 112);
-INSERT INTO `sys_role_menu` VALUES (2, 113);
-INSERT INTO `sys_role_menu` VALUES (2, 114);
-INSERT INTO `sys_role_menu` VALUES (2, 115);
-INSERT INTO `sys_role_menu` VALUES (2, 116);
-INSERT INTO `sys_role_menu` VALUES (2, 500);
-INSERT INTO `sys_role_menu` VALUES (2, 501);
-INSERT INTO `sys_role_menu` VALUES (2, 1000);
-INSERT INTO `sys_role_menu` VALUES (2, 1001);
-INSERT INTO `sys_role_menu` VALUES (2, 1002);
-INSERT INTO `sys_role_menu` VALUES (2, 1003);
-INSERT INTO `sys_role_menu` VALUES (2, 1004);
-INSERT INTO `sys_role_menu` VALUES (2, 1005);
-INSERT INTO `sys_role_menu` VALUES (2, 1006);
-INSERT INTO `sys_role_menu` VALUES (2, 1007);
-INSERT INTO `sys_role_menu` VALUES (2, 1008);
-INSERT INTO `sys_role_menu` VALUES (2, 1009);
-INSERT INTO `sys_role_menu` VALUES (2, 1010);
-INSERT INTO `sys_role_menu` VALUES (2, 1011);
-INSERT INTO `sys_role_menu` VALUES (2, 1012);
-INSERT INTO `sys_role_menu` VALUES (2, 1013);
-INSERT INTO `sys_role_menu` VALUES (2, 1014);
-INSERT INTO `sys_role_menu` VALUES (2, 1015);
-INSERT INTO `sys_role_menu` VALUES (2, 1016);
-INSERT INTO `sys_role_menu` VALUES (2, 1017);
-INSERT INTO `sys_role_menu` VALUES (2, 1018);
-INSERT INTO `sys_role_menu` VALUES (2, 1019);
-INSERT INTO `sys_role_menu` VALUES (2, 1020);
-INSERT INTO `sys_role_menu` VALUES (2, 1021);
-INSERT INTO `sys_role_menu` VALUES (2, 1022);
-INSERT INTO `sys_role_menu` VALUES (2, 1023);
-INSERT INTO `sys_role_menu` VALUES (2, 1024);
-INSERT INTO `sys_role_menu` VALUES (2, 1025);
-INSERT INTO `sys_role_menu` VALUES (2, 1026);
-INSERT INTO `sys_role_menu` VALUES (2, 1027);
-INSERT INTO `sys_role_menu` VALUES (2, 1028);
-INSERT INTO `sys_role_menu` VALUES (2, 1029);
-INSERT INTO `sys_role_menu` VALUES (2, 1030);
-INSERT INTO `sys_role_menu` VALUES (2, 1031);
-INSERT INTO `sys_role_menu` VALUES (2, 1032);
-INSERT INTO `sys_role_menu` VALUES (2, 1033);
-INSERT INTO `sys_role_menu` VALUES (2, 1034);
-INSERT INTO `sys_role_menu` VALUES (2, 1035);
-INSERT INTO `sys_role_menu` VALUES (2, 1036);
-INSERT INTO `sys_role_menu` VALUES (2, 1037);
-INSERT INTO `sys_role_menu` VALUES (2, 1038);
-INSERT INTO `sys_role_menu` VALUES (2, 1039);
-INSERT INTO `sys_role_menu` VALUES (2, 1040);
-INSERT INTO `sys_role_menu` VALUES (2, 1041);
-INSERT INTO `sys_role_menu` VALUES (2, 1042);
-INSERT INTO `sys_role_menu` VALUES (2, 1043);
-INSERT INTO `sys_role_menu` VALUES (2, 1044);
-INSERT INTO `sys_role_menu` VALUES (2, 1045);
-INSERT INTO `sys_role_menu` VALUES (2, 1046);
-INSERT INTO `sys_role_menu` VALUES (2, 1047);
-INSERT INTO `sys_role_menu` VALUES (2, 1048);
-INSERT INTO `sys_role_menu` VALUES (2, 1049);
-INSERT INTO `sys_role_menu` VALUES (2, 1050);
-INSERT INTO `sys_role_menu` VALUES (2, 1051);
-INSERT INTO `sys_role_menu` VALUES (2, 1052);
-INSERT INTO `sys_role_menu` VALUES (2, 1053);
-INSERT INTO `sys_role_menu` VALUES (2, 1054);
-INSERT INTO `sys_role_menu` VALUES (2, 1055);
-INSERT INTO `sys_role_menu` VALUES (2, 1056);
-INSERT INTO `sys_role_menu` VALUES (2, 1057);
-INSERT INTO `sys_role_menu` VALUES (2, 1058);
-INSERT INTO `sys_role_menu` VALUES (2, 1059);
-INSERT INTO `sys_role_menu` VALUES (2, 1060);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -550,10 +337,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user_dept_scope`;
 CREATE TABLE `sys_user_dept_scope` (
-  `user_id` bigint NOT NULL COMMENT '角色ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
   `dept_id` bigint NOT NULL COMMENT '部门ID',
   PRIMARY KEY (`user_id`,`dept_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色和部门关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户和部门关联表';
 
 -- ----------------------------
 -- Records of sys_user_dept_scope
@@ -565,7 +352,6 @@ INSERT INTO `sys_user_dept_scope` VALUES (2, 103);
 INSERT INTO `sys_user_dept_scope` VALUES (2, 104);
 INSERT INTO `sys_user_dept_scope` VALUES (2, 108);
 INSERT INTO `sys_user_dept_scope` VALUES (2, 109);
-
 COMMIT;
 
 -- ----------------------------
@@ -601,7 +387,6 @@ CREATE TABLE `sys_user_role` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_user_role` VALUES (1, 1);
-INSERT INTO `sys_user_role` VALUES (2, 1);
 INSERT INTO `sys_user_role` VALUES (2, 2);
 COMMIT;
 
@@ -700,3 +485,212 @@ create table sys_job_log (
      cost_time         bigint(20)     default 0                  comment '耗时（毫秒）',
      primary key (job_log_id)
 ) engine=innodb comment = '定时任务调度日志表';
+
+
+
+-- ----------------------------
+-- Table structure for sys_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_permission`;
+CREATE TABLE `sys_permission`  (
+                                   `permission_id` bigint(20) NOT NULL COMMENT '主键',
+                                   `permission_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限名称',
+                                   `parent_id` bigint(20) NULL DEFAULT NULL COMMENT '父ID',
+                                   `permission` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限标识符',
+                                   `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '0' COMMENT '状态',
+                                   `create_by` bigint(20) NULL DEFAULT NULL COMMENT '创建人',
+                                   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+                                   `update_by` bigint(20) NULL DEFAULT NULL COMMENT '更新人',
+                                   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+                                   PRIMARY KEY (`permission_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_permission
+-- ----------------------------
+INSERT INTO `sys_permission` VALUES (1, '系统管理', 0, '', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (2, '系统监控', 0, '', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (3, '系统工具', 0, '', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (100, '用户管理', 1, 'system:user:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (101, '角色管理', 1, 'system:role:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (102, '菜单管理', 1, 'system:menu:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (103, '部门管理', 1, 'system:dept:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (104, '岗位管理', 1, 'system:post:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (105, '字典管理', 1, 'system:dict:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (106, '参数设置', 1, 'system:config:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (107, '通知公告', 1, 'system:notice:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (108, '日志管理', 1, '', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (109, '在线用户', 2, 'monitor:online:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (110, '定时任务', 2, 'monitor:job:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (111, '数据监控', 2, 'monitor:druid:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (112, '服务监控', 2, 'monitor:server:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (113, '缓存监控', 2, 'monitor:cache:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (114, '缓存列表', 2, 'monitor:cache:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (115, '表单构建', 3, 'tool:build:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (116, '代码生成', 3, 'tool:gen:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (117, '系统接口', 3, 'tool:swagger:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (500, '操作日志', 108, 'monitor:operlog:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (501, '登录日志', 108, 'monitor:logininfor:list', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1000, '用户查询', 100, 'system:user:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1001, '用户新增', 100, 'system:user:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1002, '用户修改', 100, 'system:user:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1003, '用户删除', 100, 'system:user:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1004, '用户导出', 100, 'system:user:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1005, '用户导入', 100, 'system:user:import', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1006, '重置密码', 100, 'system:user:resetPwd', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1007, '角色查询', 101, 'system:role:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1008, '角色新增', 101, 'system:role:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1009, '角色修改', 101, 'system:role:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1010, '角色删除', 101, 'system:role:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1011, '角色导出', 101, 'system:role:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1012, '菜单查询', 102, 'system:menu:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1013, '菜单新增', 102, 'system:menu:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1014, '菜单修改', 102, 'system:menu:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1015, '菜单删除', 102, 'system:menu:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1016, '部门查询', 103, 'system:dept:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1017, '部门新增', 103, 'system:dept:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1018, '部门修改', 103, 'system:dept:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1019, '部门删除', 103, 'system:dept:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1020, '岗位查询', 104, 'system:post:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1021, '岗位新增', 104, 'system:post:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1022, '岗位修改', 104, 'system:post:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1023, '岗位删除', 104, 'system:post:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1024, '岗位导出', 104, 'system:post:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1025, '字典查询', 105, 'system:dict:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1026, '字典新增', 105, 'system:dict:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1027, '字典修改', 105, 'system:dict:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1028, '字典删除', 105, 'system:dict:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1029, '字典导出', 105, 'system:dict:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1030, '参数查询', 106, 'system:config:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1031, '参数新增', 106, 'system:config:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1032, '参数修改', 106, 'system:config:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1033, '参数删除', 106, 'system:config:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1034, '参数导出', 106, 'system:config:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1035, '公告查询', 107, 'system:notice:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1036, '公告新增', 107, 'system:notice:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1037, '公告修改', 107, 'system:notice:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1038, '公告删除', 107, 'system:notice:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1039, '操作查询', 500, 'monitor:operlog:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1040, '操作删除', 500, 'monitor:operlog:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1041, '日志导出', 500, 'monitor:operlog:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1042, '登录查询', 501, 'monitor:logininfor:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1043, '登录删除', 501, 'monitor:logininfor:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1044, '日志导出', 501, 'monitor:logininfor:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1046, '在线查询', 109, 'monitor:online:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1047, '批量强退', 109, 'monitor:online:batchLogout', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1048, '单条强退', 109, 'monitor:online:forceLogout', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1049, '任务查询', 110, 'monitor:job:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1050, '任务新增', 110, 'monitor:job:add', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1051, '任务修改', 110, 'monitor:job:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1052, '任务删除', 110, 'monitor:job:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1053, '状态修改', 110, 'monitor:job:changeStatus', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1054, '任务导出', 110, 'monitor:job:export', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1055, '生成查询', 116, 'tool:gen:query', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1056, '生成修改', 116, 'tool:gen:edit', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1057, '生成删除', 116, 'tool:gen:remove', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1058, '导入代码', 116, 'tool:gen:import', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1059, '预览代码', 116, 'tool:gen:preview', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+INSERT INTO `sys_permission` VALUES (1060, '生成代码', 116, 'tool:gen:code', '0', 1, '2025-02-28 13:38:05', 1, '2025-02-28 13:38:05');
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+    -- ----------------------------
+-- Table structure for sys_role_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_permission`;
+CREATE TABLE `sys_role_permission` (
+                                 `role_id` bigint NOT NULL COMMENT '角色ID',
+                                 `permission_id` bigint NOT NULL COMMENT '权限ID',
+                                 PRIMARY KEY (`role_id`,`permission_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色和权限关联表';
+
+-- ----------------------------
+-- Records of sys_role_permission
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_permission` VALUES (2, 1);
+INSERT INTO `sys_role_permission` VALUES (2, 2);
+INSERT INTO `sys_role_permission` VALUES (2, 3);
+INSERT INTO `sys_role_permission` VALUES (2, 4);
+INSERT INTO `sys_role_permission` VALUES (2, 100);
+INSERT INTO `sys_role_permission` VALUES (2, 101);
+INSERT INTO `sys_role_permission` VALUES (2, 102);
+INSERT INTO `sys_role_permission` VALUES (2, 103);
+INSERT INTO `sys_role_permission` VALUES (2, 104);
+INSERT INTO `sys_role_permission` VALUES (2, 105);
+INSERT INTO `sys_role_permission` VALUES (2, 106);
+INSERT INTO `sys_role_permission` VALUES (2, 107);
+INSERT INTO `sys_role_permission` VALUES (2, 108);
+INSERT INTO `sys_role_permission` VALUES (2, 109);
+INSERT INTO `sys_role_permission` VALUES (2, 110);
+INSERT INTO `sys_role_permission` VALUES (2, 111);
+INSERT INTO `sys_role_permission` VALUES (2, 112);
+INSERT INTO `sys_role_permission` VALUES (2, 113);
+INSERT INTO `sys_role_permission` VALUES (2, 114);
+INSERT INTO `sys_role_permission` VALUES (2, 115);
+INSERT INTO `sys_role_permission` VALUES (2, 116);
+INSERT INTO `sys_role_permission` VALUES (2, 500);
+INSERT INTO `sys_role_permission` VALUES (2, 501);
+INSERT INTO `sys_role_permission` VALUES (2, 1000);
+INSERT INTO `sys_role_permission` VALUES (2, 1001);
+INSERT INTO `sys_role_permission` VALUES (2, 1002);
+INSERT INTO `sys_role_permission` VALUES (2, 1003);
+INSERT INTO `sys_role_permission` VALUES (2, 1004);
+INSERT INTO `sys_role_permission` VALUES (2, 1005);
+INSERT INTO `sys_role_permission` VALUES (2, 1006);
+INSERT INTO `sys_role_permission` VALUES (2, 1007);
+INSERT INTO `sys_role_permission` VALUES (2, 1008);
+INSERT INTO `sys_role_permission` VALUES (2, 1009);
+INSERT INTO `sys_role_permission` VALUES (2, 1010);
+INSERT INTO `sys_role_permission` VALUES (2, 1011);
+INSERT INTO `sys_role_permission` VALUES (2, 1012);
+INSERT INTO `sys_role_permission` VALUES (2, 1013);
+INSERT INTO `sys_role_permission` VALUES (2, 1014);
+INSERT INTO `sys_role_permission` VALUES (2, 1015);
+INSERT INTO `sys_role_permission` VALUES (2, 1016);
+INSERT INTO `sys_role_permission` VALUES (2, 1017);
+INSERT INTO `sys_role_permission` VALUES (2, 1018);
+INSERT INTO `sys_role_permission` VALUES (2, 1019);
+INSERT INTO `sys_role_permission` VALUES (2, 1020);
+INSERT INTO `sys_role_permission` VALUES (2, 1021);
+INSERT INTO `sys_role_permission` VALUES (2, 1022);
+INSERT INTO `sys_role_permission` VALUES (2, 1023);
+INSERT INTO `sys_role_permission` VALUES (2, 1024);
+INSERT INTO `sys_role_permission` VALUES (2, 1025);
+INSERT INTO `sys_role_permission` VALUES (2, 1026);
+INSERT INTO `sys_role_permission` VALUES (2, 1027);
+INSERT INTO `sys_role_permission` VALUES (2, 1028);
+INSERT INTO `sys_role_permission` VALUES (2, 1029);
+INSERT INTO `sys_role_permission` VALUES (2, 1030);
+INSERT INTO `sys_role_permission` VALUES (2, 1031);
+INSERT INTO `sys_role_permission` VALUES (2, 1032);
+INSERT INTO `sys_role_permission` VALUES (2, 1033);
+INSERT INTO `sys_role_permission` VALUES (2, 1034);
+INSERT INTO `sys_role_permission` VALUES (2, 1035);
+INSERT INTO `sys_role_permission` VALUES (2, 1036);
+INSERT INTO `sys_role_permission` VALUES (2, 1037);
+INSERT INTO `sys_role_permission` VALUES (2, 1038);
+INSERT INTO `sys_role_permission` VALUES (2, 1039);
+INSERT INTO `sys_role_permission` VALUES (2, 1040);
+INSERT INTO `sys_role_permission` VALUES (2, 1041);
+INSERT INTO `sys_role_permission` VALUES (2, 1042);
+INSERT INTO `sys_role_permission` VALUES (2, 1043);
+INSERT INTO `sys_role_permission` VALUES (2, 1044);
+INSERT INTO `sys_role_permission` VALUES (2, 1045);
+INSERT INTO `sys_role_permission` VALUES (2, 1046);
+INSERT INTO `sys_role_permission` VALUES (2, 1047);
+INSERT INTO `sys_role_permission` VALUES (2, 1048);
+INSERT INTO `sys_role_permission` VALUES (2, 1049);
+INSERT INTO `sys_role_permission` VALUES (2, 1050);
+INSERT INTO `sys_role_permission` VALUES (2, 1051);
+INSERT INTO `sys_role_permission` VALUES (2, 1052);
+INSERT INTO `sys_role_permission` VALUES (2, 1053);
+INSERT INTO `sys_role_permission` VALUES (2, 1054);
+INSERT INTO `sys_role_permission` VALUES (2, 1055);
+INSERT INTO `sys_role_permission` VALUES (2, 1056);
+INSERT INTO `sys_role_permission` VALUES (2, 1057);
+INSERT INTO `sys_role_permission` VALUES (2, 1058);
+INSERT INTO `sys_role_permission` VALUES (2, 1059);
+INSERT INTO `sys_role_permission` VALUES (2, 1060);
+COMMIT;

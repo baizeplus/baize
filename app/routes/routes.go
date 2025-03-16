@@ -68,9 +68,9 @@ func NewGinEngine(
 		sc.Dept.PrivateRoutes(group)       //部门
 		sc.DictType.PrivateRoutes(group)   //字典类型
 		sc.DictData.PrivateRoutes(group)   //地点数据
-		sc.Menu.PrivateRoutes(group)       //菜单
 		sc.Role.PrivateRoutes(group)       //角色
 		sc.Post.PrivateRoutes(group)       //岗位
+		sc.Permission.PrivateRoutes(group) //岗位
 		sc.Config.PrivateRoutes(group)     //配置
 		sc.File.PrivateRoutes(group)       //文件
 		sc.Notice.PrivateRoutes(group)     //消息

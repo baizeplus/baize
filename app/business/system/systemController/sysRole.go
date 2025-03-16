@@ -17,7 +17,7 @@ func NewRole(rs systemService.IRoleService) *Role {
 }
 func (rc *Role) PrivateRoutes(router *gin.RouterGroup) {
 	rr := router.Group("/system/role")
-	rr.GET("/list", middlewares.HasPermission("system:role:list"), rc.RoleList)
+	rr.GET("/list", middlewares.HasPermission("system:role"), rc.RoleList)
 	rr.POST("/export", middlewares.HasPermission("system:role:export"), rc.RoleExport)
 	rr.GET("/:roleId", middlewares.HasPermission("system:role:query"), rc.RoleGetInfo)
 	rr.POST("", middlewares.SetLog("角色管理", middlewares.Insert), middlewares.HasPermission("system:role:add"), rc.RoleAdd)

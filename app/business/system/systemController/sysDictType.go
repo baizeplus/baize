@@ -22,7 +22,7 @@ func NewDictType(dts systemService.IDictTypeService, dds systemService.IDictData
 }
 func (dtc *DictType) PrivateRoutes(router *gin.RouterGroup) {
 	systemDictType := router.Group("/system/dict/type")
-	systemDictType.GET("/list", middlewares.HasPermission("system:dict:list"), dtc.DictTypeList)
+	systemDictType.GET("/list", middlewares.HasPermission("system:dict"), dtc.DictTypeList)
 	systemDictType.POST("/export", middlewares.HasPermission("system:dict:export"), dtc.DictTypeExport)
 	systemDictType.GET("/:dictId", middlewares.HasPermission("system:dict:query"), dtc.DictTypeGetInfo)
 	systemDictType.POST("", middlewares.SetLog("字典管理", middlewares.Insert), middlewares.HasPermission("system:dict:add"), dtc.DictTypeAdd)

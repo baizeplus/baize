@@ -26,7 +26,7 @@ import (
 type LoginService struct {
 	cache       cache.Cache
 	userDao     systemDao.IUserDao
-	menuDao     systemDao.IMenuDao
+	pd          systemDao.ISysPermissionDao
 	roleDao     systemDao.IRoleDao
 	loginforDao monitorDao.ILogininforDao
 	driver      *base64Captcha.DriverMath
@@ -34,8 +34,8 @@ type LoginService struct {
 	cs          systemService.IConfigService
 }
 
-func NewLoginService(cache cache.Cache, ud systemDao.IUserDao, md systemDao.IMenuDao, rd systemDao.IRoleDao, ld monitorDao.ILogininforDao, cs systemService.IConfigService) systemService.ILoginService {
-	return &LoginService{cache: cache, userDao: ud, menuDao: md, roleDao: rd, loginforDao: ld, cs: cs,
+func NewLoginService(cache cache.Cache, ud systemDao.IUserDao, pd systemDao.ISysPermissionDao, rd systemDao.IRoleDao, ld monitorDao.ILogininforDao, cs systemService.IConfigService) systemService.ILoginService {
+	return &LoginService{cache: cache, userDao: ud, pd: pd, roleDao: rd, loginforDao: ld, cs: cs,
 		driver: base64Captcha.NewDriverMath(38, 106, 0, 0, &color.RGBA{0, 0, 0, 0}, nil, []string{"wqy-microhei.ttc"}),
 		store:  base64Captcha.DefaultMemStore,
 	}
@@ -93,9 +93,9 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 func (loginService *LoginService) getPermission(c *gin.Context, userId int64) []string {
 	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
-		perms = loginService.menuDao.SelectMenuPermsAll(c)
+		perms = loginService.pd.SelectPermissionAll(c)
 	} else {
-		perms = loginService.menuDao.SelectMenuPermsByUserId(c, userId)
+		perms = loginService.pd.SelectPermissionByUserId(c, userId)
 	}
 	return perms
 }

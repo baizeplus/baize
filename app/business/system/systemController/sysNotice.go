@@ -17,7 +17,7 @@ func NewNotice(ns systemService.ISysNoticeService) *Notice {
 }
 func (nc *Notice) PrivateRoutes(router *gin.RouterGroup) {
 	systemNoticeData := router.Group("/system/notice")
-	systemNoticeData.GET("/list", middlewares.HasPermission("system:notice:list"), nc.NoticeList)
+	systemNoticeData.GET("/list", middlewares.HasPermission("system:notice"), nc.NoticeList)
 	systemNoticeData.GET("/:id", middlewares.HasPermission("system:notice:query"), nc.NoticeGetInfo)
 	systemNoticeData.POST("", middlewares.HasPermission("system:notice:add"), nc.NoticeAdd)
 	systemConsumptionData := router.Group("/system/consumption")

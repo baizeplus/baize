@@ -32,12 +32,12 @@ func wireApp() (*gin.Engine, func(), error) {
 		return nil, nil, err
 	}
 	iUserDao := systemDaoImpl.NewSysUserDao(sqlyContext)
-	iMenuDao := systemDaoImpl.NewSysMenuDao(sqlyContext)
+	iSysPermissionDao := systemDaoImpl.NewSysPermissionDao(sqlyContext)
 	iRoleDao := systemDaoImpl.NewSysRoleDao(sqlyContext)
 	iLogininforDao := monitorDaoImpl.NewLogininforDao(sqlyContext)
 	iConfigDao := systemDaoImpl.NewSysConfigDao(sqlyContext)
 	iConfigService := systemServiceImpl.NewConfigService(iConfigDao, cacheCache)
-	iLoginService := systemServiceImpl.NewLoginService(cacheCache, iUserDao, iMenuDao, iRoleDao, iLogininforDao, iConfigService)
+	iLoginService := systemServiceImpl.NewLoginService(cacheCache, iUserDao, iSysPermissionDao, iRoleDao, iLogininforDao, iConfigService)
 	iUserPostDao := systemDaoImpl.NewSysUserPostDao(sqlyContext)
 	iUserRoleDao := systemDaoImpl.NewSysUserRoleDao(sqlyContext)
 	objectFileObjectFile := objectFile.NewConfig()
@@ -45,10 +45,9 @@ func wireApp() (*gin.Engine, func(), error) {
 	iPostDao := systemDaoImpl.NewSysPostDao(sqlyContext)
 	iUserDeptScopeDao := systemDaoImpl.NewSysUserDeptScopeDao(sqlyContext)
 	iUserService := systemServiceImpl.NewUserService(sqlyContext, iUserDao, iUserPostDao, iUserRoleDao, objectFileObjectFile, iDeptDao, iRoleDao, iPostDao, iUserDeptScopeDao, iConfigService)
-	iRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao(sqlyContext)
-	iMenuService := systemServiceImpl.NewMenuService(iMenuDao, iRoleMenuDao, iRoleDao)
-	login := systemController.NewLogin(iLoginService, iUserService, iMenuService, iConfigService)
+	login := systemController.NewLogin(iLoginService, iUserService, iConfigService)
 	iPostService := systemServiceImpl.NewPostService(iPostDao)
+	iRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao(sqlyContext)
 	iRoleService := systemServiceImpl.NewRoleService(sqlyContext, iRoleDao, iRoleMenuDao, iUserRoleDao)
 	user := systemController.NewUser(iUserService, iPostService, iRoleService)
 	iDeptService := systemServiceImpl.NewDeptService(iDeptDao, iRoleDao)
@@ -59,7 +58,6 @@ func wireApp() (*gin.Engine, func(), error) {
 	iDictDataService := systemServiceImpl.NewDictDataService(iDictDataDao, cacheCache)
 	dictType := systemController.NewDictType(iDictTypeService, iDictDataService)
 	dictData := systemController.NewDictData(iDictDataService)
-	menu := systemController.NewMenu(iMenuService)
 	role := systemController.NewRole(iRoleService)
 	post := systemController.NewPost(iPostService)
 	profile := systemController.NewProfile(iUserService)
@@ -71,20 +69,22 @@ func wireApp() (*gin.Engine, func(), error) {
 	iSysNoticeDao := systemDaoImpl.NewSysNoticeDao(sqlyContext)
 	iSysNoticeService := systemServiceImpl.NewNoticeService(iSysNoticeDao, iUserDao, iSseService)
 	notice := systemController.NewNotice(iSysNoticeService)
+	iSysPermissionService := systemServiceImpl.NewPermissionService(iSysPermissionDao)
+	permission := systemController.NewPermission(iSysPermissionService)
 	system := &systemController.System{
-		Login:    login,
-		User:     user,
-		Dept:     dept,
-		DictType: dictType,
-		DictData: dictData,
-		Menu:     menu,
-		Role:     role,
-		Post:     post,
-		Profile:  profile,
-		Config:   config,
-		File:     file,
-		Sse:      sse,
-		Notice:   notice,
+		Login:      login,
+		User:       user,
+		Dept:       dept,
+		DictType:   dictType,
+		DictData:   dictData,
+		Role:       role,
+		Post:       post,
+		Profile:    profile,
+		Config:     config,
+		File:       file,
+		Sse:        sse,
+		Notice:     notice,
+		Permission: permission,
 	}
 	infoServer := monitorController.NewInfoServer()
 	iUserOnlineService := monitorServiceImpl.NewUserOnlineService(cacheCache)

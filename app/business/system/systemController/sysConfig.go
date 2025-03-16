@@ -18,7 +18,7 @@ func NewConfig(cs systemService.IConfigService) *Config {
 
 func (cc *Config) PrivateRoutes(router *gin.RouterGroup) {
 	systemConfig := router.Group("/system/config")
-	systemConfig.GET("/list", middlewares.HasPermission("system:config:list"), cc.ConfigList)
+	systemConfig.GET("/list", middlewares.HasPermission("system:config"), cc.ConfigList)
 	systemConfig.POST("/export", middlewares.HasPermission("system:config:export"), cc.ConfigExport)
 	systemConfig.GET("/:configId", middlewares.HasPermission("system:config:query"), cc.ConfigGetInfo)
 	systemConfig.POST("", middlewares.SetLog("配置管理", middlewares.Insert), middlewares.HasPermission("system:config:add"), cc.ConfigAdd)

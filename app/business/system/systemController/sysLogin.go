@@ -14,17 +14,17 @@ import (
 type Login struct {
 	ls systemService.ILoginService
 	us systemService.IUserService
-	ms systemService.IMenuService
+	//pd systemDao.ISysPermissionDao
 	cs systemService.IConfigService
 }
 
-func NewLogin(ls systemService.ILoginService, us systemService.IUserService, ms systemService.IMenuService, cs systemService.IConfigService) *Login {
-	return &Login{ls: ls, us: us, ms: ms, cs: cs}
+func NewLogin(ls systemService.ILoginService, us systemService.IUserService, cs systemService.IConfigService) *Login {
+	return &Login{ls: ls, us: us, cs: cs}
 }
 
 func (lc *Login) PrivateRoutes(router *gin.RouterGroup) {
 	router.GET("/getInfo", lc.GetInfo)
-	router.GET("/getRouters", lc.GetRouters)
+	//router.GET("/getRouters", lc.GetRouters)
 }
 func (lc *Login) PublicRoutes(router *gin.RouterGroup) {
 	router.GET("/captchaImage", lc.GetCode) //获取验证码
@@ -156,16 +156,16 @@ func (lc *Login) GetCode(c *gin.Context) {
 	baizeContext.SuccessData(c, lc.ls.GenerateCode(c))
 }
 
-// GetRouters 获取路由
-// @Summary 获取路由
-// @Description 获取路由
-// @Tags 登录
-// @Produce application/json
-// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.RouterVo}} "获取成功"
-// @Router /getRouters [get]
-func (lc *Login) GetRouters(c *gin.Context) {
-	userId := baizeContext.GetUserId(c)
-	menus := lc.ms.SelectMenuTreeByUserId(c, userId)
-	buildMenus := lc.ms.BuildMenus(c, menus)
-	baizeContext.SuccessData(c, buildMenus)
-}
+//// GetRouters 获取路由
+//// @Summary 获取路由
+//// @Description 获取路由
+//// @Tags 登录
+//// @Produce application/json
+//// @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.RouterVo}} "获取成功"
+//// @Router /getRouters [get]
+//func (lc *Login) GetRouters(c *gin.Context) {
+//	userId := baizeContext.GetUserId(c)
+//	menus := lc.ms.SelectMenuTreeByUserId(c, userId)
+//	buildMenus := lc.ms.BuildMenus(c, menus)
+//	baizeContext.SuccessData(c, buildMenus)
+//}
