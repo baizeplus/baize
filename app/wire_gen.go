@@ -32,12 +32,12 @@ func wireApp() (*gin.Engine, func(), error) {
 		return nil, nil, err
 	}
 	iUserDao := systemDaoImpl.NewSysUserDao(sqlyContext)
-	iSysPermissionDao := systemDaoImpl.NewSysPermissionDao(sqlyContext)
+	iPermissionDao := systemDaoImpl.NewSysPermissionDao(sqlyContext)
 	iRoleDao := systemDaoImpl.NewSysRoleDao(sqlyContext)
 	iLogininforDao := monitorDaoImpl.NewLogininforDao(sqlyContext)
 	iConfigDao := systemDaoImpl.NewSysConfigDao(sqlyContext)
 	iConfigService := systemServiceImpl.NewConfigService(iConfigDao, cacheCache)
-	iLoginService := systemServiceImpl.NewLoginService(cacheCache, iUserDao, iSysPermissionDao, iRoleDao, iLogininforDao, iConfigService)
+	iLoginService := systemServiceImpl.NewLoginService(cacheCache, iUserDao, iPermissionDao, iRoleDao, iLogininforDao, iConfigService)
 	iUserPostDao := systemDaoImpl.NewSysUserPostDao(sqlyContext)
 	iUserRoleDao := systemDaoImpl.NewSysUserRoleDao(sqlyContext)
 	objectFileObjectFile := objectFile.NewConfig()
@@ -47,7 +47,7 @@ func wireApp() (*gin.Engine, func(), error) {
 	iUserService := systemServiceImpl.NewUserService(sqlyContext, iUserDao, iUserPostDao, iUserRoleDao, objectFileObjectFile, iDeptDao, iRoleDao, iPostDao, iUserDeptScopeDao, iConfigService)
 	login := systemController.NewLogin(iLoginService, iUserService, iConfigService)
 	iPostService := systemServiceImpl.NewPostService(iPostDao)
-	iRoleMenuDao := systemDaoImpl.NewSysRoleMenuDao(sqlyContext)
+	iRoleMenuDao := systemDaoImpl.NewSysRolePermissionDao(sqlyContext)
 	iRoleService := systemServiceImpl.NewRoleService(sqlyContext, iRoleDao, iRoleMenuDao, iUserRoleDao)
 	user := systemController.NewUser(iUserService, iPostService, iRoleService)
 	iDeptService := systemServiceImpl.NewDeptService(iDeptDao, iRoleDao)
@@ -69,8 +69,10 @@ func wireApp() (*gin.Engine, func(), error) {
 	iSysNoticeDao := systemDaoImpl.NewSysNoticeDao(sqlyContext)
 	iSysNoticeService := systemServiceImpl.NewNoticeService(iSysNoticeDao, iUserDao, iSseService)
 	notice := systemController.NewNotice(iSysNoticeService)
-	iSysPermissionService := systemServiceImpl.NewPermissionService(iSysPermissionDao)
+	iSysPermissionService := systemServiceImpl.NewPermissionService(iPermissionDao)
 	permission := systemController.NewPermission(iSysPermissionService)
+	iSelectBoxService := systemServiceImpl.NewSelectService(iPermissionDao)
+	selectBox := systemController.NewSelectBox(iSelectBoxService)
 	system := &systemController.System{
 		Login:      login,
 		User:       user,
@@ -85,6 +87,7 @@ func wireApp() (*gin.Engine, func(), error) {
 		Sse:        sse,
 		Notice:     notice,
 		Permission: permission,
+		SelectBox:  selectBox,
 	}
 	infoServer := monitorController.NewInfoServer()
 	iUserOnlineService := monitorServiceImpl.NewUserOnlineService(cacheCache)

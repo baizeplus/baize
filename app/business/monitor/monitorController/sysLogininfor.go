@@ -18,8 +18,8 @@ func NewLogininfor(ls monitorService.ILogininforService) *Logininfor {
 
 func (lc *Logininfor) PrivateRoutes(router *gin.RouterGroup) {
 	logininfor := router.Group("/monitor/logininfor")
-	logininfor.GET("/list", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforList)
-	logininfor.GET("/export", middlewares.HasPermission("monitor:logininfor:list"), lc.LogininforExport)
+	logininfor.GET("/list", middlewares.HasPermission("system:monitor:logininfor"), lc.LogininforList)
+	logininfor.GET("/export", middlewares.HasPermission("monitor:logininfor:export"), lc.LogininforExport)
 	logininfor.DELETE("/:infoIds", middlewares.SetLog("登录日志", middlewares.Delete), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforRemove)
 	logininfor.DELETE("/clean", middlewares.SetLog("登录日志", middlewares.Clear), middlewares.HasPermission("monitor:logininfor:remove"), lc.LogininforClean)
 }

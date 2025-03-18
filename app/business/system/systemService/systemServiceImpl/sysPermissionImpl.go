@@ -10,10 +10,10 @@ import (
 )
 
 type PermissionService struct {
-	pd systemDao.ISysPermissionDao
+	pd systemDao.IPermissionDao
 }
 
-func NewPermissionService(pd systemDao.ISysPermissionDao) systemService.ISysPermissionService {
+func NewPermissionService(pd systemDao.IPermissionDao) systemService.ISysPermissionService {
 	return &PermissionService{pd: pd}
 }
 func (ps *PermissionService) SelectPermissionList(c *gin.Context, permission *systemModels.SysPermissionDQL) (list []*systemModels.SysPermissionVo) {

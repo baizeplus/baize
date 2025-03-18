@@ -18,8 +18,8 @@ func NewOperLog(ls monitorService.ISysOperLogService) *OperLog {
 
 func (ol *OperLog) PrivateRoutes(router *gin.RouterGroup) {
 	operlog := router.Group("/monitor/operlog")
-	operlog.GET("/list", middlewares.HasPermission("monitor:operlog:list"), ol.OperLogList)
-	operlog.POST("/export", middlewares.HasPermission("monitor:operlog:list"), ol.OperLogExport)
+	operlog.GET("/list", middlewares.HasPermission("system:monitor:operlog"), ol.OperLogList)
+	operlog.POST("/export", middlewares.HasPermission("monitor:operlog:export"), ol.OperLogExport)
 	operlog.DELETE("/:operIds", middlewares.SetLog("操作日志", middlewares.Delete), middlewares.HasPermission("monitor:operlog:remove"), ol.OperLogRemove)
 	operlog.DELETE("/clean", middlewares.SetLog("操作日志", middlewares.Clear), middlewares.HasPermission("monitor:operlog:remove"), ol.OperLogClean)
 

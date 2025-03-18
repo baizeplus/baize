@@ -16,15 +16,15 @@ import (
 type RoleService struct {
 	ms          sqly.SqlyContext
 	roleDao     systemDao.IRoleDao
-	roleMenuDao systemDao.IRoleMenuDao
+	rpDao       systemDao.IRolePermissionDao
 	userRoleDao systemDao.IUserRoleDao
 }
 
-func NewRoleService(ms sqly.SqlyContext, rd systemDao.IRoleDao, rmd systemDao.IRoleMenuDao, urd systemDao.IUserRoleDao) systemService.IRoleService {
+func NewRoleService(ms sqly.SqlyContext, rd systemDao.IRoleDao, rmd systemDao.IRolePermissionDao, urd systemDao.IUserRoleDao) systemService.IRoleService {
 	return &RoleService{
 		ms:          ms,
 		roleDao:     rd,
-		roleMenuDao: rmd,
+		rpDao:       rmd,
 		userRoleDao: urd,
 	}
 }
@@ -47,8 +47,17 @@ func (roleService *RoleService) RoleExport(c *gin.Context, role *systemModels.Sy
 	return buffer.Bytes()
 }
 
-func (roleService *RoleService) SelectRoleById(c *gin.Context, roseId int64) (role *systemModels.SysRoleVo) {
-	return roleService.roleDao.SelectRoleById(c, roseId)
+func (roleService *RoleService) SelectRoleById(c *gin.Context, roleId int64) (role *systemModels.SysRoleVo) {
+	role = roleService.roleDao.SelectRoleById(c, roleId)
+	if role.RoleId != 0 {
+		id := roleService.rpDao.SelectPermissionIdsByRoleId(c, roleId)
+		strings := make([]string, 0, len(id))
+		for _, s := range id {
+			strings = append(strings, strconv.FormatInt(s, 10))
+		}
+		role.PermissionIds = strings
+	}
+	return role
 
 }
 
@@ -66,17 +75,17 @@ func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels
 	}()
 	rd := systemDaoImpl.NewSysRoleDao(tx)
 	rd.InsertRole(c, sysRole)
-	menuIds := sysRole.MenuIds
-	l := len(menuIds)
+	pIds := sysRole.PermissionIds
+	l := len(pIds)
 	if l != 0 {
-		list := make([]*systemModels.SysRoleMenu, 0, l)
-		for _, PermissionId := range menuIds {
-			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
-			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
+		list := make([]*systemModels.SysRolePermission, 0, l)
+		for _, permissionId := range pIds {
+			intPermissionId, _ := strconv.ParseInt(permissionId, 10, 64)
+			list = append(list, &systemModels.SysRolePermission{RoleId: sysRole.RoleId, PermissionId: intPermissionId})
 		}
 		if len(list) != 0 {
-			md := systemDaoImpl.NewSysRoleMenuDao(tx)
-			md.BatchRoleMenu(c, list)
+			md := systemDaoImpl.NewSysRolePermissionDao(tx)
+			md.BatchRolePermission(c, list)
 		}
 	}
 
@@ -96,18 +105,18 @@ func (roleService *RoleService) UpdateRole(c *gin.Context, sysRole *systemModels
 	}()
 	rd := systemDaoImpl.NewSysRoleDao(tx)
 	rd.UpdateRole(c, sysRole)
-	md := systemDaoImpl.NewSysRoleMenuDao(tx)
-	md.DeleteRoleMenuByRoleId(c, sysRole.RoleId)
-	menuIds := sysRole.MenuIds
+	md := systemDaoImpl.NewSysRolePermissionDao(tx)
+	md.DeleteRolePermissionByRoleId(c, sysRole.RoleId)
+	menuIds := sysRole.PermissionIds
 	l := len(menuIds)
 	if l != 0 {
-		list := make([]*systemModels.SysRoleMenu, 0, l)
+		list := make([]*systemModels.SysRolePermission, 0, l)
 		for _, PermissionId := range menuIds {
 			intPermissionId, _ := strconv.ParseInt(PermissionId, 10, 64)
-			list = append(list, &systemModels.SysRoleMenu{RoleId: sysRole.RoleId, MenuId: intPermissionId})
+			list = append(list, &systemModels.SysRolePermission{RoleId: sysRole.RoleId, PermissionId: intPermissionId})
 		}
 		if len(list) != 0 {
-			md.BatchRoleMenu(c, list)
+			md.BatchRolePermission(c, list)
 		}
 	}
 	return
@@ -129,8 +138,8 @@ func (roleService *RoleService) DeleteRoleByIds(c *gin.Context, ids []int64) {
 		}
 	}()
 	rd := systemDaoImpl.NewSysRoleDao(tx)
-	md := systemDaoImpl.NewSysRoleMenuDao(tx)
-	md.DeleteRoleMenu(c, ids)
+	md := systemDaoImpl.NewSysRolePermissionDao(tx)
+	md.DeleteRolePermission(c, ids)
 	rd.DeleteRoleByIds(c, ids)
 }
 func (roleService *RoleService) CountUserRoleByRoleId(c *gin.Context, ids []int64) bool {
@@ -142,11 +151,9 @@ func (roleService *RoleService) SelectBasicRolesByUserId(c *gin.Context, userId 
 
 }
 
-func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (rolePerms []string, loginRoles []int64) {
+func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (loginRoles []int64) {
 	loginRoles = make([]int64, 0, len(roles))
-	rolePerms = make([]string, 0, len(roles))
 	for _, role := range roles {
-		rolePerms = append(rolePerms, role.RoleKey)
 		loginRoles = append(loginRoles, role.RoleId)
 	}
 	return
@@ -154,14 +161,6 @@ func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*s
 
 func (roleService *RoleService) CheckRoleNameUnique(c *gin.Context, id int64, roleName string) bool {
 	RoleId := roleService.roleDao.CheckRoleNameUnique(c, roleName)
-	if RoleId == id || RoleId == 0 {
-		return false
-	}
-	return true
-}
-
-func (roleService *RoleService) CheckRoleKeyUnique(c *gin.Context, id int64, roleKey string) bool {
-	RoleId := roleService.roleDao.CheckRoleKeyUnique(c, roleKey)
 	if RoleId == id || RoleId == 0 {
 		return false
 	}

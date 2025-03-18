@@ -28,7 +28,7 @@ func (dtc *DictType) PrivateRoutes(router *gin.RouterGroup) {
 	systemDictType.POST("", middlewares.SetLog("字典管理", middlewares.Insert), middlewares.HasPermission("system:dict:add"), dtc.DictTypeAdd)
 	systemDictType.PUT("", middlewares.SetLog("字典管理", middlewares.Update), middlewares.HasPermission("system:dict:edit"), dtc.DictTypeEdit)
 	systemDictType.DELETE("/:dictIds", middlewares.SetLog("字典管理", middlewares.Delete), middlewares.HasPermission("system:dict:remove"), dtc.DictTypeRemove)
-	systemDictType.DELETE("/refreshCache", middlewares.SetLog("字典管理", middlewares.Clear), middlewares.HasPermission("system:dict:remove"), dtc.DictTypeClearCache)
+	systemDictType.DELETE("/refreshCache", middlewares.HasPermission("system:dict:remove"), dtc.DictTypeClearCache)
 	systemDictType.GET("/optionSelect", dtc.DictTypeOptionSelect)
 }
 

@@ -24,13 +24,13 @@ func NewSysDictTypeDao(ms sqly.SqlyContext) systemDao.IDictTypeDao {
 func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeList(ctx context.Context, dictType *systemModels.SysDictTypeDQL) (list []*systemModels.SysDictTypeVo, total int64) {
 	whereSql := ``
 	if dictType.DictName != "" {
-		whereSql += " AND dict_name like concat('%', :dictName, '%')"
+		whereSql += " AND dict_name like concat('%', :dict_name, '%')"
 	}
 	if dictType.Status != "" {
 		whereSql += " AND  status = :status"
 	}
 	if dictType.DictType != "" {
-		whereSql += " AND dict_type like concat('%', :dictType, '%')"
+		whereSql += " AND dict_type like concat('%', :dict_type, '%')"
 	}
 
 	if whereSql != "" {

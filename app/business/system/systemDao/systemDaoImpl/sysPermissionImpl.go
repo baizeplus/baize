@@ -165,7 +165,7 @@ func (pd *SysPermissionDao) SelectPermissionAll(ctx context.Context) []string {
 func (pd *SysPermissionDao) SelectPermissionListSelectBoxByPerm(ctx context.Context, perm []string) (list []*systemModels.SelectPermission) {
 	selectSql := `select permission_id ,permission_name ,parent_id 
 				from sys_permission
-				where  permission in (?) 	 order by sort`
+				where status = '0' and permission in (?)  order by sort`
 	query, args, err := sqly.In(selectSql, perm)
 	if err != nil {
 		panic(err)

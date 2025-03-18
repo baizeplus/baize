@@ -2,6 +2,8 @@ package systemController
 
 import (
 	"baize/app/business/system/systemService"
+	"baize/app/middlewares"
+	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,9 +16,9 @@ func NewSelectBox(sbs systemService.ISelectBoxService) *SelectBox {
 }
 func (s *SelectBox) PrivateRoutes(router *gin.RouterGroup) {
 	sb := router.Group("/system/selectBox")
-	sb.GET("/permission", s.SelectPermission)
+	sb.GET("/permission", middlewares.HasPermissions([]string{"system:permission:add", "system:permission:edit"}), s.SelectPermission)
 }
 
 func (s *SelectBox) SelectPermission(c *gin.Context) {
-	s.sbs.SelectPermissionBox(c)
+	baizeContext.SuccessData(c, s.sbs.SelectPermissionBox(c))
 }

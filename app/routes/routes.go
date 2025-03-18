@@ -74,6 +74,7 @@ func NewGinEngine(
 		sc.Config.PrivateRoutes(group)     //配置
 		sc.File.PrivateRoutes(group)       //文件
 		sc.Notice.PrivateRoutes(group)     //消息
+		sc.SelectBox.PrivateRoutes(group)
 		mc.Server.PrivateRoutes(group)     //服务器详情
 		mc.Oper.PrivateRoutes(group)       //操作日志
 		mc.UserOnline.PrivateRoutes(group) //在线用户

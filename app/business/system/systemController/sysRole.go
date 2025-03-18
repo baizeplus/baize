@@ -88,10 +88,6 @@ func (rc *Role) RoleAdd(c *gin.Context) {
 		baizeContext.Waring(c, "新增角色'"+sysRole.RoleName+"'失败，角色名称已存在")
 		return
 	}
-	if rc.rs.CheckRoleKeyUnique(c, 0, sysRole.RoleKey) {
-		baizeContext.Waring(c, "新增角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
-		return
-	}
 	sysRole.SetCreateBy(baizeContext.GetUserId(c))
 	rc.rs.InsertRole(c, sysRole)
 	baizeContext.Success(c)
@@ -116,10 +112,6 @@ func (rc *Role) RoleEdit(c *gin.Context) {
 	}
 	if rc.rs.CheckRoleNameUnique(c, sysRole.RoleId, sysRole.RoleName) {
 		baizeContext.Waring(c, "修改角色'"+sysRole.RoleName+"'失败，角色名称已存在")
-		return
-	}
-	if rc.rs.CheckRoleKeyUnique(c, sysRole.RoleId, sysRole.RoleKey) {
-		baizeContext.Waring(c, "修改角色'"+sysRole.RoleKey+"'失败，角色权限已存在")
 		return
 	}
 	sysRole.SetUpdateBy(baizeContext.GetUserId(c))
