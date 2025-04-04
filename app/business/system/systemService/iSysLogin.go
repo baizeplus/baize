@@ -7,7 +7,7 @@ import (
 )
 
 type ILoginService interface {
-	Login(c *gin.Context, user *systemModels.User, lb *monitorModels.Logininfor) string
+	Login(c *gin.Context, user *systemModels.User) string
 	Register(c *gin.Context, user *systemModels.LoginBody)
 	RecordLoginInfo(c *gin.Context, loginUser *monitorModels.Logininfor)
 	GenerateCode(c *gin.Context) (m *systemModels.CaptchaVo)

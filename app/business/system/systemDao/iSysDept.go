@@ -1,12 +1,14 @@
 package systemDao
 
 import (
+	"baize/app/baize"
 	"baize/app/business/system/systemModels"
 	"context"
 )
 
 type IDeptDao interface {
 	SelectDeptList(ctx context.Context, dept *systemModels.SysDeptDQL) (sysDeptList []*systemModels.SysDeptVo)
+	SelectDeptListSelectBox(ctx context.Context, dept *baize.BaseEntityDQL) (list []*systemModels.SelectDept)
 	SelectDeptById(ctx context.Context, deptId int64) (dept *systemModels.SysDeptVo)
 	InsertDept(ctx context.Context, dept *systemModels.SysDeptVo)
 	UpdateDept(ctx context.Context, dept *systemModels.SysDeptVo)

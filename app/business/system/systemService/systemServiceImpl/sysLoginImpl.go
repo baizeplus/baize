@@ -12,8 +12,6 @@ import (
 	"baize/app/middlewares/session"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/ipUtils"
-	"context"
 	"time"
 
 	"baize/app/utils/snowflake"
@@ -41,25 +39,13 @@ func NewLoginService(cache cache.Cache, ud systemDao.IUserDao, pd systemDao.IPer
 	}
 }
 
-func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User, l *monitorModels.Logininfor) string {
-	l.Status = 0
-	l.Msg = "登录成功"
+func (loginService *LoginService) Login(c *gin.Context, user *systemModels.User) string {
 	manager := session.NewManger(loginService.cache)
 	session, _ := manager.InitSession(c, user.UserId)
-	session.Set(c, sessionStatus.Os, l.Os)
-	session.Set(c, sessionStatus.Browser, l.Browser)
+	session.Set(c, sessionStatus.Os, user.Os)
+	session.Set(c, sessionStatus.Browser, user.Browser)
 	session.Set(c, sessionStatus.UserName, user.UserName)
 	session.Set(c, sessionStatus.Avatar, user.Avatar)
-	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				zap.L().Error("登录日志记录错误", zap.Any("error", err))
-			}
-		}()
-		l.LoginLocation = ipUtils.GetRealAddressByIP(l.IpAddr)
-		l.LoginTime = time.Now()
-		loginService.loginforDao.InserLogininfor(context.Background(), l)
-	}()
 	return session.Id()
 }
 

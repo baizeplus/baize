@@ -1,26 +1,15 @@
 package baizeContext
 
 import (
-	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/dataScopeAspect"
 	"baize/app/constant/sessionStatus"
 	"baize/app/middlewares/session/sessionCache"
-	"baize/app/utils/snowflake"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/mssola/user_agent"
 	"strconv"
 )
 
-func SetUserAgent(c *gin.Context, login *monitorModels.Logininfor) {
-	login.InfoId = snowflake.GenID()
-	ua := user_agent.New(c.Request.Header.Get("User-Agent"))
-	ip := c.ClientIP()
-	login.IpAddr = ip
-	login.Os = ua.OS()
-	login.Browser, _ = ua.Browser()
-}
 func IsAdmin(c *gin.Context) bool {
 	for _, id := range GetRoles(c) {
 		if id == 1 {

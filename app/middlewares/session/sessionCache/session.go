@@ -3,10 +3,10 @@ package sessionCache
 import (
 	"baize/app/constant/sessionStatus"
 	"baize/app/datasource/cache"
+	"baize/app/utils/converts"
 	"baize/app/utils/stringUtils"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/spf13/viper"
 	"gopkg.in/errgo.v2/errors"
 	"time"
@@ -84,7 +84,7 @@ func (s *Session) Get(ctx context.Context, key string) string {
 }
 
 func (s *Session) Set(ctx context.Context, key string, val any) {
-	gs := gconv.String(val)
+	gs := converts.String(val)
 	s.values[key] = gs
 	s.cache.JudgmentAndHSet(ctx, redisKey(s.id), key, gs)
 }

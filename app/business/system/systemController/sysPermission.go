@@ -6,6 +6,7 @@ import (
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type Permission struct {
@@ -93,6 +94,7 @@ func (pc *Permission) PermissionAdd(c *gin.Context) {
 	permission := new(systemModels.SysPermissionAdd)
 	err := c.ShouldBind(permission)
 	if err != nil {
+		zap.L().Debug("参数错误", zap.Any("err", err))
 		baizeContext.ParameterError(c)
 		return
 	}

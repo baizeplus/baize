@@ -1,6 +1,7 @@
 package systemDaoImpl
 
 import (
+	"baize/app/baize"
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
@@ -43,7 +44,19 @@ func (sysDeptDao *sysDeptDao) SelectDeptList(ctx context.Context, dept *systemMo
 		panic(err)
 	}
 	return list
-
+}
+func (sysDeptDao *sysDeptDao) SelectDeptListSelectBox(ctx context.Context, dept *baize.BaseEntityDQL) (list []*systemModels.SelectDept) {
+	sql := `select d.dept_id, d.parent_id, d.dept_name from sys_dept d where d.del_flag = '0' `
+	if dept.DataScope != "" {
+		sql += " AND " + dept.DataScope
+	}
+	sql += " order by d.parent_id, d.order_num"
+	list = make([]*systemModels.SelectDept, 0)
+	err := sysDeptDao.ms.NamedSelectContext(ctx, &list, sql, dept)
+	if err != nil {
+		panic(err)
+	}
+	return list
 }
 func (sysDeptDao *sysDeptDao) SelectDeptById(ctx context.Context, deptId int64) (dept *systemModels.SysDeptVo) {
 	whereSql := ` where d.dept_id = ?`

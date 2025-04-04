@@ -47,8 +47,8 @@ func wireApp() (*gin.Engine, func(), error) {
 	iUserService := systemServiceImpl.NewUserService(sqlyContext, iUserDao, iUserPostDao, iUserRoleDao, objectFileObjectFile, iDeptDao, iRoleDao, iPostDao, iUserDeptScopeDao, iConfigService)
 	login := systemController.NewLogin(iLoginService, iUserService, iConfigService)
 	iPostService := systemServiceImpl.NewPostService(iPostDao)
-	iRoleMenuDao := systemDaoImpl.NewSysRolePermissionDao(sqlyContext)
-	iRoleService := systemServiceImpl.NewRoleService(sqlyContext, iRoleDao, iRoleMenuDao, iUserRoleDao)
+	iRolePermissionDao := systemDaoImpl.NewSysRolePermissionDao(sqlyContext)
+	iRoleService := systemServiceImpl.NewRoleService(sqlyContext, iRoleDao, iRolePermissionDao, iUserRoleDao)
 	user := systemController.NewUser(iUserService, iPostService, iRoleService)
 	iDeptService := systemServiceImpl.NewDeptService(iDeptDao, iRoleDao)
 	dept := systemController.NewDept(iDeptService)
@@ -71,7 +71,7 @@ func wireApp() (*gin.Engine, func(), error) {
 	notice := systemController.NewNotice(iSysNoticeService)
 	iSysPermissionService := systemServiceImpl.NewPermissionService(iPermissionDao)
 	permission := systemController.NewPermission(iSysPermissionService)
-	iSelectBoxService := systemServiceImpl.NewSelectService(iPermissionDao)
+	iSelectBoxService := systemServiceImpl.NewSelectService(iPermissionDao, iDeptDao)
 	selectBox := systemController.NewSelectBox(iSelectBoxService)
 	system := &systemController.System{
 		Login:      login,

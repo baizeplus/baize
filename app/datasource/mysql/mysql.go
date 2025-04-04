@@ -6,6 +6,7 @@ import (
 	"github.com/baizeplus/sqly"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
+	"time"
 )
 
 //type Sql interface {
@@ -43,6 +44,7 @@ func NewData() (sqly.SqlyContext, func(), error) {
 	}
 	db.SetMaxOpenConns(d.MaxOpenConns)
 	db.SetMaxIdleConns(d.MaxIdleConns)
+	db.SetConnMaxLifetime(time.Minute * 5)
 	sqly.SetLog(new(logger.SqlyLog))
 	return db, nil, err
 }

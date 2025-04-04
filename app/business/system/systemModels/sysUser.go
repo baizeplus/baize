@@ -49,7 +49,6 @@ type SysUserVo struct {
 	Phonenumber string  `json:"phonenumber"db:"phonenumber" bze:"5,电话"`
 	Avatar      string  `json:"avatar" db:"avatar"`
 	DataScope   string  `json:"dataScope" db:"data_scope"`
-	RoleId      *int64  `json:"roleId" db:"role_id"`
 	Remark      string  `json:"remark" db:"remark"`
 	baize.BaseEntity
 }

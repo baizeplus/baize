@@ -2,9 +2,9 @@ package localCache
 
 import (
 	"baize/app/datasource/cache/cacheError"
+	"baize/app/utils/converts"
 	"context"
 	"errors"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/redis/go-redis/v9"
 	"strings"
 	"sync"
@@ -104,7 +104,7 @@ func (b *BuildInMapCache) HSet(ctx context.Context, key string, values ...any) {
 	if !ok {
 		panic("key已被使用并类型不对")
 	}
-	m[gconv.String(values[0])] = gconv.String(values[1])
+	m[converts.String(values[0])] = converts.String(values[1])
 	b.data[key] = item{
 		val:      m,
 		deadline: dl,
@@ -215,7 +215,7 @@ func (b *BuildInMapCache) JudgmentAndHSet(ctx context.Context, rk, key string, g
 	if !ok {
 		return
 	}
-	m[key] = gconv.String(gs)
+	m[key] = converts.String(gs)
 	b.data[rk] = item{
 		val:      m,
 		deadline: res.deadline,

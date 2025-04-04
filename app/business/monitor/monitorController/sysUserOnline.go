@@ -20,7 +20,7 @@ func NewUserOnline(uos monitorService.IUserOnlineService) *UserOnline {
 
 func (uoc *UserOnline) PrivateRoutes(router *gin.RouterGroup) {
 	online := router.Group("/monitor/online")
-	online.GET("/list", middlewares.HasPermission("monitor:online:list"), uoc.UserOnlineList)
+	online.GET("/list", middlewares.HasPermission("monitor:online"), uoc.UserOnlineList)
 	online.DELETE("/:tokenId", middlewares.SetLog("在线用户", middlewares.ForcedRetreat), middlewares.HasPermission("monitor:online:forceLogout"), uoc.ForceLogout)
 }
 

@@ -16,6 +16,8 @@ type User struct {
 	Password  string `json:"-" db:"password"`
 	Status    string `json:"-" db:"status"`
 	DelFlag   string `json:"-" db:"del_flag"`
+	Os        string `json:"-"`
+	Browser   string `json:"-"`
 }
 
 type GetInfo struct {

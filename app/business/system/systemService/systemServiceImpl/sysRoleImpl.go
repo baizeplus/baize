@@ -63,6 +63,7 @@ func (roleService *RoleService) SelectRoleById(c *gin.Context, roleId int64) (ro
 
 func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML) {
 	sysRole.RoleId = snowflake.GenID()
+	sysRole.DelFlag = "0"
 	tx := roleService.ms.MustBeginTx(c, nil)
 
 	defer func() {

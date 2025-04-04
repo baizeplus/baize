@@ -2,29 +2,33 @@ package systemController
 
 import (
 	"baize/app/business/monitor/monitorModels"
+	"baize/app/business/monitor/monitorService"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/constant/userStatus"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/ipUtils"
+	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/mssola/user_agent"
 	"go.uber.org/zap"
+	"time"
 )
 
 type Login struct {
-	ls systemService.ILoginService
-	us systemService.IUserService
-	//pd systemDao.ISysPermissionDao
-	cs systemService.IConfigService
+	ls    systemService.ILoginService
+	us    systemService.IUserService
+	login monitorService.ILogininforService
+	cs    systemService.IConfigService
 }
 
-func NewLogin(ls systemService.ILoginService, us systemService.IUserService, cs systemService.IConfigService) *Login {
-	return &Login{ls: ls, us: us, cs: cs}
+func NewLogin(ls systemService.ILoginService, us systemService.IUserService, cs systemService.IConfigService, login monitorService.ILogininforService) *Login {
+	return &Login{ls: ls, us: us, cs: cs, login: login}
 }
 
 func (lc *Login) PrivateRoutes(router *gin.RouterGroup) {
 	router.GET("/getInfo", lc.GetInfo)
-	//router.GET("/getRouters", lc.GetRouters)
 }
 func (lc *Login) PublicRoutes(router *gin.RouterGroup) {
 	router.GET("/captchaImage", lc.GetCode) //获取验证码
@@ -51,8 +55,24 @@ func (lc *Login) Login(c *gin.Context) {
 		return
 	}
 	logininfor := new(monitorModels.Logininfor)
-	logininfor.UserName = login.Username
-	baizeContext.SetUserAgent(c, logininfor)
+	ua := user_agent.New(c.Request.Header.Get("User-Agent"))
+	logininfor.IpAddr = c.ClientIP()
+	defer func() {
+		go func() {
+			defer func() {
+				if err := recover(); err != nil {
+					zap.L().Error("登录日志记录错误", zap.Any("error", err))
+				}
+			}()
+			logininfor.LoginTime = time.Now()
+			logininfor.UserName = login.Username
+			logininfor.Os = ua.OS()
+			logininfor.Browser, _ = ua.Browser()
+			logininfor.LoginLocation = ipUtils.GetRealAddressByIP(logininfor.IpAddr)
+			lc.login.InsertLogininfor(context.Background(), logininfor)
+		}()
+	}()
+
 	if lc.cs.SelectConfigValueByKey(c, "sys.account.captchaEnabled") != "false" {
 		captcha := lc.ls.VerityCaptcha(c, login.Uuid, login.Code)
 		if !captcha {
@@ -84,8 +104,12 @@ func (lc *Login) Login(c *gin.Context) {
 		baizeContext.Waring(c, "用户不存在/密码错误")
 		return
 	}
+	user.Os = logininfor.Os
+	user.Browser = logininfor.Browser
+	logininfor.Status = 0
+	logininfor.Msg = "登录成功"
+	baizeContext.SuccessData(c, lc.ls.Login(c, user))
 
-	baizeContext.SuccessData(c, lc.ls.Login(c, user, logininfor))
 }
 
 // Register 用户登录
@@ -127,7 +151,6 @@ func (lc *Login) Register(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.GetInfo}  "获取成功"
 // @Router /getInfo [get]
 func (lc *Login) GetInfo(c *gin.Context) {
-
 	baizeContext.SuccessData(c, lc.ls.GetInfo(c))
 
 }

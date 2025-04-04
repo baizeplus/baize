@@ -17,14 +17,14 @@ func NewJob(ls monitorService.IJobService) *Job {
 }
 func (j *Job) PrivateRoutes(router *gin.RouterGroup) {
 	job := router.Group("/monitor/job")
-	job.GET("/list", middlewares.HasPermission("monitor:job:list"), j.JobList)
+	job.GET("/list", middlewares.HasPermission("monitor:job"), j.JobList)
 	job.GET("/:jobId", middlewares.HasPermission("monitor:job:query"), j.JobGetInfo)
 	job.POST("", middlewares.HasPermission("monitor:job:add"), j.JobAdd)
 	job.PUT("", middlewares.HasPermission("monitor:job:edit"), j.JobEdit)
 	job.PUT("/changeStatus", middlewares.HasPermission("monitor:job:changeStatus"), j.JobChangeStatus)
 	job.PUT("/run", middlewares.HasPermission("monitor:job:changeStatus"), j.JobRun)
 	job.DELETE("/:jobIds", middlewares.HasPermission("monitor:job:remove"), j.JobRemove)
-	job.GET("/funList", middlewares.HasPermission("monitor:job:list"), j.FunList)
+	job.GET("/funList", middlewares.HasPermission("monitor:job"), j.FunList)
 	job.GET("/log/list", j.JobLogList)
 	job.GET("/log/:logId", j.JobLogGetInfo)
 	job.GET("/jobIdAndName", j.JobIdAndNameAll)

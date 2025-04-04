@@ -11,11 +11,8 @@ import (
 
 func NewSysRoleDao(ms sqly.SqlyContext) systemDao.IRoleDao {
 	return &sysRoleDao{
-		ms: ms,
-		selectSql: ` select distinct r.role_id, r.role_name, r.role_sort,  r.status, r.del_flag, r.create_time, r.remark from sys_role r
-	        left join sys_user_role ur on ur.role_id = r.role_id
-	        left join sys_user u on u.user_id = ur.user_id
-	        left join sys_dept d on u.dept_id = d.dept_id`,
+		ms:        ms,
+		selectSql: ` select r.role_id, r.role_name, r.role_sort,  r.status, r.create_time, r.remark from sys_role r`,
 	}
 }
 
@@ -25,7 +22,10 @@ type sysRoleDao struct {
 }
 
 func (rd *sysRoleDao) SelectRoleList(ctx context.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64) {
-	whereSql := " where r.del_flag = '0'"
+	if role.OrderBy == "" {
+		role.OrderBy = "r.role_sort"
+	}
+	whereSql := " where r.del_flag = '0' "
 	if role.RoleName != "" {
 		whereSql += " AND r.role_name like concat('%', :role_name, '%')"
 	}

@@ -6,6 +6,7 @@ import (
 	"baize/app/business/monitor/monitorService"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
+	"context"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +35,7 @@ func (ls *LogininforService) ExportLogininfor(c *gin.Context, logininfor *monito
 	return buffer.Bytes()
 }
 
-func (ls *LogininforService) InsertLogininfor(c *gin.Context, loginUser *monitorModels.Logininfor) {
+func (ls *LogininforService) InsertLogininfor(c context.Context, loginUser *monitorModels.Logininfor) {
 	loginUser.InfoId = snowflake.GenID()
 	ls.ld.InserLogininfor(c, loginUser)
 }

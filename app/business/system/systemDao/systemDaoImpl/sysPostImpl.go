@@ -23,7 +23,7 @@ func NewSysPostDao(ms sqly.SqlyContext) systemDao.IPostDao {
 
 func (postDao *sysPostDao) SelectPostAll(ctx context.Context) (sysPost []*systemModels.SysPostVo) {
 	sysPost = make([]*systemModels.SysPostVo, 0)
-	err := postDao.ms.SelectContext(ctx, &sysPost, postDao.postSql)
+	err := postDao.ms.SelectContext(ctx, &sysPost, postDao.postSql+" order by post_sort")
 	if err != nil {
 		panic(err)
 	}
@@ -45,6 +45,9 @@ func (postDao *sysPostDao) SelectPostListByUserId(ctx context.Context, userId in
 }
 
 func (postDao *sysPostDao) SelectPostList(ctx context.Context, post *systemModels.SysPostDQL) (list []*systemModels.SysPostVo, total int64) {
+	if post.OrderBy == "" {
+		post.OrderBy = "post_sort"
+	}
 	whereSql := ``
 	if post.PostCode != "" {
 		whereSql += " AND post_code like concat('%', :post_code, '%')"

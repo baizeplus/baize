@@ -41,7 +41,7 @@ func NewGinEngine(
 		IgnorePaths("/ping").Build())
 	r.Use(newCors())
 	group := r.Group("")
-	if setting.Conf.Mode != "dev" {
+	if setting.Conf.Mode == "dev" {
 		host := setting.Conf.Host
 		docs.SwaggerInfo.Host = host[strings.Index(host, "//")+2:]
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}

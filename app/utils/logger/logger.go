@@ -1,24 +1,15 @@
 package logger
 
 import (
-	"baize/app/baize"
 	"baize/app/setting"
-	"baize/app/utils/response"
 	"fmt"
-	"github.com/spf13/viper"
-	"net/http"
-	"runtime/debug"
-
-	"os"
-	"time"
-
-	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
+	"runtime/debug"
 )
-
-var sl *zap.SugaredLogger
 
 // Init 初始化lg
 func init() {
@@ -50,7 +41,6 @@ func init() {
 
 	logger := zap.New(core, zap.AddCaller())
 	zap.ReplaceGlobals(logger)
-	sl = zap.L().Sugar()
 	zap.L().Debug("init logger success")
 	return
 }
@@ -75,66 +65,15 @@ func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.Write
 	return zapcore.AddSync(lumberJackLogger)
 }
 
-type loggerMiddlewareBuilder struct {
-	paths baize.Set[string]
-}
-
-func NewLoggerMiddlewareBuilder() *loggerMiddlewareBuilder {
-	return &loggerMiddlewareBuilder{
-		paths: baize.Set[string]{},
+func GoroutineRecovery(path string, any any) {
+	zap.L().Error("goroutine",
+		zap.Any("error", any),
+		zap.String("path", path),
+		zap.String("stack", string(debug.Stack())),
+	)
+	if setting.Conf.Mode == "dev" {
+		fmt.Println("----------------------------------------------------------------------------------------------------")
+		fmt.Printf("error:%s\n", any)
+		fmt.Println("stack:" + string(debug.Stack()))
 	}
-}
-
-func (l *loggerMiddlewareBuilder) IgnorePaths(path string) *loggerMiddlewareBuilder {
-	l.paths.Add(path)
-	return l
-}
-
-func (l *loggerMiddlewareBuilder) Build() func(c *gin.Context) {
-	return func(c *gin.Context) {
-		start := time.Now()
-		path := c.Request.URL.Path
-		query := c.Request.URL.RawQuery
-
-		defer func() {
-			if err := recover(); err != nil {
-				zap.L().Error("[Recovery from panic]",
-					zap.Any("error", err),
-					zap.String("path", c.Request.URL.Path),
-					zap.String("query", c.Request.URL.RawQuery),
-					zap.String("ip", c.ClientIP()),
-					zap.String("user-agent", c.Request.UserAgent()),
-					zap.String("stack", string(debug.Stack())),
-				)
-				if setting.Conf.Mode == "dev" {
-					fmt.Println("----------------------------------------------------------------------------------------------------")
-					fmt.Printf("error:%s\n", err)
-					fmt.Println("stack:" + string(debug.Stack()))
-				}
-				c.JSON(http.StatusInternalServerError, response.ResponseData{Code: response.Error, Msg: response.Error.Msg()})
-			}
-		}()
-
-		c.Next()
-		cost := time.Since(start)
-		if !l.paths.Contains(c.Request.RequestURI) {
-			zap.L().Info(path,
-				zap.Int("status", c.Writer.Status()),
-				zap.String("method", c.Request.Method),
-				zap.String("path", path),
-				zap.String("query", query),
-				zap.String("ip", c.ClientIP()),
-				zap.String("user-agent", c.Request.UserAgent()),
-				zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
-				zap.Duration("cost", cost),
-			)
-		}
-	}
-}
-
-type SqlyLog struct {
-}
-
-func (s *SqlyLog) Debug(cost time.Duration, sql string, args ...interface{}) {
-	sl.Debug(sql, "\t", args, "\tcost:"+cost.String())
 }
