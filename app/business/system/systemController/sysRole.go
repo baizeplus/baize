@@ -19,13 +19,13 @@ func (rc *Role) PrivateRoutes(router *gin.RouterGroup) {
 	rr := router.Group("/system/role")
 	rr.GET("/list", middlewares.HasPermission("system:role"), rc.RoleList)
 	rr.POST("/export", middlewares.HasPermission("system:role:export"), rc.RoleExport)
-	rr.GET("/:roleId", middlewares.HasPermission("system:role:query"), rc.RoleGetInfo)
+	rr.GET("/:roleId", middlewares.HasPermission("system:role"), rc.RoleGetInfo)
 	rr.POST("", middlewares.SetLog("角色管理", middlewares.Insert), middlewares.HasPermission("system:role:add"), rc.RoleAdd)
 	rr.PUT("", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.RoleEdit)
 	rr.PUT("/changeStatus", middlewares.HasPermission("system:role:edit"), rc.RoleChangeStatus)
 	rr.DELETE("/:rolesIds", middlewares.SetLog("角色管理", middlewares.Delete), middlewares.HasPermission("system:role:remove"), rc.RoleRemove)
-	rr.GET("/authUser/allocatedList", middlewares.HasPermission("system:role:list"), rc.AllocatedList)
-	rr.GET("/authUser/unallocatedList", middlewares.HasPermission("system:role:list"), rc.UnallocatedList)
+	rr.GET("/authUser/allocatedList", middlewares.HasPermission("system:role"), rc.AllocatedList)
+	rr.GET("/authUser/unallocatedList", middlewares.HasPermission("system:role"), rc.UnallocatedList)
 	rr.PUT("/authUser/selectAll", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.InsertAuthUser)
 	rr.PUT("/authUser/cancelAll", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.CancelAuthUserAll)
 	rr.PUT("/authUser/cancel", middlewares.SetLog("角色管理", middlewares.Update), middlewares.HasPermission("system:role:edit"), rc.CancelAuthUser)
@@ -43,6 +43,9 @@ func (rc *Role) PrivateRoutes(router *gin.RouterGroup) {
 func (rc *Role) RoleList(c *gin.Context) {
 	role := new(systemModels.SysRoleDQL)
 	_ = c.ShouldBind(role)
+	if !baizeContext.IsAdmin(c) {
+		role.CreateBy = baizeContext.GetUserId(c)
+	}
 	list, count := rc.rs.SelectRoleList(c, role)
 	baizeContext.SuccessListData(c, list, count)
 }
@@ -50,6 +53,9 @@ func (rc *Role) RoleList(c *gin.Context) {
 func (rc *Role) RoleExport(c *gin.Context) {
 	role := new(systemModels.SysRoleDQL)
 	_ = c.ShouldBind(role)
+	if !baizeContext.IsAdmin(c) {
+		role.CreateBy = baizeContext.GetUserId(c)
+	}
 	baizeContext.DataPackageExcel(c, rc.rs.RoleExport(c, role))
 }
 

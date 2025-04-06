@@ -17,4 +17,6 @@ type IRoleDao interface {
 	CheckRoleNameUnique(ctx context.Context, roleName string) int64
 	SelectAllocatedList(ctx context.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)
 	SelectUnallocatedList(ctx context.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)
+	SelectRoleIdAndNameAll(ctx context.Context) (list []*systemModels.SysRoleIdAndName)
+	SelectRoleIdAndName(ctx context.Context, userId int64, roleIds []int64) (list []*systemModels.SysRoleIdAndName)
 }

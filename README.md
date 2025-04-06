@@ -8,14 +8,68 @@
 <br>
 [baize-vue](https://gitee.com/baizeplus/baize-vue) https://gitee.com/baizeplus/baize-vue  , https://github.com/baizeplus/baize-vue
 <br>
-[baize-app] 策划中
+
+# Baize: A Comprehensive Web Application Framework with Role-Based Access Control
+
+Baize is a modern Go web application framework that provides a robust foundation for building secure, scalable, and maintainable web applications with comprehensive role-based access control (RBAC) and monitoring capabilities.
+
+The framework implements a clean architecture pattern with clear separation of concerns between controllers, services, and data access layers. It provides built-in support for user management, authentication, authorization, configuration management, monitoring, and code generation.
+
+## Repository Structure
+```
+.
+├── app/                            # Main application code
+│   ├── baize/                     # Core framework utilities and base types
+│   ├── business/                  # Business logic modules
+│   │   ├── monitor/              # Monitoring functionality (jobs, logs, etc.)
+│   │   ├── system/               # Core system functionality (users, roles, etc.)
+│   │   └── tool/                 # Development tools and generators
+│   ├── constant/                 # Application constants
+│   ├── datasource/              # Data source implementations (MySQL, Redis, S3)
+│   ├── docs/                    # API documentation (Swagger)
+│   ├── middlewares/             # HTTP middleware components
+│   ├── routes/                  # Route definitions
+│   ├── setting/                 # Application configuration
+│   └── utils/                   # Utility functions
+├── config/                      # Configuration files
+├── template/                    # Code generation templates
+└── sql/                        # Database schema definitions
+```
 
 
-* 后端采用Gin、Zap、sqly(sqlx升级)。
-* 权限认证使用共享Session(单机支持本地缓存,集群需要redis)，支持多终端认证系统。
-* 支持加载动态权限菜单，多方式轻松权限控制。
-* 高效率开发，使用代码生成器可以一键生成后端代码。(前端正在发开)
-* 特别鸣谢：[ruoyi-vue](https://gitee.com/y_project/RuoYi-Vue?_from=gitee_search )，
+## Data Flow
+The application follows a clean architecture pattern with clear data flow:
+
+1. HTTP Request → Middleware (Auth/Logging) → Controller
+2. Controller → Service Layer (Business Logic)
+3. Service Layer → Data Access Layer (DAO)
+4. DAO → Database/Cache/Storage
+
+```ascii
+Request → [Middleware] → [Controller] → [Service] → [DAO] → [Database]
+                                                         ↓
+                                                    [Cache/Redis]
+                                                         ↓
+                                                  [Storage (S3/Local)]
+```
+
+Key Component Interactions:
+- Controllers handle HTTP requests and response formatting
+- Services implement business logic and transaction management
+- DAOs handle data persistence and retrieval
+- Middleware provides cross-cutting concerns (auth, logging)
+- Cache layer improves performance for frequently accessed data
+- Storage service handles file uploads and downloads
+
+
+
+
+
+- 后端采用Gin、Zap、sqly(sqlx升级)。
+- 权限认证使用共享Session(单机支持本地缓存,集群需要redis)，支持多终端认证系统。
+- 支持加载动态权限菜单，多方式轻松权限控制。
+- 高效率开发，使用代码生成器可以一键生成后端代码。(前端正在发开)
+- 特别鸣谢：[ruoyi-vue](https://gitee.com/y_project/RuoYi-Vue?_from=gitee_search )，
 
 ## <p>随手 star ⭐是一种美德。 你们的star就是我的动力</p>
 
@@ -49,6 +103,8 @@ v5.6.7<br>
 主版本号升级请参考更新说明更新修改或添加相应的数据表。
 次版本号升级请参考更新说明查看API接口修改情况。
 阶段版本号不会影响数据库与api接口，除修复重大bug不更新说明文档
+
+
 
 ## 在线体验
 

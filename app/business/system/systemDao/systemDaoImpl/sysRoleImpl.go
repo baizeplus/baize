@@ -38,6 +38,9 @@ func (rd *sysRoleDao) SelectRoleList(ctx context.Context, role *systemModels.Sys
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
+	if role.CreateBy != 0 {
+		whereSql += " and r.create_by = :create_by"
+	}
 	err := rd.ms.NamedSelectPageContext(ctx, &list, &total, rd.selectSql+whereSql, role)
 	if err != nil {
 		panic(err)
@@ -200,4 +203,23 @@ func (rd *sysRoleDao) SelectUnallocatedList(ctx context.Context, user *systemMod
 	}
 	return
 
+}
+
+func (rd *sysRoleDao) SelectRoleIdAndNameAll(ctx context.Context) (list []*systemModels.SysRoleIdAndName) {
+	err := rd.ms.SelectContext(ctx, &list, "select role_id,role_name from sys_role where status = '0'and del_flag='0' order by role_sort")
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+func (rd *sysRoleDao) SelectRoleIdAndName(ctx context.Context, userId int64, roleIds []int64) (list []*systemModels.SysRoleIdAndName) {
+	in, i, err := sqly.In("select role_id,role_name from sys_role where status = '0' and del_flag='0'and (create_by=? or role_id in(?))order by role_sort", userId, roleIds)
+	if err != nil {
+		panic(err)
+	}
+	err = rd.ms.SelectContext(ctx, &list, in, i...)
+	if err != nil {
+		panic(err)
+	}
+	return
 }

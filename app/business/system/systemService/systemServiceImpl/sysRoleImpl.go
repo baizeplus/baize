@@ -31,7 +31,6 @@ func NewRoleService(ms sqly.SqlyContext, rd systemDao.IRoleDao, rmd systemDao.IR
 
 func (roleService *RoleService) SelectRoleList(c *gin.Context, role *systemModels.SysRoleDQL) (list []*systemModels.SysRoleVo, total int64) {
 	return roleService.roleDao.SelectRoleList(c, role)
-
 }
 func (roleService *RoleService) RoleExport(c *gin.Context, role *systemModels.SysRoleDQL) (data []byte) {
 

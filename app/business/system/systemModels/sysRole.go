@@ -46,6 +46,10 @@ type SysRoleAndUserDQL struct {
 	RoleId      string `form:"roleId" db:"role_id" binding:"required"`
 	UserName    string `form:"userName" db:"user_name"`
 	Phonenumber string `form:"phonenumber" db:"phonenumber"`
-
 	baize.BaseEntityDQL
+}
+
+type SysRoleIdAndName struct {
+	RoleId   int64  `json:"roleId,string" db:"role_id"`
+	RoleName string `json:"roleName" db:"role_name" `
 }

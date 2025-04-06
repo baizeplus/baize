@@ -109,20 +109,20 @@ func RowsToSysUserDMLList(rows [][]string, str string, failureNum int, dept map[
 }
 
 type Accredit struct {
-	Posts []*SysPostVo `json:"posts"` //岗位
-	Roles []*SysRoleVo `json:"roles"` //角色
+	Posts []*SysPostVo        `json:"posts"` //岗位
+	Roles []*SysRoleIdAndName `json:"roles"` //角色
 }
 type UserAndAccredit struct {
-	User    *SysUserVo   `json:"user"`    //user
-	Roles   []*SysRoleVo `json:"roles"`   //角色
-	RoleIds []string     `json:"roleIds"` //选择的角色Id
-	Posts   []*SysPostVo `json:"posts"`   //岗位
-	PostIds []string     `json:"postIds"` //选择的岗位Id
+	User    *SysUserVo          `json:"user"`    //user
+	Roles   []*SysRoleIdAndName `json:"roles"`   //角色
+	RoleIds []string            `json:"roleIds"` //选择的角色Id
+	Posts   []*SysPostVo        `json:"posts"`   //岗位
+	PostIds []string            `json:"postIds"` //选择的岗位Id
 }
 type UserAndRoles struct {
-	User    *SysUserVo   `json:"user"`    //user
-	Roles   []*SysRoleVo `json:"roles"`   //角色
-	RoleIds []string     `json:"roleIds"` //选择的角色Id
+	User    *SysUserVo          `json:"user"`    //user
+	Roles   []*SysRoleIdAndName `json:"roles"`   //角色
+	RoleIds []string            `json:"roleIds"` //选择的角色Id
 }
 
 type UserProfile struct {

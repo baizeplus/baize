@@ -163,7 +163,7 @@ definitions:
       roles:
         description: 角色
         items:
-          $ref: '#/definitions/systemModels.SysRoleVo'
+          $ref: '#/definitions/systemModels.SysRoleIdAndName'
         type: array
     type: object
   systemModels.ConsumptionNoticeVo:
@@ -272,6 +272,17 @@ definitions:
         items:
           $ref: '#/definitions/systemModels.SysDeptVo'
         type: array
+    type: object
+  systemModels.SelectPermission:
+    properties:
+      parentId:
+        example: "0"
+        type: string
+      permissionId:
+        example: "0"
+        type: string
+      permissionName:
+        type: string
     type: object
   systemModels.SysConfigVo:
     properties:
@@ -460,7 +471,6 @@ definitions:
         description: 修改时间
         type: string
     required:
-    - parentId
     - permission
     type: object
   systemModels.SysPermissionEdit:
@@ -574,13 +584,13 @@ definitions:
       createTime:
         description: 创建时间
         type: string
-      menuIds:
+      delFlag:
+        type: string
+      permissionIds:
         items:
           type: string
         type: array
       remark:
-        type: string
-      roleKey:
         type: string
       roleName:
         type: string
@@ -595,6 +605,14 @@ definitions:
         description: 修改时间
         type: string
     type: object
+  systemModels.SysRoleIdAndName:
+    properties:
+      roleId:
+        example: "0"
+        type: string
+      roleName:
+        type: string
+    type: object
   systemModels.SysRoleVo:
     properties:
       createBy:
@@ -603,14 +621,14 @@ definitions:
       createTime:
         description: 创建时间
         type: string
-      delFlag:
-        type: string
+      permissionIds:
+        items:
+          type: string
+        type: array
       remark:
         type: string
       roleId:
         example: "0"
-        type: string
-      roleKey:
         type: string
       roleName:
         type: string
@@ -746,8 +764,6 @@ definitions:
         type: string
       remark:
         type: string
-      roleId:
-        type: integer
       sex:
         type: string
       status:
@@ -796,7 +812,7 @@ definitions:
       roles:
         description: 角色
         items:
-          $ref: '#/definitions/systemModels.SysRoleVo'
+          $ref: '#/definitions/systemModels.SysRoleIdAndName'
         type: array
       user:
         allOf:
@@ -3076,9 +3092,6 @@ paths:
         name: pageSize
         type: integer
       - in: query
-        name: roleKey
-        type: string
-      - in: query
         name: roleName
         type: string
       - in: query
@@ -3108,6 +3121,46 @@ paths:
       summary: 查询角色列表查询
       tags:
       - 角色相关
+  /system/selectBox/dept:
+    get:
+      description: 部门选择框
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SelectPermission'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 部门选择框
+      tags:
+      - 下拉框选项
+  /system/selectBox/permission:
+    get:
+      description: 权限选择框
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseData'
+            - properties:
+                data:
+                  $ref: '#/definitions/systemModels.SelectPermission'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 权限选择框
+      tags:
+      - 下拉框选项
   /system/sse/{token}:
     get:
       description: 建立SSE链接

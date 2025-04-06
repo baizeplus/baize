@@ -3722,11 +3722,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "roleKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "roleName",
                         "in": "query"
                     },
@@ -3852,6 +3847,80 @@ const docTemplate = `{
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/selectBox/dept": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "部门选择框",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "下拉框选项"
+                ],
+                "summary": "部门选择框",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SelectPermission"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/selectBox/permission": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "权限选择框",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "下拉框选项"
+                ],
+                "summary": "权限选择框",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/systemModels.SelectPermission"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -4967,7 +5036,7 @@ const docTemplate = `{
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/systemModels.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleIdAndName"
                     }
                 }
             }
@@ -5120,6 +5189,22 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/systemModels.SysDeptVo"
                     }
+                }
+            }
+        },
+        "systemModels.SelectPermission": {
+            "type": "object",
+            "properties": {
+                "parentId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "permissionId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "permissionName": {
+                    "type": "string"
                 }
             }
         },
@@ -5342,7 +5427,6 @@ const docTemplate = `{
         "systemModels.SysPermissionAdd": {
             "type": "object",
             "required": [
-                "parentId",
                 "permission"
             ],
             "properties": {
@@ -5537,16 +5621,16 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
-                "menuIds": {
+                "delFlag": {
+                    "type": "string"
+                },
+                "permissionIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "remark": {
-                    "type": "string"
-                },
-                "roleKey": {
                     "type": "string"
                 },
                 "roleName": {
@@ -5568,6 +5652,18 @@ const docTemplate = `{
                 }
             }
         },
+        "systemModels.SysRoleIdAndName": {
+            "type": "object",
+            "properties": {
+                "roleId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "roleName": {
+                    "type": "string"
+                }
+            }
+        },
         "systemModels.SysRoleVo": {
             "type": "object",
             "properties": {
@@ -5579,8 +5675,11 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
-                "delFlag": {
-                    "type": "string"
+                "permissionIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "remark": {
                     "type": "string"
@@ -5588,9 +5687,6 @@ const docTemplate = `{
                 "roleId": {
                     "type": "string",
                     "example": "0"
-                },
-                "roleKey": {
-                    "type": "string"
                 },
                 "roleName": {
                     "type": "string"
@@ -5778,9 +5874,6 @@ const docTemplate = `{
                 "remark": {
                     "type": "string"
                 },
-                "roleId": {
-                    "type": "integer"
-                },
                 "sex": {
                     "type": "string"
                 },
@@ -5850,7 +5943,7 @@ const docTemplate = `{
                     "description": "角色",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/systemModels.SysRoleVo"
+                        "$ref": "#/definitions/systemModels.SysRoleIdAndName"
                     }
                 },
                 "user": {

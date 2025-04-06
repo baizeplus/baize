@@ -13,6 +13,7 @@ import (
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/excel"
 	"baize/app/utils/fileUtils"
+	"baize/app/utils/sliceUtils"
 	"baize/app/utils/snowflake"
 	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
@@ -127,7 +128,6 @@ func (userService *UserService) ImportTemplate(c *gin.Context) (data []byte) {
 func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit) {
 	uaa := new(systemModels.UserAndAccredit)
 	uaa.User = userService.userDao.SelectUserById(c, userId)
-	uaa.Roles = userService.roleDao.SelectRoleAll(c, new(systemModels.SysRoleDQL))
 	uaa.Posts = userService.postDao.SelectPostAll(c)
 	rIds := userService.roleDao.SelectRoleListByUserId(c, userId)
 	pIds := userService.postDao.SelectPostListByUserId(c, userId)
@@ -139,11 +139,20 @@ func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId
 	for _, id := range pIds {
 		uaa.PostIds = append(uaa.PostIds, strconv.FormatInt(id, 10))
 	}
+	if baizeContext.IsAdmin(c) {
+		uaa.Roles = userService.roleDao.SelectRoleIdAndNameAll(c)
+	} else {
+		uaa.Roles = userService.roleDao.SelectRoleIdAndName(c, userId, sliceUtils.Union(baizeContext.GetRoles(c), rIds))
+	}
 	return uaa
 }
 func (userService *UserService) SelectAccredit(c *gin.Context) (sysUser *systemModels.Accredit) {
 	ua := new(systemModels.Accredit)
-	ua.Roles = userService.roleDao.SelectRoleAll(c, new(systemModels.SysRoleDQL))
+	if baizeContext.IsAdmin(c) {
+		ua.Roles = userService.roleDao.SelectRoleIdAndNameAll(c)
+	} else {
+		ua.Roles = userService.roleDao.SelectRoleIdAndName(c, baizeContext.GetUserId(c), baizeContext.GetRoles(c))
+	}
 	ua.Posts = userService.postDao.SelectPostAll(c)
 	return ua
 }
@@ -383,7 +392,11 @@ func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *s
 	if !baizeContext.IsAdmin(c) {
 		s.CreateBy = baizeContext.GetUserId(c)
 	}
-	uar.Roles = userService.roleDao.SelectRoleAll(c, s)
+	if baizeContext.IsAdmin(c) {
+		uar.Roles = userService.roleDao.SelectRoleIdAndNameAll(c)
+	} else {
+		uar.Roles = userService.roleDao.SelectRoleIdAndName(c, baizeContext.GetUserId(c), baizeContext.GetRoles(c))
+	}
 	rIds := userService.roleDao.SelectRoleListByUserId(c, userId)
 	uar.RoleIds = make([]string, 0, len(rIds))
 	for _, id := range rIds {
