@@ -114,7 +114,7 @@ func wireApp() (*gin.Engine, func(), error) {
 	tool := &toolController.Tool{
 		GenTable: genTable,
 	}
-	engine := routes.NewGinEngine(cacheCache, system, monitor, tool)
+	engine := routes.NewGinEngine(cacheCache, sqlyContext, system, monitor, tool)
 	return engine, func() {
 		cleanup()
 	}, nil

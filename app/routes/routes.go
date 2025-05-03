@@ -6,6 +6,7 @@ import (
 	"baize/app/business/tool/toolController"
 	"baize/app/datasource/cache"
 	"baize/app/datasource/objectFile/localhostObject"
+	"github.com/baizeplus/sqly"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	gs "github.com/swaggo/gin-swagger"
@@ -28,6 +29,7 @@ var ProviderSet = wire.NewSet(NewGinEngine)
 
 func NewGinEngine(
 	cache cache.Cache,
+	ms sqly.SqlyContext,
 	sc *systemController.System,
 	mc *monitorController.Monitor,
 	gc *toolController.Tool,
@@ -59,9 +61,8 @@ func NewGinEngine(
 
 	}
 	//做鉴权的
-	group.Use(middlewares.NewSessionAuthMiddlewareBuilder(cache).Build())
+	group.Use(middlewares.NewSessionAuthMiddlewareBuilder(cache).Build(), middlewares.NewLoggerMiddlewareBuilder(ms).Build())
 	{
-
 		sc.Profile.PrivateRoutes(group)    //个人资料
 		sc.Login.PrivateRoutes(group)      //登录
 		sc.User.PrivateRoutes(group)       //用户

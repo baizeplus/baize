@@ -1,16 +1,36 @@
 package middlewares
 
 import (
+	"baize/app/business/monitor/monitorDao"
+	"baize/app/business/monitor/monitorDao/monitorDaoImpl"
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/snowflake"
 	"bytes"
+	"context"
 	"encoding/json"
+	"github.com/baizeplus/sqly"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
 	"time"
 )
+
+type loggerMiddlewareBuilder struct {
+	ol monitorDao.IOperLog
+}
+
+func NewLoggerMiddlewareBuilder(ms sqly.SqlyContext) *loggerMiddlewareBuilder {
+	return &loggerMiddlewareBuilder{ol: monitorDaoImpl.NewOperLog(ms)}
+}
+
+func (s *loggerMiddlewareBuilder) Build() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		c.Set("ol", s.ol)
+		c.Next()
+	}
+}
 
 type BusinessType string
 
@@ -72,8 +92,15 @@ func SetLog(title string, businessTy BusinessType) func(c *gin.Context) {
 					zap.L().Error("操作日志错误", zap.Any("error", err))
 				}
 			}()
-			//monitorServiceImpl.OperLog.InsertOperLog(context.Background(), ol)
-			//Todo
+			val, exists := c.Get("ol")
+			if exists {
+				iol := val.(monitorDao.IOperLog)
+				ol.OperId = snowflake.GenID()
+				ol.OperTime = time.Now()
+				iol.InsertOperLog(context.Background(), ol)
+			} else {
+				panic("不应该出现")
+			}
 		}()
 	}
 }

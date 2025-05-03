@@ -13,10 +13,10 @@ log:
 #  max_backups: 7
 
 mysql:
-  host: localhost
-  user: root
-  password: 123456
-  dbname: baize
+  host: knit-mysql-dev.cluster-cckvv5btxkk9.ap-southeast-1.rds.amazonaws.com
+  user: admin
+  password: 1q2w3e4r5tA
+  dbname: eortest
   port: 3306
   max_open_conns: 20
   max_idle_conns: 5
