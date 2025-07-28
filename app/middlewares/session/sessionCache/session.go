@@ -80,7 +80,6 @@ func (s *Session) Get(ctx context.Context, key string) string {
 	result := s.cache.HGet(ctx, redisKey(s.id), key)
 	s.values[key] = result
 	return result
-
 }
 
 func (s *Session) Set(ctx context.Context, key string, val any) {
