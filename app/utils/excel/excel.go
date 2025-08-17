@@ -2,10 +2,11 @@ package excel
 
 import (
 	"errors"
-	"github.com/xuri/excelize/v2"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/xuri/excelize/v2"
 )
 
 func init() {
@@ -123,16 +124,19 @@ func setExcelContent(item reflect.Value, position []int, lt int, format []string
 	for item.Kind() == reflect.Ptr {
 		item = item.Elem()
 	}
-	s2 := make([]any, lt)
+	r := make([]any, lt)
 	for i2, i3 := range position {
-		index := item.Field(i3)
+		val := item.Field(i3)
+		if val.IsNil() {
+			continue
+		}
 		if format[i2] != "" {
-			s2[i2] = mf[format[i2]](index)
+			r[i2] = mf[format[i2]](val)
 		} else {
-			s2[i2] = index
+			r[i2] = val
 		}
 	}
-	return s2
+	return r
 }
 
 var mf map[string]func(value reflect.Value) string
@@ -145,4 +149,5 @@ func toExcelColumn(num int) string {
 		num /= 26
 	}
 	return column
+
 }
