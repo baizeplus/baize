@@ -6,6 +6,7 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,7 +37,7 @@ func (postService *PostService) PostExport(c *gin.Context, post *systemModels.Sy
 	return buffer.Bytes()
 }
 
-func (postService *PostService) SelectPostById(c *gin.Context, postId int64) (Post *systemModels.SysPostVo) {
+func (postService *PostService) SelectPostById(c *gin.Context, postId string) (Post *systemModels.SysPostVo) {
 	return postService.postDao.SelectPostById(c, postId)
 
 }
@@ -49,7 +50,7 @@ func (postService *PostService) InsertPost(c *gin.Context, post *systemModels.Sy
 func (postService *PostService) UpdatePost(c *gin.Context, post *systemModels.SysPostVo) {
 	postService.postDao.UpdatePost(c, post)
 }
-func (postService *PostService) DeletePostByIds(c *gin.Context, postId []int64) {
+func (postService *PostService) DeletePostByIds(c *gin.Context, postId []string) {
 	postService.postDao.DeletePostByIds(c, postId)
 	return
 }

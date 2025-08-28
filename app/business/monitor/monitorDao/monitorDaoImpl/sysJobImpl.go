@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -61,7 +62,7 @@ func (jd *JobDao) SelectJobIdAndNameAll(ctx context.Context) (list []*monitorMod
 	}
 	return
 }
-func (jd *JobDao) SelectJobById(ctx context.Context, id int64) (job *monitorModels.JobVo) {
+func (jd *JobDao) SelectJobById(ctx context.Context, id string) (job *monitorModels.JobVo) {
 	job = new(monitorModels.JobVo)
 	err := jd.ms.GetContext(ctx, job, jd.selectSql+" where job_id = ?", id)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -81,7 +82,7 @@ func (jd *JobDao) SelectJobByInvokeTarget(ctx context.Context, invokeTarget stri
 	}
 	return
 }
-func (jd *JobDao) DeleteJobById(ctx context.Context, id int64) {
+func (jd *JobDao) DeleteJobById(ctx context.Context, id string) {
 	_, err := jd.ms.ExecContext(ctx, "delete from sys_job where job_id = ", id)
 	if err != nil {
 		panic(err)
@@ -124,7 +125,7 @@ func (jd *JobDao) InsertJob(ctx context.Context, job *monitorModels.JobDML) {
 	}
 	return
 }
-func (jd *JobDao) DeleteJobByIds(ctx context.Context, ids []int64) {
+func (jd *JobDao) DeleteJobByIds(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("delete from sys_job where job_id in (?)", ids)
 	if err != nil {
 		panic(err)
@@ -163,7 +164,7 @@ func (jd *JobDao) SelectJobLogList(ctx context.Context, job *monitorModels.JobLo
 	return
 }
 
-func (jd *JobDao) SelectJobLogById(ctx context.Context, id int64) (vo *monitorModels.JobLog) {
+func (jd *JobDao) SelectJobLogById(ctx context.Context, id string) (vo *monitorModels.JobLog) {
 	vo = new(monitorModels.JobLog)
 	err := jd.ms.GetContext(ctx, vo, jd.selectLogSql+" where job_log_id = ?", id)
 	if errors.Is(err, sql.ErrNoRows) {

@@ -57,7 +57,7 @@ func (loginService *LoginService) Register(c *gin.Context, user *systemModels.Lo
 	u.NickName = user.Username
 	u.UserName = user.Username
 	u.Status = "0"
-	u.DeptId = 100
+	u.DeptId = "100"
 	u.SetCreateBy(u.UserId)
 	loginService.userDao.InsertUser(c, u)
 }
@@ -76,7 +76,7 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 
 }
 
-func (loginService *LoginService) getPermission(c *gin.Context, userId int64) []string {
+func (loginService *LoginService) getPermission(c *gin.Context, userId string) []string {
 	perms := make([]string, 0)
 	if baizeContext.IsAdmin(c) {
 		perms = loginService.pd.SelectPermissionAll(c)

@@ -7,6 +7,7 @@ import (
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
 	"context"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,7 +41,7 @@ func (ls *LogininforService) InsertLogininfor(c context.Context, loginUser *moni
 	ls.ld.InserLogininfor(c, loginUser)
 }
 
-func (ls *LogininforService) DeleteLogininforByIds(c *gin.Context, infoIds []int64) {
+func (ls *LogininforService) DeleteLogininforByIds(c *gin.Context, infoIds []string) {
 	ls.ld.DeleteLogininforByIds(c, infoIds)
 
 }

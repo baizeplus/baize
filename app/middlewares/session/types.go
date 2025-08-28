@@ -3,11 +3,12 @@ package session
 import (
 	"baize/app/middlewares/session/sessionCache"
 	"context"
+
 	"github.com/gin-gonic/gin"
 )
 
 type Store interface {
-	Generate(ctx context.Context, userId int64) (*sessionCache.Session, error)
+	Generate(ctx context.Context, userId string) (*sessionCache.Session, error)
 	Refresh(ctx context.Context, id string) error
 	Remove(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (*sessionCache.Session, error)

@@ -34,10 +34,10 @@ func (ols *OperLogService) ExportOperLog(c *gin.Context, openLog *monitorModels.
 	return buffer.Bytes()
 }
 
-func (ols *OperLogService) DeleteOperLogByIds(c *gin.Context, operIds []int64) {
+func (ols *OperLogService) DeleteOperLogByIds(c *gin.Context, operIds []string) {
 	ols.old.DeleteOperLogByIds(c, operIds)
 }
-func (ols *OperLogService) SelectOperLogById(c *gin.Context, operId int64) (operLog *monitorModels.SysOperLog) {
+func (ols *OperLogService) SelectOperLogById(c *gin.Context, operId string) (operLog *monitorModels.SysOperLog) {
 	return ols.old.SelectOperLogById(c, operId)
 }
 func (ols *OperLogService) CleanOperLog(c *gin.Context) {

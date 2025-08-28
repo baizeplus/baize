@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -38,7 +39,7 @@ func (rd *sysRoleDao) SelectRoleList(ctx context.Context, role *systemModels.Sys
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	if role.CreateBy != 0 {
+	if role.CreateBy != "" {
 		whereSql += " and r.create_by = :create_by"
 	}
 	err := rd.ms.NamedSelectPageContext(ctx, &list, &total, rd.selectSql+whereSql, role)
@@ -61,7 +62,7 @@ func (rd *sysRoleDao) SelectRoleAll(ctx context.Context, role *systemModels.SysR
 	if role.EndTime != "" {
 		whereSql += " and date_format(r.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	if role.CreateBy != 0 {
+	if role.CreateBy != "" {
 		whereSql += " and r.create_by = :create_by"
 	}
 	list = make([]*systemModels.SysRoleVo, 0)
@@ -71,7 +72,7 @@ func (rd *sysRoleDao) SelectRoleAll(ctx context.Context, role *systemModels.SysR
 	}
 	return
 }
-func (rd *sysRoleDao) SelectRoleById(ctx context.Context, roleId int64) (role *systemModels.SysRoleVo) {
+func (rd *sysRoleDao) SelectRoleById(ctx context.Context, roleId string) (role *systemModels.SysRoleVo) {
 	whereSql := ` where r.role_id = ?`
 	role = new(systemModels.SysRoleVo)
 	err := rd.ms.GetContext(ctx, role, rd.selectSql+whereSql, roleId)
@@ -81,7 +82,7 @@ func (rd *sysRoleDao) SelectRoleById(ctx context.Context, roleId int64) (role *s
 	return
 }
 
-func (rd *sysRoleDao) SelectBasicRolesByUserId(ctx context.Context, userId int64) (roles []*systemModels.SysRole) {
+func (rd *sysRoleDao) SelectBasicRolesByUserId(ctx context.Context, userId string) (roles []*systemModels.SysRole) {
 	sqlStr := `select  r.role_id, r.role_name
 				from sys_role r
 				left join sys_user_role ur  on r.role_id = ur.role_id
@@ -94,13 +95,13 @@ func (rd *sysRoleDao) SelectBasicRolesByUserId(ctx context.Context, userId int64
 	return
 }
 
-func (rd *sysRoleDao) SelectRoleListByUserId(ctx context.Context, userId int64) (list []int64) {
+func (rd *sysRoleDao) SelectRoleListByUserId(ctx context.Context, userId string) (list []string) {
 	sqlStr := `select r.role_id
         from sys_role r
 	        left join sys_user_role ur on ur.role_id = r.role_id
 	        left join sys_user u on u.user_id = ur.user_id
 		where u.user_id = ?`
-	list = make([]int64, 0, 1)
+	list = make([]string, 0)
 	err := rd.ms.SelectContext(ctx, &list, sqlStr, userId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
@@ -142,7 +143,7 @@ func (rd *sysRoleDao) UpdateRole(ctx context.Context, sysRole *systemModels.SysR
 	return
 }
 
-func (rd *sysRoleDao) DeleteRoleByIds(ctx context.Context, ids []int64) {
+func (rd *sysRoleDao) DeleteRoleByIds(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("update sys_role set del_flag = '2',role_name = concat(role_name,'(删除)')  where role_id in(?)", ids)
 	if err != nil {
 		panic(err)
@@ -153,8 +154,8 @@ func (rd *sysRoleDao) DeleteRoleByIds(ctx context.Context, ids []int64) {
 	}
 	return
 }
-func (rd *sysRoleDao) CheckRoleNameUnique(ctx context.Context, roleName string) int64 {
-	var roleId int64 = 0
+func (rd *sysRoleDao) CheckRoleNameUnique(ctx context.Context, roleName string) string {
+	var roleId string
 	err := rd.ms.GetContext(ctx, &roleId, "select role_id from sys_role where role_name = ?", roleName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
@@ -212,7 +213,7 @@ func (rd *sysRoleDao) SelectRoleIdAndNameAll(ctx context.Context) (list []*syste
 	}
 	return
 }
-func (rd *sysRoleDao) SelectRoleIdAndName(ctx context.Context, userId int64, roleIds []int64) (list []*systemModels.SysRoleIdAndName) {
+func (rd *sysRoleDao) SelectRoleIdAndName(ctx context.Context, userId string, roleIds []string) (list []*systemModels.SysRoleIdAndName) {
 	in, i, err := sqly.In("select role_id,role_name from sys_role where status = '0' and del_flag='0'and (create_by=? or role_id in(?))order by role_sort", userId, roleIds)
 	if err != nil {
 		panic(err)

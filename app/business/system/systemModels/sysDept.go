@@ -6,15 +6,15 @@ import (
 )
 
 type SysDeptDQL struct {
-	ParentId int64  `form:"parentId,string" db:"parent_id"` //上级id
+	ParentId string `form:"parentId,string" db:"parent_id"` //上级id
 	DeptName string `form:"deptName" db:"dept_name"`        //部门名称
 	Status   string `form:"status" db:"status"`             //状态
 	baize.BaseEntityDQL
 }
 
 type SysDeptVo struct {
-	DeptId    int64  `json:"deptId,string" db:"dept_id"`     //id
-	ParentId  int64  `json:"parentId,string" db:"parent_id"` //上级id
+	DeptId    string `json:"deptId,string" db:"dept_id"`     //id
+	ParentId  string `json:"parentId,string" db:"parent_id"` //上级id
 	Ancestors string `json:"ancestors" db:"ancestors"`       //祖级列表
 	DeptName  string `json:"deptName" db:"dept_name"`        //部门名称
 	OrderNum  int64  `json:"orderNum" db:"order_num"`        //排序
@@ -40,7 +40,7 @@ func GetParentNameAll(items []*SysDeptVo) []string {
 	return ss
 }
 
-func GetParentName(items []*SysDeptVo, parentId int64, name string) string {
+func GetParentName(items []*SysDeptVo, parentId string, name string) string {
 
 	for _, item := range items {
 		if item.DeptId == parentId {
@@ -51,8 +51,8 @@ func GetParentName(items []*SysDeptVo, parentId int64, name string) string {
 	return name
 }
 
-func GetParentNameAndIds(items []*SysDeptVo) map[string]int64 {
-	ss := make(map[string]int64)
+func GetParentNameAndIds(items []*SysDeptVo) map[string]string {
+	ss := make(map[string]string)
 	for _, item := range items {
 		ss[GetParentName(items, item.ParentId, item.DeptName)] = item.DeptId
 	}

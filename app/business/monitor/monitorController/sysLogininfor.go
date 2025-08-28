@@ -5,6 +5,8 @@ import (
 	"baize/app/business/monitor/monitorService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -48,7 +50,7 @@ func (lc *Logininfor) LogininforExport(c *gin.Context) {
 }
 
 func (lc *Logininfor) LogininforRemove(c *gin.Context) {
-	lc.ls.DeleteLogininforByIds(c, baizeContext.ParamInt64Array(c, "infoIds"))
+	lc.ls.DeleteLogininforByIds(c, strings.Split(c.Param("infoIds"), ","))
 	baizeContext.Success(c)
 }
 

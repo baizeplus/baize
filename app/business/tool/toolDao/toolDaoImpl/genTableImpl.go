@@ -4,6 +4,7 @@ import (
 	"baize/app/business/tool/toolDao"
 	"baize/app/business/tool/toolModels"
 	"context"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -172,7 +173,7 @@ func (genTableDao *GenTableDao) UpdateGenTable(ctx context.Context, genTable *to
 	if genTable.Remark != "" {
 		updateSQL += ",remark = :remark"
 	}
-	if genTable.ParentMenuId != 0 {
+	if genTable.ParentMenuId != "" {
 		updateSQL += ",parent_menu_id = :parent_menu_id"
 	}
 

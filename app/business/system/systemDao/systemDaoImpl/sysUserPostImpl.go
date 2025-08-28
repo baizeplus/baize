@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -23,7 +24,7 @@ func (sysUserPostDao *sysUserPostDao) BatchUserPost(ctx context.Context, users [
 	}
 }
 
-func (sysUserPostDao *sysUserPostDao) DeleteUserPostByUserId(ctx context.Context, userId int64) {
+func (sysUserPostDao *sysUserPostDao) DeleteUserPostByUserId(ctx context.Context, userId string) {
 
 	_, err := sysUserPostDao.ms.ExecContext(ctx, "delete from sys_user_post where user_id= ?", userId)
 	if err != nil {
@@ -31,7 +32,7 @@ func (sysUserPostDao *sysUserPostDao) DeleteUserPostByUserId(ctx context.Context
 	}
 }
 
-func (sysUserPostDao *sysUserPostDao) DeleteUserPost(ctx context.Context, ids []int64) {
+func (sysUserPostDao *sysUserPostDao) DeleteUserPost(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("delete from sys_user_post where user_id in(?)", ids)
 	if err != nil {
 		panic(err)

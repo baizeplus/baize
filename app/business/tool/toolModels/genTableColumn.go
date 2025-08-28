@@ -10,8 +10,8 @@ import (
 )
 
 type GenTableColumnDML struct {
-	ColumnId      int64  `json:"columnId,string" db:"column_id"`
-	TableId       int64  `json:"tableId,string" db:"table_id"`
+	ColumnId      string `json:"columnId" db:"column_id"`
+	TableId       string `json:"tableId" db:"table_id"`
 	ColumnName    string `json:"columnName" db:"column_name"`
 	ColumnComment string `json:"columnComment" db:"column_comment"`
 	ColumnType    string `json:"columnType" db:"column_type"`
@@ -63,7 +63,7 @@ type InformationSchemaColumn struct {
 	Sort          int32  `db:"sort"`
 }
 
-func GetGenTableColumnDML(column *InformationSchemaColumn, tableId int64, userId int64) *GenTableColumnDML {
+func GetGenTableColumnDML(column *InformationSchemaColumn, tableId string, userId string) *GenTableColumnDML {
 	genTableColumn := new(GenTableColumnDML)
 	dataType := column.ColumnType
 	columnName := column.ColumnName

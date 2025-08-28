@@ -5,6 +5,8 @@ import (
 	"baize/app/business/monitor/monitorService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,7 +47,7 @@ func (ol *OperLog) OperLogExport(c *gin.Context) {
 }
 
 func (ol *OperLog) OperLogRemove(c *gin.Context) {
-	ol.ls.DeleteOperLogByIds(c, baizeContext.ParamInt64Array(c, "operIds"))
+	ol.ls.DeleteOperLogByIds(c, strings.Split(c.Param("operIds"), ","))
 	baizeContext.Success(c)
 }
 

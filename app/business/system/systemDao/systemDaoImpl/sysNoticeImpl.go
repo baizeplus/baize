@@ -39,7 +39,7 @@ func (s *sysNoticeDao) SelectNoticeList(ctx context.Context, notice *systemModel
 	return
 }
 
-func (s *sysNoticeDao) SelectNoticeById(ctx context.Context, id int64) *systemModels.SysNoticeVo {
+func (s *sysNoticeDao) SelectNoticeById(ctx context.Context, id string) *systemModels.SysNoticeVo {
 	n := new(systemModels.SysNoticeVo)
 	sqlStr := `select id,title,type,txt,create_by,create_time,create_name,dept_ids from sys_notice where id=?`
 	err := s.ms.GetContext(ctx, n, sqlStr, id)
@@ -60,7 +60,7 @@ func (s *sysNoticeDao) InsertNotice(ctx context.Context, notice *systemModels.Sy
 	return
 }
 
-func (s *sysNoticeDao) DeleteNoticeById(ctx context.Context, id int64) {
+func (s *sysNoticeDao) DeleteNoticeById(ctx context.Context, id string) {
 
 	_, err := s.ms.ExecContext(ctx, `delete from sys_notice where id = ? `, id)
 	if err != nil {
@@ -78,7 +78,7 @@ func (s *sysNoticeDao) BatchSysNoticeUsers(ctx context.Context, notice []*system
 	return
 }
 
-func (s *sysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, userId int64) int64 {
+func (s *sysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, userId string) int64 {
 	count := int64(0)
 	err := s.ms.GetContext(ctx, &count, `select count(*) from  sys_notice_user  where user_id=? and status='1' `, userId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -87,7 +87,7 @@ func (s *sysNoticeDao) SelectNewMessageCountByUserId(ctx context.Context, userId
 	return count
 }
 
-func (s *sysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, userId, noticeId int64) *systemModels.ConsumptionNoticeVo {
+func (s *sysNoticeDao) SelectConsumptionNoticeById(ctx context.Context, userId, noticeId string) *systemModels.ConsumptionNoticeVo {
 	vo := new(systemModels.ConsumptionNoticeVo)
 	err := s.ms.GetContext(ctx, vo, `select sn.id,sn.title,sn.txt,sn.create_name, sn.type,sn.create_time,snu.status from sys_notice sn left join sys_notice_user snu on sn.id = snu.notice_id where snu.user_id=? and snu.notice_id=?`,
 		userId, noticeId)
@@ -116,7 +116,7 @@ where snu.user_id=:user_id `
 	}
 	return list, total
 }
-func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, noticeId, userId int64) int {
+func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context, noticeId, userId string) int {
 	count := 0
 	err := s.ms.GetContext(ctx, &count, "SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id =?)", userId, noticeId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -124,7 +124,7 @@ func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdAndUserId(ctx context.Context
 	}
 	return count
 }
-func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Context, noticeId []int64, userId int64) int {
+func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Context, noticeId []string, userId string) int {
 	query, i, err := sqly.In("SELECT EXISTS( SELECT 1 FROM sys_notice_user where user_id = ? and status='1' and notice_id in (?)) ", userId, noticeId)
 	count := 0
 	err = s.ms.GetContext(ctx, &count, query, i...)
@@ -133,20 +133,20 @@ func (s *sysNoticeDao) SelectNoticeStatusByNoticeIdsAndUserId(ctx context.Contex
 	}
 	return count
 }
-func (s *sysNoticeDao) UpdateNoticeRead(ctx context.Context, noticeId int64, userId int64) {
+func (s *sysNoticeDao) UpdateNoticeRead(ctx context.Context, noticeId string, userId string) {
 
 	_, err := s.ms.ExecContext(ctx, "update sys_notice_user set status = '2'  where user_id = ? and notice_id = ?", userId, noticeId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (s *sysNoticeDao) UpdateNoticeReadAll(ctx context.Context, userId int64) {
+func (s *sysNoticeDao) UpdateNoticeReadAll(ctx context.Context, userId string) {
 	_, err := s.ms.ExecContext(ctx, `update sys_notice_user set status = '2'  where user_id = ?`, userId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (s *sysNoticeDao) DeleteConsumptionNotice(ctx context.Context, noticeId []int64, userId int64) {
+func (s *sysNoticeDao) DeleteConsumptionNotice(ctx context.Context, noticeId []string, userId string) {
 	query, i, err := sqly.In("delete from sys_notice_user where  user_id = ? and notice_id in(?) ", userId, noticeId)
 	if err != nil {
 		panic(err)

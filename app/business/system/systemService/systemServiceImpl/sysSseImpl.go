@@ -11,15 +11,16 @@ import (
 	"baize/app/utils/baizeContext"
 	"context"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"io"
 	"sync"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type SseService struct {
 	ChannelsMap map[string]chan *systemModels.SseType
-	userMap     map[int64][]string
+	userMap     map[string][]string
 	mutex       sync.RWMutex
 	cache       cache.Cache
 }
@@ -27,7 +28,7 @@ type SseService struct {
 func NewSseService(cache cache.Cache) systemService.ISseService {
 	return &SseService{
 		ChannelsMap: make(map[string]chan *systemModels.SseType),
-		userMap:     make(map[int64][]string),
+		userMap:     make(map[string][]string),
 		cache:       cache,
 	}
 }

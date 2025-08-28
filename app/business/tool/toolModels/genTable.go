@@ -17,7 +17,7 @@ type GenTableDQL struct {
 }
 
 type GenTableDML struct {
-	TableId        int64                `json:"tableId,string" db:"table_id"`
+	TableId        string               `json:"tableId,string" db:"table_id"`
 	TableName      string               `json:"tableName" db:"table_name"`
 	TableComment   string               `json:"tableComment" db:"table_comment"`
 	SubTableName   string               `json:"subTableName" db:"sub_table_name"`
@@ -31,12 +31,12 @@ type GenTableDML struct {
 	FunctionAuthor string               `json:"functionAuthor" db:"function_author"`
 	Options        string               `json:"options" db:"options"`
 	Remark         string               `json:"remark" db:"remark"`
-	ParentMenuId   int64                `json:"parentMenuId,string" db:"parent_menu_id"`
+	ParentMenuId   string               `json:"parentMenuId,string" db:"parent_menu_id"`
 	Columns        []*GenTableColumnDML `json:"columns"`
 	baize.BaseEntity
 }
 
-func GetGenTableDML(table *DBTableVo, tableId int64, userId int64) *GenTableDML {
+func GetGenTableDML(table *DBTableVo, tableId string, userId string) *GenTableDML {
 	gen := new(GenTableDML)
 	gen.TableId = tableId
 	gen.TableName = table.TableName
@@ -48,7 +48,7 @@ func GetGenTableDML(table *DBTableVo, tableId int64, userId int64) *GenTableDML 
 	gen.FunctionName = strings.ReplaceAll(table.TableComment, "表", "")
 	gen.FunctionAuthor = "baize"
 	gen.TplCategory = "crud"
-	gen.ParentMenuId = 1
+	gen.ParentMenuId = "1"
 	gen.SetCreateBy(userId)
 	return gen
 }

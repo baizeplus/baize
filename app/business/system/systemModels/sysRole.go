@@ -12,12 +12,12 @@ type SysRoleDQL struct {
 	Status    string `form:"status" db:"status"`
 	BeginTime string `form:"beginTime" db:"begin_time"`
 	EndTime   string `form:"endTime" db:"end_time"`
-	CreateBy  int64  `db:"create_by" swaggerignore:"true"` //创建人
+	CreateBy  string `db:"create_by" swaggerignore:"true"` //创建人
 	baize.BaseEntityDQL
 }
 
 type SysRoleVo struct {
-	RoleId        int64    `json:"roleId,string" db:"role_id"`
+	RoleId        string   `json:"roleId" db:"role_id"`
 	RoleName      string   `json:"roleName" db:"role_name" bze:"1,角色名称"`
 	RoleSort      int      `json:"roleSort" db:"role_sort"`
 	Status        string   `json:"status"  db:"status"`
@@ -27,7 +27,7 @@ type SysRoleVo struct {
 }
 
 type SysRoleDML struct {
-	RoleId        int64    `json:"RoleId,string" db:"role_id"`
+	RoleId        string   `json:"RoleId" db:"role_id"`
 	RoleName      string   `json:"roleName" db:"role_name"`
 	RoleSort      int      `json:"roleSort" db:"role_sort"`
 	Status        string   `json:"status" db:"status"`
@@ -38,8 +38,8 @@ type SysRoleDML struct {
 }
 
 type SysRolePermission struct {
-	RoleId       int64 `db:"role_id"`
-	PermissionId int64 `db:"permission_id"`
+	RoleId       string `db:"role_id"`
+	PermissionId string `db:"permission_id"`
 }
 
 type SysRoleAndUserDQL struct {
@@ -50,6 +50,6 @@ type SysRoleAndUserDQL struct {
 }
 
 type SysRoleIdAndName struct {
-	RoleId   int64  `json:"roleId,string" db:"role_id"`
+	RoleId   string `json:"roleId" db:"role_id"`
 	RoleName string `json:"roleName" db:"role_name" `
 }

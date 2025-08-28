@@ -69,7 +69,7 @@ func (ld *LogininforDao) SelectLogininforListAll(ctx context.Context, logininfor
 	}
 	return
 }
-func (ld *LogininforDao) DeleteLogininforByIds(ctx context.Context, infoIds []int64) {
+func (ld *LogininforDao) DeleteLogininforByIds(ctx context.Context, infoIds []string) {
 	query, i, err := sqly.In("delete from sys_logininfor where info_id in (?)", infoIds)
 	if err != nil {
 		panic(err)

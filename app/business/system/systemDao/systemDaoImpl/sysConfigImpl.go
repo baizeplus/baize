@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -65,7 +66,7 @@ func (s *sysConfigDao) SelectConfigListAll(ctx context.Context, config *systemMo
 	return
 }
 
-func (s *sysConfigDao) SelectConfigById(ctx context.Context, configId int64) (config *systemModels.SysConfigVo) {
+func (s *sysConfigDao) SelectConfigById(ctx context.Context, configId string) (config *systemModels.SysConfigVo) {
 	whereSql := ` where config_id = ?`
 	config = new(systemModels.SysConfigVo)
 	err := s.ms.GetContext(ctx, config, s.configSql+whereSql, configId)
@@ -112,7 +113,7 @@ func (s *sysConfigDao) UpdateConfig(ctx context.Context, config *systemModels.Sy
 	return
 }
 
-func (s *sysConfigDao) DeleteConfigById(ctx context.Context, configId int64) {
+func (s *sysConfigDao) DeleteConfigById(ctx context.Context, configId string) {
 	_, err := s.ms.ExecContext(ctx, "delete from sys_config  where config_id = ?", configId)
 	if err != nil {
 		panic(err)
@@ -120,8 +121,8 @@ func (s *sysConfigDao) DeleteConfigById(ctx context.Context, configId int64) {
 	return
 }
 
-func (s *sysConfigDao) SelectConfigIdByConfigKey(ctx context.Context, configKey string) int64 {
-	var configId int64 = 0
+func (s *sysConfigDao) SelectConfigIdByConfigKey(ctx context.Context, configKey string) string {
+	var configId string
 	err := s.ms.GetContext(ctx, &configId, "select config_id from sys_config where config_key = ?", configKey)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)

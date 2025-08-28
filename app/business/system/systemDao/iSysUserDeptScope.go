@@ -6,8 +6,8 @@ import (
 )
 
 type IUserDeptScopeDao interface {
-	DeleteUserDeptScope(ctx context.Context, ids []int64)
-	SelectUserDeptScopeDeptIdByUserId(ctx context.Context, id int64) []string
-	DeleteUserDeptScopeByUserId(ctx context.Context, id int64)
+	DeleteUserDeptScope(ctx context.Context, ids []string)
+	SelectUserDeptScopeDeptIdByUserId(ctx context.Context, id string) []string
+	DeleteUserDeptScopeByUserId(ctx context.Context, id string)
 	BatchUserDeptScope(ctx context.Context, list []*systemModels.SysUserDeptScope)
 }

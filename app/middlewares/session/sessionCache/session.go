@@ -7,9 +7,10 @@ import (
 	"baize/app/utils/stringUtils"
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/spf13/viper"
 	"gopkg.in/errgo.v2/errors"
-	"time"
 )
 
 var (
@@ -29,7 +30,7 @@ func NewStore(cache cache.Cache) *Store {
 	}
 }
 
-func (s *Store) Generate(ctx context.Context, userId int64) (*Session, error) {
+func (s *Store) Generate(ctx context.Context, userId string) (*Session, error) {
 	sId := sessionId(userId)
 	s.cache.HSet(ctx, redisKey(sId), sessionStatus.UserId, userId)
 	return NewSession(sId, s.cache), nil
@@ -92,8 +93,8 @@ func (s *Session) Id() string {
 	return s.id
 }
 
-func sessionId(userId int64) string {
-	return fmt.Sprintf("%d:%s", userId, stringUtils.GetUUID())
+func sessionId(userId string) string {
+	return fmt.Sprintf("%s:%s", userId, stringUtils.GetUUID())
 }
 
 func redisKey(id string) string {

@@ -4,6 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"context"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -15,7 +16,7 @@ func NewSysUserRoleDao(ms sqly.SqlyContext) systemDao.IUserRoleDao {
 	return &sysUserRoleDao{ms: ms}
 }
 
-func (sysUserRoleDao *sysUserRoleDao) DeleteUserRole(ctx context.Context, ids []int64) {
+func (sysUserRoleDao *sysUserRoleDao) DeleteUserRole(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("delete from sys_user_role where user_id in(?)", ids)
 	if err != nil {
 		panic(err)
@@ -34,14 +35,14 @@ func (sysUserRoleDao *sysUserRoleDao) BatchUserRole(ctx context.Context, users [
 	}
 }
 
-func (sysUserRoleDao *sysUserRoleDao) DeleteUserRoleByUserId(ctx context.Context, userId int64) {
+func (sysUserRoleDao *sysUserRoleDao) DeleteUserRoleByUserId(ctx context.Context, userId string) {
 
 	_, err := sysUserRoleDao.ms.ExecContext(ctx, "delete from sys_user_role where user_id= ?", userId)
 	if err != nil {
 		panic(err)
 	}
 }
-func (sysUserRoleDao *sysUserRoleDao) CountUserRoleByRoleId(ctx context.Context, ids []int64) int {
+func (sysUserRoleDao *sysUserRoleDao) CountUserRoleByRoleId(ctx context.Context, ids []string) int {
 	var count = 0
 	query, i, err := sqly.In("SELECT EXISTS( SELECT 1  from sys_user_role where role_id in(?))", ids)
 	if err != nil {
@@ -59,7 +60,7 @@ func (sysUserRoleDao *sysUserRoleDao) DeleteUserRoleInfo(ctx context.Context, us
 		panic(err)
 	}
 }
-func (sysUserRoleDao *sysUserRoleDao) DeleteUserRoleInfos(ctx context.Context, roleId int64, userIds []int64) {
+func (sysUserRoleDao *sysUserRoleDao) DeleteUserRoleInfos(ctx context.Context, roleId string, userIds []string) {
 	query, i, err := sqly.In("delete from sys_user_role where role_id=(?) and user_id in (?)", roleId, userIds)
 	if err != nil {
 		panic(err)

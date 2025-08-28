@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -25,7 +26,7 @@ func NewSysDeptDao(ms sqly.SqlyContext) systemDao.IDeptDao {
 
 func (sysDeptDao *sysDeptDao) SelectDeptList(ctx context.Context, dept *systemModels.SysDeptDQL) (list []*systemModels.SysDeptVo) {
 	whereSql := ` where d.del_flag = '0'`
-	if dept.ParentId != 0 {
+	if dept.ParentId != "" {
 		whereSql += " AND parent_id = :parent_id"
 	}
 	if dept.DeptName != "" {
@@ -58,7 +59,7 @@ func (sysDeptDao *sysDeptDao) SelectDeptListSelectBox(ctx context.Context, dept 
 	}
 	return list
 }
-func (sysDeptDao *sysDeptDao) SelectDeptById(ctx context.Context, deptId int64) (dept *systemModels.SysDeptVo) {
+func (sysDeptDao *sysDeptDao) SelectDeptById(ctx context.Context, deptId string) (dept *systemModels.SysDeptVo) {
 	whereSql := ` where d.dept_id = ?`
 	dept = new(systemModels.SysDeptVo)
 	err := sysDeptDao.ms.GetContext(ctx, dept, sysDeptDao.deptSql+whereSql, deptId)
@@ -104,7 +105,7 @@ func (sysDeptDao *sysDeptDao) InsertDept(ctx context.Context, dept *systemModels
 
 func (sysDeptDao *sysDeptDao) UpdateDept(ctx context.Context, dept *systemModels.SysDeptVo) {
 	updateSQL := `update sys_dept set order_num=:order_num , update_time = :update_time , update_by = :update_by `
-	if dept.ParentId != 0 {
+	if dept.ParentId != "" {
 		updateSQL += ",parent_id = :parent_id"
 	}
 
@@ -136,22 +137,22 @@ func (sysDeptDao *sysDeptDao) UpdateDept(ctx context.Context, dept *systemModels
 	return
 }
 
-func (sysDeptDao *sysDeptDao) DeleteDeptById(ctx context.Context, deptId int64) {
+func (sysDeptDao *sysDeptDao) DeleteDeptById(ctx context.Context, deptId string) {
 	_, err := sysDeptDao.ms.ExecContext(ctx, "update sys_dept set del_flag = '2',dept_name = concat(dept_name,'(删除)')  where dept_id =?", deptId)
 	if err != nil {
 		panic(err)
 	}
 	return
 }
-func (sysDeptDao *sysDeptDao) CheckDeptNameUnique(ctx context.Context, deptName string, parentId int64) int64 {
-	var roleId int64 = 0
+func (sysDeptDao *sysDeptDao) CheckDeptNameUnique(ctx context.Context, deptName string, parentId string) string {
+	var roleId string
 	err := sysDeptDao.ms.GetContext(ctx, &roleId, "select dept_id from sys_dept where dept_name=? and parent_id = ?", deptName, parentId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return roleId
 }
-func (sysDeptDao *sysDeptDao) HasChildByDeptId(ctx context.Context, deptId int64) int {
+func (sysDeptDao *sysDeptDao) HasChildByDeptId(ctx context.Context, deptId string) int {
 	var count = 0
 	err := sysDeptDao.ms.GetContext(ctx, &count, "select count(1) from sys_dept where parent_id = ?", deptId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -159,7 +160,7 @@ func (sysDeptDao *sysDeptDao) HasChildByDeptId(ctx context.Context, deptId int64
 	}
 	return count
 }
-func (sysDeptDao *sysDeptDao) CheckDeptExistUser(ctx context.Context, deptId int64) int {
+func (sysDeptDao *sysDeptDao) CheckDeptExistUser(ctx context.Context, deptId string) int {
 	var count = 0
 	err := sysDeptDao.ms.GetContext(ctx, &count, "select count(1) from sys_user where dept_id = ? and del_flag = '0'", deptId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {

@@ -9,6 +9,6 @@ type ILogininforDao interface {
 	InserLogininfor(ctx context.Context, logininfor *monitorModels.Logininfor)
 	SelectLogininforList(ctx context.Context, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor, total int64)
 	SelectLogininforListAll(ctx context.Context, logininfor *monitorModels.LogininforDQL) (list []*monitorModels.Logininfor)
-	DeleteLogininforByIds(ctx context.Context, infoIds []int64)
+	DeleteLogininforByIds(ctx context.Context, infoIds []string)
 	CleanLogininfor(ctx context.Context)
 }

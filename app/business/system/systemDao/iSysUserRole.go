@@ -6,10 +6,10 @@ import (
 )
 
 type IUserRoleDao interface {
-	DeleteUserRole(ctx context.Context, ids []int64)
+	DeleteUserRole(ctx context.Context, ids []string)
 	BatchUserRole(ctx context.Context, users []*systemModels.SysUserRole)
-	DeleteUserRoleByUserId(ctx context.Context, userId int64)
-	CountUserRoleByRoleId(ctx context.Context, ids []int64) int
+	DeleteUserRoleByUserId(ctx context.Context, userId string)
+	CountUserRoleByRoleId(ctx context.Context, ids []string) int
 	DeleteUserRoleInfo(ctx context.Context, userRole *systemModels.SysUserRole)
-	DeleteUserRoleInfos(ctx context.Context, roleId int64, userIds []int64)
+	DeleteUserRoleInfos(ctx context.Context, roleId string, userIds []string)
 }

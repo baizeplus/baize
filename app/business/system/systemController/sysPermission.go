@@ -5,6 +5,8 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -53,11 +55,7 @@ func (pc *Permission) PermissionList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysPermissionVo} "成功"
 // @Router /system/permission/{permissionId}  [get]
 func (pc *Permission) PermissionGetInfo(c *gin.Context) {
-	permissionId := baizeContext.ParamInt64(c, "permissionId")
-	if permissionId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	permissionId := c.Param("permissionId")
 	permission := pc.ps.SelectPermissionById(c, permissionId)
 	baizeContext.SuccessData(c, permission)
 }
@@ -72,11 +70,7 @@ func (pc *Permission) PermissionGetInfo(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=[]systemModels.SysPermissionVo} "成功"
 // @Router /system/permission/byRoleIds/{roleIds} [get]
 func (pc *Permission) PermissionListByRoleIds(c *gin.Context) {
-	roleIds := baizeContext.ParamInt64Array(c, "roleIds")
-	if len(roleIds) == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	roleIds := strings.Split(c.Param("roleIds"), ",")
 	permission := pc.ps.SelectPermissionListByRoleIds(c, roleIds)
 	baizeContext.SuccessData(c, permission)
 }
@@ -131,11 +125,7 @@ func (pc *Permission) PermissionEdit(c *gin.Context) {
 // @Router /system/permission/{permissionId} [delete]
 func (pc *Permission) PermissionRemove(c *gin.Context) {
 
-	permissionId := baizeContext.ParamInt64(c, "permissionId")
-	if permissionId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	permissionId := c.Param("permissionId")
 	if pc.ps.HasChildByPermissionId(c, permissionId) {
 		baizeContext.Waring(c, "有子权限不可以删除")
 		return

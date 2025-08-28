@@ -5,6 +5,8 @@ import (
 	"baize/app/business/monitor/monitorService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,11 +58,7 @@ func (j *Job) JobList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=monitorModels.JobVo}  "成功"
 // @Router /monitor/job/{jobId}  [get]
 func (j *Job) JobGetInfo(c *gin.Context) {
-	jobId := baizeContext.ParamInt64(c, "jobId")
-	if jobId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	jobId := c.Param("jobId")
 	menu := j.ls.SelectJobById(c, jobId)
 	baizeContext.SuccessData(c, menu)
 }
@@ -162,7 +160,7 @@ func (j *Job) JobRun(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /monitor/job/{jobIds}  [delete]
 func (j *Job) JobRemove(c *gin.Context) {
-	j.ls.DeleteJobByIds(c, baizeContext.ParamInt64Array(c, "jobIds"))
+	j.ls.DeleteJobByIds(c, strings.Split(c.Param("jobIds"), ","))
 	baizeContext.Success(c)
 
 }
@@ -205,11 +203,7 @@ func (j *Job) JobLogList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=monitorModels.JobLog}  "成功"
 // @Router /monitor/job/log/{jobLogId}  [get]
 func (j *Job) JobLogGetInfo(c *gin.Context) {
-	jobLogId := baizeContext.ParamInt64(c, "jobLogId")
-	if jobLogId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	jobLogId := c.Param("jobLogId")
 	menu := j.ls.SelectJobLogById(c, jobLogId)
 	baizeContext.SuccessData(c, menu)
 }

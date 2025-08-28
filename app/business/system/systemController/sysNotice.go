@@ -5,6 +5,8 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -62,8 +64,8 @@ func (nc *Notice) NoticeList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysNoticeVo} "成功"
 // @Router /system/notice/{id}  [get]
 func (nc *Notice) NoticeGetInfo(c *gin.Context) {
-	id := baizeContext.ParamInt64(c, "id")
-	if id == 0 {
+	id := c.Param("id")
+	if id == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
@@ -114,8 +116,8 @@ func (nc *Notice) NewMessage(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.ConsumptionNoticeVo} "成功"
 // @Router /system/consumption/{id}  [get]
 func (nc *Notice) UserNoticeGetInfo(c *gin.Context) {
-	id := baizeContext.ParamInt64(c, "id")
-	if id == 0 {
+	id := c.Param("id")
+	if id == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
@@ -153,8 +155,8 @@ func (nc *Notice) UserNoticeList(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/consumption/noticeRead/{id} [put]
 func (nc *Notice) NoticeRead(c *gin.Context) {
-	id := baizeContext.ParamInt64(c, "id")
-	if id == 0 {
+	id := c.Param("id")
+	if id == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
@@ -185,7 +187,7 @@ func (nc *Notice) NoticeReadAll(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/consumption/noticeDelete/{ids} [delete]
 func (nc *Notice) NoticeDelete(c *gin.Context) {
-	ids := baizeContext.ParamInt64Array(c, "ids")
+	ids := strings.Split(c.Param("ids"), ",")
 	if len(ids) == 0 {
 		baizeContext.ParameterError(c)
 		return

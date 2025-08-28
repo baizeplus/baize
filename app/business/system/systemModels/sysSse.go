@@ -6,7 +6,7 @@ type SseType struct {
 }
 
 type Sse struct {
-	UserIds      []int64
+	UserIds      []string
 	RedisPublish bool
 	Sse          *SseType
 }
