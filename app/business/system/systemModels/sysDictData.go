@@ -3,7 +3,7 @@ package systemModels
 import "baize/app/baize"
 
 type SysDictDataVo struct {
-	DictCode  int64  `json:"dictCode,string" db:"dict_code"`
+	DictCode  string `json:"dictCode,string" db:"dict_code"`
 	DictSort  int32  `json:"dictSort" db:"dict_sort"`
 	DictLabel string `json:"dictLabel" db:"dict_label"  bze:"1,字典标签"`
 	DictValue string `json:"dictValue" db:"dict_value"  bze:"2,参数键值"`

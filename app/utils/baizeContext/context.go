@@ -6,21 +6,21 @@ import (
 	"baize/app/middlewares/session/sessionCache"
 	"encoding/json"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func IsAdmin(c *gin.Context) bool {
 	for _, id := range GetRoles(c) {
-		if id == 1 {
+		if id == "1" {
 			return true
 		}
 	}
 	return false
 }
-func GetRoles(c *gin.Context) []int64 {
+func GetRoles(c *gin.Context) []string {
 	get := GetSession(c).Get(c, sessionStatus.Role)
-	roles := make([]int64, 0)
+	roles := make([]string, 0)
 	err := json.Unmarshal([]byte(get), &roles)
 	if err != nil {
 		panic(err)
@@ -54,19 +54,11 @@ func GetPermission(c *gin.Context) []string {
 	return permission
 }
 
-func GetUserId(c *gin.Context) int64 {
-	i, err := strconv.ParseInt(GetSession(c).Get(c, sessionStatus.UserId), 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	return i
+func GetUserId(c *gin.Context) string {
+	return GetSession(c).Get(c, sessionStatus.UserId)
 }
-func GetDeptId(c *gin.Context) int64 {
-	i, err := strconv.ParseInt(GetSession(c).Get(c, sessionStatus.DeptId), 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	return i
+func GetDeptId(c *gin.Context) string {
+	return GetSession(c).Get(c, sessionStatus.DeptId)
 }
 
 func GetDataScopeAspect(c *gin.Context) string {

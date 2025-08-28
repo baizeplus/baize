@@ -5,6 +5,8 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -69,11 +71,7 @@ func (pc *Post) PostExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysPostVo}  "成功"
 // @Router /system/post/{postId}  [get]
 func (pc *Post) PostGetInfo(c *gin.Context) {
-	postId := baizeContext.ParamInt64(c, "postId")
-	if postId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	postId := c.Param("postId")
 	baizeContext.SuccessData(c, pc.ps.SelectPostById(c, postId))
 }
 
@@ -127,6 +125,6 @@ func (pc *Post) PostEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/post/{postIds}  [delete]
 func (pc *Post) PostRemove(c *gin.Context) {
-	pc.ps.DeletePostByIds(c, baizeContext.ParamInt64Array(c, "postIds"))
+	pc.ps.DeletePostByIds(c, strings.Split(c.Param("postIds"), ","))
 	baizeContext.Success(c)
 }

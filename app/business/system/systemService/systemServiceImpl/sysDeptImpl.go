@@ -6,7 +6,6 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/utils/snowflake"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 type DeptService struct {
@@ -23,7 +22,7 @@ func (ds *DeptService) SelectDeptList(c *gin.Context, dept *systemModels.SysDept
 
 }
 
-func (ds *DeptService) SelectDeptById(c *gin.Context, deptId int64) (dept *systemModels.SysDeptVo) {
+func (ds *DeptService) SelectDeptById(c *gin.Context, deptId string) (dept *systemModels.SysDeptVo) {
 	return ds.deptDao.SelectDeptById(c, deptId)
 
 }
@@ -31,7 +30,7 @@ func (ds *DeptService) SelectDeptById(c *gin.Context, deptId int64) (dept *syste
 func (ds *DeptService) InsertDept(c *gin.Context, dept *systemModels.SysDeptVo) {
 	//获取上级部门祖籍信息
 	parentDept := ds.SelectDeptById(c, dept.ParentId)
-	dept.Ancestors = parentDept.Ancestors + "," + strconv.FormatInt(dept.ParentId, 10)
+	dept.Ancestors = parentDept.Ancestors + "," + dept.ParentId
 	//执行添加
 	dept.DeptId = snowflake.GenID()
 	ds.deptDao.InsertDept(c, dept)
@@ -41,21 +40,21 @@ func (ds *DeptService) InsertDept(c *gin.Context, dept *systemModels.SysDeptVo) 
 func (ds *DeptService) UpdateDept(c *gin.Context, dept *systemModels.SysDeptVo) {
 	ds.deptDao.UpdateDept(c, dept)
 }
-func (ds *DeptService) DeleteDeptById(c *gin.Context, dept int64) {
+func (ds *DeptService) DeleteDeptById(c *gin.Context, dept string) {
 	ds.deptDao.DeleteDeptById(c, dept)
 	return
 }
-func (ds *DeptService) CheckDeptNameUnique(c *gin.Context, id, parentId int64, deptName string) bool {
+func (ds *DeptService) CheckDeptNameUnique(c *gin.Context, id, parentId string, deptName string) bool {
 	deptId := ds.deptDao.CheckDeptNameUnique(c, deptName, parentId)
-	if deptId == id || deptId == 0 {
+	if deptId == id || deptId == "" {
 		return false
 	}
 	return true
 }
-func (ds *DeptService) HasChildByDeptId(c *gin.Context, deptId int64) bool {
+func (ds *DeptService) HasChildByDeptId(c *gin.Context, deptId string) bool {
 	return ds.deptDao.HasChildByDeptId(c, deptId) > 0
 }
 
-func (ds *DeptService) CheckDeptExistUser(c *gin.Context, deptId int64) bool {
+func (ds *DeptService) CheckDeptExistUser(c *gin.Context, deptId string) bool {
 	return ds.deptDao.CheckDeptExistUser(c, deptId) > 0
 }

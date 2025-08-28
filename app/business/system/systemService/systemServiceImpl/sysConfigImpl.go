@@ -7,6 +7,7 @@ import (
 	"baize/app/datasource/cache"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,7 +37,7 @@ func (cs *ConfigService) ConfigExport(c *gin.Context, config *systemModels.SysCo
 	return buffer.Bytes()
 }
 
-func (cs *ConfigService) SelectConfigById(c *gin.Context, configId int64) (Config *systemModels.SysConfigVo) {
+func (cs *ConfigService) SelectConfigById(c *gin.Context, configId string) (Config *systemModels.SysConfigVo) {
 	return cs.cd.SelectConfigById(c, configId)
 }
 
@@ -50,13 +51,13 @@ func (cs *ConfigService) UpdateConfig(c *gin.Context, config *systemModels.SysCo
 	cs.cache.Del(c, cs.getCacheKey(config.ConfigKey))
 }
 
-func (cs *ConfigService) DeleteConfigById(c *gin.Context, configId int64) {
+func (cs *ConfigService) DeleteConfigById(c *gin.Context, configId string) {
 	key := cs.cd.SelectConfigById(c, configId).ConfigKey
 	cs.cd.DeleteConfigById(c, configId)
 	cs.cache.Del(c, cs.getCacheKey(key))
 }
 
-func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId int64, configKey string) bool {
+func (cs *ConfigService) CheckConfigKeyUnique(c *gin.Context, configId string, configKey string) bool {
 	id := cs.cd.SelectConfigIdByConfigKey(c, configKey)
 	if id == configId {
 		return false

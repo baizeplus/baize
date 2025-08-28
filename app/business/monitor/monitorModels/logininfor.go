@@ -13,7 +13,7 @@ type LogininforDQL struct {
 }
 
 type Logininfor struct {
-	InfoId        int64     `json:"infoId,string" db:"info_id"`
+	InfoId        string    `json:"infoId,string" db:"info_id"`
 	Status        int8      `json:"status" db:"status"`
 	UserName      string    `json:"userName" db:"user_name"`
 	Msg           string    `json:"msg" db:"msg"`

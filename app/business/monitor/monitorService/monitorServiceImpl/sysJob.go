@@ -21,7 +21,7 @@ type JobService struct {
 	cache     cache.Cache
 	jd        monitorDao.IJobDao
 	funMap    map[string]func(...string)
-	cronMap   map[int64]*cron.Cron
+	cronMap   map[string]*cron.Cron
 	normal    string
 	pause     string
 	quartzKey string
@@ -31,7 +31,7 @@ func NewJobService(cache cache.Cache, jd monitorDao.IJobDao) monitorService.IJob
 	funMap := make(map[string]func(...string))
 	funMap["NoParams"] = task.NoParams
 	funMap["Params"] = task.Params
-	return &JobService{cache: cache, jd: jd, funMap: funMap, cronMap: make(map[int64]*cron.Cron),
+	return &JobService{cache: cache, jd: jd, funMap: funMap, cronMap: make(map[string]*cron.Cron),
 		normal: "0", pause: "1", quartzKey: "quartz:"}
 }
 
@@ -39,7 +39,7 @@ func (js *JobService) SelectJobList(c *gin.Context, job *monitorModels.JobDQL) (
 	list, total = js.jd.SelectJobList(c, job)
 	return
 }
-func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModels.JobVo) {
+func (js *JobService) SelectJobById(c *gin.Context, id string) (job *monitorModels.JobVo) {
 	job = js.jd.SelectJobById(c, id)
 	if job != nil {
 		schedule, err := cron.ParseStandard(job.CronExpression)
@@ -53,7 +53,7 @@ func (js *JobService) SelectJobById(c *gin.Context, id int64) (job *monitorModel
 	return
 }
 
-func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []int64) {
+func (js *JobService) DeleteJobByIds(c *gin.Context, jobIds []string) {
 	for _, id := range jobIds {
 		m := new(monitorModels.JobRedis)
 		m.Id = id
@@ -233,7 +233,7 @@ func (js *JobService) SelectJobLogList(c *gin.Context, job *monitorModels.JobLog
 	return js.jd.SelectJobLogList(c, job)
 }
 
-func (js *JobService) SelectJobLogById(c *gin.Context, id int64) (vo *monitorModels.JobLog) {
+func (js *JobService) SelectJobLogById(c *gin.Context, id string) (vo *monitorModels.JobLog) {
 	return js.jd.SelectJobLogById(c, id)
 }
 

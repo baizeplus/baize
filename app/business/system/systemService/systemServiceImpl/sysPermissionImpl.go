@@ -22,11 +22,11 @@ func (ps *PermissionService) SelectPermissionList(c *gin.Context, permission *sy
 	return
 }
 
-func (ps *PermissionService) SelectPermissionById(ctx context.Context, permissionId int64) (Permission *systemModels.SysPermissionVo) {
+func (ps *PermissionService) SelectPermissionById(ctx context.Context, permissionId string) (Permission *systemModels.SysPermissionVo) {
 	return ps.pd.SelectPermissionById(ctx, permissionId)
 }
 
-func (ps *PermissionService) SelectPermissionListByRoleIds(ctx context.Context, roleIds []int64) (list []*systemModels.SysPermissionVo) {
+func (ps *PermissionService) SelectPermissionListByRoleIds(ctx context.Context, roleIds []string) (list []*systemModels.SysPermissionVo) {
 	return ps.pd.SelectPermissionListByRoleIds(ctx, roleIds)
 }
 
@@ -40,11 +40,11 @@ func (ps *PermissionService) UpdatePermission(ctx context.Context, permission *s
 	ps.pd.UpdatePermission(ctx, permission)
 }
 
-func (ps *PermissionService) DeletePermissionById(ctx context.Context, permissionId int64) {
+func (ps *PermissionService) DeletePermissionById(ctx context.Context, permissionId string) {
 	ps.pd.DeletePermissionById(ctx, permissionId)
 }
 
-func (ps *PermissionService) HasChildByPermissionId(ctx context.Context, permissionId int64) bool {
+func (ps *PermissionService) HasChildByPermissionId(ctx context.Context, permissionId string) bool {
 	return ps.pd.HasChildByPermissionId(ctx, permissionId) > 0
 }
 

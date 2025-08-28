@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -66,7 +67,7 @@ func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeAll(ctx context.Context, dic
 	return
 }
 
-func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeById(ctx context.Context, dictId int64) (dictType *systemModels.SysDictTypeVo) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeById(ctx context.Context, dictId string) (dictType *systemModels.SysDictTypeVo) {
 
 	dictType = new(systemModels.SysDictTypeVo)
 	err := sysDictTypeDao.ms.GetContext(ctx, dictType, sysDictTypeDao.dictTypeSql+" where dict_id = ?", dictId)
@@ -76,7 +77,7 @@ func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeById(ctx context.Context, di
 	return
 }
 
-func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeByIds(ctx context.Context, dictId []int64) (dictTypes []string) {
+func (sysDictTypeDao *sysDictTypeDao) SelectDictTypeByIds(ctx context.Context, dictId []string) (dictTypes []string) {
 	dictTypes = make([]string, 0)
 	query, args, err := sqly.In("select dict_type from sys_dict_type where dict_id in(?)", dictId)
 	if err != nil {
@@ -126,7 +127,7 @@ func (sysDictTypeDao *sysDictTypeDao) UpdateDictType(ctx context.Context, dictTy
 	return
 }
 
-func (sysDictTypeDao *sysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, dictIds []int64) {
+func (sysDictTypeDao *sysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, dictIds []string) {
 	query, i, err := sqly.In("delete from sys_dict_type where dict_id in (?)", dictIds)
 	if err != nil {
 		panic(err)
@@ -137,8 +138,8 @@ func (sysDictTypeDao *sysDictTypeDao) DeleteDictTypeByIds(ctx context.Context, d
 	}
 	return
 }
-func (sysDictTypeDao *sysDictTypeDao) CheckDictTypeUnique(ctx context.Context, dictType string) int64 {
-	var dictId int64 = 0
+func (sysDictTypeDao *sysDictTypeDao) CheckDictTypeUnique(ctx context.Context, dictType string) string {
+	var dictId string
 	err := sysDictTypeDao.ms.GetContext(ctx, &dictId, "select dict_id from sys_dict_type where dict_type = ?", dictType)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)

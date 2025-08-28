@@ -7,6 +7,8 @@ import (
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"baize/app/utils/response"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -157,8 +159,8 @@ func (uc *User) UpdateUserDataScope(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData  "成功"
 // @Router /system/user/dataScope/{userId}   [get]
 func (uc *User) SelectUserDataScope(c *gin.Context) {
-	userId := baizeContext.ParamInt64(c, "userId")
-	if userId == 0 {
+	userId := c.Param("userId")
+	if userId == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
@@ -178,7 +180,7 @@ func (uc *User) UserAdd(c *gin.Context) {
 
 	sysUser := new(systemModels.SysUserDML)
 	_ = c.ShouldBindJSON(sysUser)
-	if sysUser.DeptId == 0 {
+	if sysUser.DeptId == "" {
 		sysUser.DeptId = baizeContext.GetDeptId(c)
 	}
 	if uc.us.CheckUserNameUnique(c, sysUser.UserName) {
@@ -238,8 +240,8 @@ func (uc *User) UserGetInfo(c *gin.Context) {
 // // @Success 200 {object}  response.ResponseData{data=systemModels.UserAndRoles}  "成功"
 // @Router /system/user/authRole/{userId}  [get]
 func (uc *User) UserAuthRole(c *gin.Context) {
-	userId := baizeContext.ParamInt64(c, "userId")
-	if userId == 0 {
+	userId := c.Param("userId")
+	if userId == "" {
 		baizeContext.ParameterError(c)
 	}
 	baizeContext.SuccessData(c, uc.us.GetUserAuthRole(c, userId))
@@ -255,12 +257,7 @@ func (uc *User) UserAuthRole(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.UserAndAccredit}  "成功"
 // @Router /system/user/{userId}  [get]
 func (uc *User) UserGetInfoById(c *gin.Context) {
-	userId := baizeContext.ParamInt64(c, "userId")
-	if userId == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
-
+	userId := c.Param("userId")
 	baizeContext.SuccessData(c, uc.us.SelectUserAndAccreditById(c, userId))
 
 }
@@ -275,7 +272,7 @@ func (uc *User) UserGetInfoById(c *gin.Context) {
 // @Success 200 {object} response.ResponseData
 // @Router /system/user/:userIds [delete]
 func (uc *User) UserRemove(c *gin.Context) {
-	array := baizeContext.ParamInt64Array(c, "userIds")
+	array := strings.Split(c.Param("userIds"), ",")
 	for _, i := range array {
 		if i == baizeContext.GetUserId(c) {
 			baizeContext.Waring(c, response.ForbiddenOperation)
@@ -352,12 +349,12 @@ func (uc *User) ImportTemplate(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
 // @Router /system/user/authRole  [put]
 func (uc *User) InsertAuthRole(c *gin.Context) {
-	userId := baizeContext.QueryInt64(c, "userId")
+	userId := c.Query("userId")
 	if userId == baizeContext.GetUserId(c) {
 		baizeContext.Waring(c, response.ForbiddenOperation)
 		return
 	}
-	array := baizeContext.QueryInt64Array(c, "roleIds")
+	array := strings.Split(c.Query("roleIds"), ",")
 	uc.us.InsertUserAuth(c, userId, array)
 	baizeContext.Success(c)
 }

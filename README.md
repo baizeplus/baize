@@ -1,7 +1,8 @@
 
 ## 平台简介
 
-白泽是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+Baize 是一个功能齐全的 Web 应用框架，专注于提供基于角色的访问控制（RBAC）功能。它适用于构建企业级管理系统，支持用户权限管理、系统监控、任务调度、数据字典、代码生成等模块，具备完整的前后端分离架构设计。
+，毫无保留给个人及企业免费使用。
 
 ## 前端代码地址
 [baize-react](https://gitee.com/baizeplus/baize-react) https://gitee.com/baizeplus/baize-react  , https://github.com/baizeplus/baize-react
@@ -9,42 +10,61 @@
 [baize-vue](https://gitee.com/baizeplus/baize-vue) https://gitee.com/baizeplus/baize-vue  , https://github.com/baizeplus/baize-vue
 <br>
 
-# Baize: A Comprehensive Web Application Framework with Role-Based Access Control
+```markdown
+# Baize：基于角色的访问控制综合Web应用框架
 
-Baize is a modern Go web application framework that provides a robust foundation for building secure, scalable, and maintainable web applications with comprehensive role-based access control (RBAC) and monitoring capabilities.
+## 项目简介
 
-The framework implements a clean architecture pattern with clear separation of concerns between controllers, services, and data access layers. It provides built-in support for user management, authentication, authorization, configuration management, monitoring, and code generation.
+## 主要功能
+- **用户权限管理**：支持用户注册、登录、角色分配、权限控制。
+- **角色管理**：支持创建、编辑、删除角色，并为角色分配权限。
+- **权限控制**：基于 RBAC 模型，支持细粒度权限控制。
+- **系统监控**：包括定时任务管理、在线用户管理、操作日志、登录日志等。
+- **数据字典**：支持字典类型和字典数据的管理。
+- **代码生成**：支持从数据库表自动生成代码模板(待修改)。
+- **文件上传**：支持多种文件存储方式（本地、S3 等）。
+- **通知系统**：支持系统消息推送和 SSE（Server-Sent Events）实时通知。
 
-## Repository Structure
+## 技术栈
+- **后端**：Go + Gin 框架
+- **数据库**：MySQL
+- **缓存**：Redis、本地缓存
+- **权限控制**：基于 RBAC 模型
+- **前端**：Vue和react（配套前端）
+- **部署**：Docker 支持
+- **日志**：Zap 日志库
+```
+## 目录结构
 ```
 .
-├── app/                            # Main application code
-│   ├── baize/                     # Core framework utilities and base types
-│   ├── business/                  # Business logic modules
-│   │   ├── monitor/              # Monitoring functionality (jobs, logs, etc.)
-│   │   ├── system/               # Core system functionality (users, roles, etc.)
-│   │   └── tool/                 # Development tools and generators
-│   ├── constant/                 # Application constants
-│   ├── datasource/              # Data source implementations (MySQL, Redis, S3)
-│   ├── docs/                    # API documentation (Swagger)
-│   ├── middlewares/             # HTTP middleware components
-│   ├── routes/                  # Route definitions
-│   ├── setting/                 # Application configuration
-│   └── utils/                   # Utility functions
-├── config/                      # Configuration files
-├── template/                    # Code generation templates
-└── sql/                        # Database schema definitions
+├── app/                            # 主要应用代码
+│   ├── baize/                     # 核心框架实用程序和基本类型
+│   ├── business/                  # 业务逻辑模块
+│   │   ├── monitor/              # 监控功能(jobs, logs, etc.)
+│   │   ├── system/               # 核心系统功能 (users, roles.)
+│   │   └── tool/                 # 开发工具和生成器
+│   ├── constant/                 # 应用程序常量
+│   ├── datasource/              # 数据源实现 (MySQL, Redis, S3)
+│   ├── docs/                    # API文档 (Swagger)
+│   ├── middlewares/             # 中间件（权限、日志、会话）
+│   ├── routes/                  # 路由定义
+│   ├── setting/                 # 应用程序配置
+│   └── utils/                   # 工具类（加密、文件处理、响应封装等）
+├── config/                      # 配置文件
+├── template/                    # 代码生成模板
+└── sql/                        # 数据库脚本
+
 ```
 
 
-## Data Flow
-The application follows a clean architecture pattern with clear data flow:
+## 数据流
 
-1. HTTP Request → Middleware (Auth/Logging) → Controller
-2. Controller → Service Layer (Business Logic)
-3. Service Layer → Data Access Layer (DAO)
-4. DAO → Database/Cache/Storage
+该应用程序遵循清晰的架构模式，数据流清晰：
 
+1. HTTP 请求 → 中间件（身份验证/日志记录）→ 控制器
+2. 控制器 → 服务层（业务逻辑）
+3. 服务层 → 数据访问层 (DAO)
+4. DAO → 数据库/缓存/存储
 ```ascii
 Request → [Middleware] → [Controller] → [Service] → [DAO] → [Database]
                                                          ↓
@@ -53,14 +73,14 @@ Request → [Middleware] → [Controller] → [Service] → [DAO] → [Database]
                                                   [Storage (S3/Local)]
 ```
 
-Key Component Interactions:
-- Controllers handle HTTP requests and response formatting
-- Services implement business logic and transaction management
-- DAOs handle data persistence and retrieval
-- Middleware provides cross-cutting concerns (auth, logging)
-- Cache layer improves performance for frequently accessed data
-- Storage service handles file uploads and downloads
 
+关键组件交互：
+- 控制器处理 HTTP 请求和响应格式
+- 服务实现业务逻辑和事务管理
+- DAO 处理数据持久化和检索
+- 中间件提供横切关注点（身份验证、日志记录）
+- 缓存层提升频繁访问数据的性能
+- 存储服务处理文件上传和下载
 
 
 
@@ -68,12 +88,12 @@ Key Component Interactions:
 - 后端采用Gin、Zap、sqly(sqlx升级)。
 - 权限认证使用共享Session(单机支持本地缓存,集群需要redis)，支持多终端认证系统。
 - 支持加载动态权限菜单，多方式轻松权限控制。
-- 高效率开发，使用代码生成器可以一键生成后端代码。(前端正在发开)
+- 高效率开发，使用代码生成器可以一键生成后端代码。(正在完善)
 - 特别鸣谢：[ruoyi-vue](https://gitee.com/y_project/RuoYi-Vue?_from=gitee_search )，
 
 ## <p>随手 star ⭐是一种美德。 你们的star就是我的动力</p>
 
-## 也期待小伙伴一起加入白泽   
+## 也期待小伙伴一起加入白泽
 
 ## 内置功能
 

@@ -15,13 +15,14 @@ import (
 	"baize/app/utils/fileUtils"
 	"baize/app/utils/sliceUtils"
 	"baize/app/utils/snowflake"
-	"github.com/baizeplus/sqly"
-	"github.com/gin-gonic/gin"
-	"github.com/xuri/excelize/v2"
 	"mime/multipart"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/baizeplus/sqly"
+	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 )
 
 type UserService struct {
@@ -125,16 +126,12 @@ func (userService *UserService) ImportTemplate(c *gin.Context) (data []byte) {
 
 }
 
-func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId int64) (sysUser *systemModels.UserAndAccredit) {
+func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId string) (sysUser *systemModels.UserAndAccredit) {
 	uaa := new(systemModels.UserAndAccredit)
 	uaa.User = userService.userDao.SelectUserById(c, userId)
 	uaa.Posts = userService.postDao.SelectPostAll(c)
-	rIds := userService.roleDao.SelectRoleListByUserId(c, userId)
+	uaa.RoleIds = userService.roleDao.SelectRoleListByUserId(c, userId)
 	pIds := userService.postDao.SelectPostListByUserId(c, userId)
-	uaa.RoleIds = make([]string, 0, len(rIds))
-	for _, id := range rIds {
-		uaa.RoleIds = append(uaa.RoleIds, strconv.FormatInt(id, 10))
-	}
 	uaa.PostIds = make([]string, 0, len(pIds))
 	for _, id := range pIds {
 		uaa.PostIds = append(uaa.PostIds, strconv.FormatInt(id, 10))
@@ -142,7 +139,7 @@ func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId
 	if baizeContext.IsAdmin(c) {
 		uaa.Roles = userService.roleDao.SelectRoleIdAndNameAll(c)
 	} else {
-		uaa.Roles = userService.roleDao.SelectRoleIdAndName(c, userId, sliceUtils.Union(baizeContext.GetRoles(c), rIds))
+		uaa.Roles = userService.roleDao.SelectRoleIdAndName(c, userId, sliceUtils.Union(baizeContext.GetRoles(c), uaa.RoleIds))
 	}
 	return uaa
 }
@@ -222,35 +219,27 @@ func (userService *UserService) UpdateUserStatus(c *gin.Context, sysUser *system
 	userService.userDao.UpdateUser(c, s)
 
 }
-func (userService *UserService) ResetPwd(c *gin.Context, userId int64, password string) {
+func (userService *UserService) ResetPwd(c *gin.Context, userId string, password string) {
 	userService.userDao.ResetUserPwd(c, userId, bCryptPasswordEncoder.HashPassword(password))
 
 }
 
-func (userService *UserService) insertUserPost(userId int64, posts []string) (userPost []*systemModels.SysUserPost) {
+func (userService *UserService) insertUserPost(userId string, posts []string) (userPost []*systemModels.SysUserPost) {
 
 	list := make([]*systemModels.SysUserPost, 0, len(posts))
 	for _, postId := range posts {
-		i, err := strconv.ParseInt(postId, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		post := systemModels.NewSysUserPost(userId, i)
+		post := systemModels.NewSysUserPost(userId, postId)
 		list = append(list, post)
 	}
 	return list
 
 }
 
-func (userService *UserService) insertUserRole(userId int64, roles []string) (users []*systemModels.SysUserRole) {
+func (userService *UserService) insertUserRole(userId string, roles []string) (users []*systemModels.SysUserRole) {
 
 	list := make([]*systemModels.SysUserRole, 0, len(roles))
 	for _, roleId := range roles {
-		i, err := strconv.ParseInt(roleId, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		role := systemModels.NewSysUserRole(userId, i)
+		role := systemModels.NewSysUserRole(userId, roleId)
 		list = append(list, role)
 	}
 	return list
@@ -262,29 +251,29 @@ func (userService *UserService) CheckUserNameUnique(c *gin.Context, userName str
 
 }
 
-func (userService *UserService) CheckPhoneUnique(c *gin.Context, id int64, phonenumber string) bool {
-	if phonenumber == "" {
+func (userService *UserService) CheckPhoneUnique(c *gin.Context, id string, phoneNumber string) bool {
+	if phoneNumber == "" {
 		return false
 	}
-	userId := userService.userDao.CheckPhoneUnique(c, phonenumber)
-	if userId == id || userId == 0 {
+	userId := userService.userDao.CheckPhoneUnique(c, phoneNumber)
+	if userId == id || userId == "" {
 		return false
 	}
 	return true
 }
 
-func (userService *UserService) CheckEmailUnique(c *gin.Context, id int64, email string) bool {
+func (userService *UserService) CheckEmailUnique(c *gin.Context, id string, email string) bool {
 	if email == "" {
 		return false
 	}
 	userId := userService.userDao.CheckEmailUnique(c, email)
-	if userId == id || userId == 0 {
+	if userId == id || userId == "" {
 		return false
 	}
 	return true
 }
 
-func (userService *UserService) DeleteUserByIds(c *gin.Context, ids []int64) {
+func (userService *UserService) DeleteUserByIds(c *gin.Context, ids []string) {
 	tx := userService.ms.MustBeginTx(c, nil)
 	defer func() {
 		if p := recover(); p != nil {
@@ -363,18 +352,18 @@ func (userService *UserService) UpdateUserAvatar(c *gin.Context, file *multipart
 	return avatar
 }
 
-func (userService *UserService) ResetUserPwd(c *gin.Context, userId int64, password string) {
+func (userService *UserService) ResetUserPwd(c *gin.Context, userId string, password string) {
 	userService.userDao.ResetUserPwd(c, userId, bCryptPasswordEncoder.HashPassword(password))
 }
 func (userService *UserService) UpdateUserProfile(c *gin.Context, sysUser *systemModels.SysUserDML) {
 	userService.userDao.UpdateUser(c, sysUser)
 
 }
-func (userService *UserService) MatchesPassword(c *gin.Context, rawPassword string, userId int64) bool {
+func (userService *UserService) MatchesPassword(c *gin.Context, rawPassword string, userId string) bool {
 
 	return bCryptPasswordEncoder.CheckPasswordHash(rawPassword, userService.userDao.SelectPasswordByUserId(c, userId))
 }
-func (userService *UserService) InsertUserAuth(c *gin.Context, userId int64, roleIds []int64) {
+func (userService *UserService) InsertUserAuth(c *gin.Context, userId string, roleIds []string) {
 	userService.userRoleDao.DeleteUserRoleByUserId(c, userId)
 	if len(roleIds) != 0 {
 		list := make([]*systemModels.SysUserRole, 0, len(roleIds))
@@ -385,7 +374,7 @@ func (userService *UserService) InsertUserAuth(c *gin.Context, userId int64, rol
 		userService.userRoleDao.BatchUserRole(c, list)
 	}
 }
-func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *systemModels.UserAndRoles {
+func (userService *UserService) GetUserAuthRole(c *gin.Context, userId string) *systemModels.UserAndRoles {
 	uar := new(systemModels.UserAndRoles)
 	uar.User = userService.userDao.SelectUserById(c, userId)
 	s := new(systemModels.SysRoleDQL)
@@ -397,11 +386,7 @@ func (userService *UserService) GetUserAuthRole(c *gin.Context, userId int64) *s
 	} else {
 		uar.Roles = userService.roleDao.SelectRoleIdAndName(c, baizeContext.GetUserId(c), baizeContext.GetRoles(c))
 	}
-	rIds := userService.roleDao.SelectRoleListByUserId(c, userId)
-	uar.RoleIds = make([]string, 0, len(rIds))
-	for _, id := range rIds {
-		uar.RoleIds = append(uar.RoleIds, strconv.FormatInt(id, 10))
-	}
+	uar.RoleIds = userService.roleDao.SelectRoleListByUserId(c, userId)
 	return uar
 }
 
@@ -441,17 +426,13 @@ func (userService *UserService) UpdateUserDataScope(c *gin.Context, uds *systemM
 	if uds.DataScope == dataScopeAspect.DataScopeCustom && len(uds.DeptIds) != 0 {
 		scopes := make([]*systemModels.SysUserDeptScope, 0, len(uds.DeptIds))
 		for _, id := range uds.DeptIds {
-			i, err := strconv.ParseInt(id, 10, 64)
-			if err != nil {
-				panic(err)
-			}
-			scopes = append(scopes, &systemModels.SysUserDeptScope{UserId: userId, DeptId: i})
+			scopes = append(scopes, &systemModels.SysUserDeptScope{UserId: userId, DeptId: id})
 		}
 		udsd.BatchUserDeptScope(c, scopes)
 	}
 }
 
-func (userService *UserService) SelectUserDataScope(c *gin.Context, userId int64) *systemModels.SysUserDataScope {
+func (userService *UserService) SelectUserDataScope(c *gin.Context, userId string) *systemModels.SysUserDataScope {
 	s := new(systemModels.SysUserDataScope)
 	s.UserId = userId
 	s.DataScope = userService.userDao.SelectUserById(c, userId).DataScope

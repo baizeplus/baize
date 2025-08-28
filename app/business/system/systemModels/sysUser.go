@@ -18,8 +18,8 @@ type SysUserDQL struct {
 }
 
 type SysUserDML struct {
-	UserId      int64    `json:"userId,string" db:"user_id"swaggerignore:"true"` //用户ID
-	DeptId      int64    `json:"deptId,string" db:"dept_id" binding:"required"`  //部门ID
+	UserId      string   `json:"userId,string" db:"user_id"swaggerignore:"true"` //用户ID
+	DeptId      string   `json:"deptId,string" db:"dept_id" binding:"required"`  //部门ID
 	UserName    string   `json:"userName" db:"user_name" binding:"required"`     //用户名
 	NickName    string   `json:"nickName" db:"nick_name" binding:"required"`     //用户昵称
 	Email       string   `json:"email" db:"email"`                               //邮箱
@@ -36,13 +36,13 @@ type SysUserDML struct {
 }
 
 type SysUserVo struct {
-	UserId      int64   `json:"userId,string" db:"user_id"`
+	UserId      string  `json:"userId,string" db:"user_id"`
 	UserName    string  `json:"userName" db:"user_name" bze:"1,用户名"`
 	NickName    string  `json:"nickName" db:"nick_name" bze:"2,用户昵称"`
 	Sex         string  `json:"sex" db:"sex" bze:"3,性别"`
 	Status      string  `json:"status" db:"status"`
 	DelFlag     string  `json:"delFlag" db:"del_flag"`
-	DeptId      int64   `json:"deptId,string" db:"dept_id"`
+	DeptId      string  `json:"deptId,string" db:"dept_id"`
 	DeptName    *string `json:"deptName" db:"dept_name" bze:"4,部门名称"`
 	Leader      string  `json:"leader" db:"leader"`
 	Email       string  `json:"email" db:"email"`
@@ -53,22 +53,22 @@ type SysUserVo struct {
 	baize.BaseEntity
 }
 type SysUserDataScope struct {
-	UserId    int64    `json:"userId,string"  binding:"required"` //用户ID
+	UserId    string   `json:"userId,string"  binding:"required"` //用户ID
 	DataScope string   `json:"dataScope"  binding:"required"`     //数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限,无任何）权限
 	DeptIds   []string `json:"deptIds"`                           //如果是自定义就是部门ID 其他不填
 }
 
 type ResetPwd struct {
-	UserId   int64  `json:"userId,string" db:"user_id" binding:"required"` //用户ID
+	UserId   string `json:"userId,string" db:"user_id" binding:"required"` //用户ID
 	Password string `json:"password" db:"password" binding:"required"`     //新密码
 }
 type EditUserStatus struct {
-	UserId int64  `json:"userId,string" binding:"required"` //用户id
+	UserId string `json:"userId,string" binding:"required"` //用户id
 	Status string `json:"status" binding:"required"`        //状态
 	baize.BaseEntity
 }
 
-func RowsToSysUserDMLList(rows [][]string, str string, failureNum int, dept map[string]int64, password string, userId int64) ([]*SysUserDML, string, int) {
+func RowsToSysUserDMLList(rows [][]string, str string, failureNum int, dept map[string]string, password string, userId string) ([]*SysUserDML, string, int) {
 	list := make([]*SysUserDML, 0, len(rows)-1)
 	for i, row := range rows {
 		if i == 0 {
@@ -84,7 +84,7 @@ func RowsToSysUserDMLList(rows [][]string, str string, failureNum int, dept map[
 		sysUser.UserName = row[0]
 		sysUser.NickName = row[1]
 		sysUser.DeptId = dept[row[2]]
-		if sysUser.DeptId == 0 {
+		if sysUser.DeptId == "" {
 			str += "<br/>第" + strconv.Itoa(i+1) + "部门错误"
 			failureNum++
 			continue
@@ -131,6 +131,6 @@ type UserProfile struct {
 	PostGroup string     `json:"postGroup"` //选择的角色Id
 }
 type SysUserDeptScope struct {
-	UserId int64 `db:"user_id"`
-	DeptId int64 `db:"dept_id"`
+	UserId string `db:"user_id"`
+	DeptId string `db:"dept_id"`
 }

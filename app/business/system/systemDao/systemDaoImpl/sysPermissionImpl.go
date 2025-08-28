@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -23,7 +24,7 @@ func NewSysPermissionDao(ms sqly.SqlyContext) systemDao.IPermissionDao {
 	}
 }
 
-func (pd *SysPermissionDao) SelectPermissionById(ctx context.Context, permissionId int64) *systemModels.SysPermissionVo {
+func (pd *SysPermissionDao) SelectPermissionById(ctx context.Context, permissionId string) *systemModels.SysPermissionVo {
 	whereSql := ` where permission_id = ?`
 	sp := new(systemModels.SysPermissionVo)
 	err := pd.ms.GetContext(ctx, sp, pd.selectPermissionSql+pd.fromPermissionSql+whereSql, permissionId)
@@ -50,7 +51,7 @@ func (pd *SysPermissionDao) SelectPermissionList(ctx context.Context, permission
 	return
 
 }
-func (pd *SysPermissionDao) SelectPermissionListByParentId(ctx context.Context, parentId int64) (list []*systemModels.SysPermissionVo) {
+func (pd *SysPermissionDao) SelectPermissionListByParentId(ctx context.Context, parentId string) (list []*systemModels.SysPermissionVo) {
 	list = make([]*systemModels.SysPermissionVo, 0)
 	err := pd.ms.SelectContext(ctx, &list, pd.selectPermissionSql+pd.fromPermissionSql+"where parent_id = ? ", parentId)
 	if err != nil {
@@ -59,7 +60,7 @@ func (pd *SysPermissionDao) SelectPermissionListByParentId(ctx context.Context, 
 	return list
 }
 
-func (pd *SysPermissionDao) SelectPermissionListByRoleIds(ctx context.Context, roleIds []int64) (list []*systemModels.SysPermissionVo) {
+func (pd *SysPermissionDao) SelectPermissionListByRoleIds(ctx context.Context, roleIds []string) (list []*systemModels.SysPermissionVo) {
 	whereSql := `  left join sys_role_permission rp on rp.permission_id=p.permission_id
 where rp.role_id in (?)	`
 	list = make([]*systemModels.SysPermissionVo, 0)
@@ -96,7 +97,7 @@ func (pd *SysPermissionDao) UpdatePermission(ctx context.Context, permission *sy
 		updateSQL += ",sort = :sort"
 
 	}
-	if permission.ParentId != 0 {
+	if permission.ParentId != "" {
 		updateSQL += ",parent_id = :parent_id"
 	}
 
@@ -116,7 +117,7 @@ func (pd *SysPermissionDao) UpdatePermission(ctx context.Context, permission *sy
 	return
 }
 
-func (pd *SysPermissionDao) DeletePermissionById(ctx context.Context, permissionId int64) {
+func (pd *SysPermissionDao) DeletePermissionById(ctx context.Context, permissionId string) {
 	_, err := pd.ms.ExecContext(ctx, "delete from sys_permission where permission_id = ?", permissionId)
 	if err != nil {
 		panic(err)
@@ -124,16 +125,16 @@ func (pd *SysPermissionDao) DeletePermissionById(ctx context.Context, permission
 	return
 }
 
-func (pd *SysPermissionDao) HasChildByPermissionId(ctx context.Context, permissionId int64) int {
+func (pd *SysPermissionDao) HasChildByPermissionId(ctx context.Context, permissionId string) int {
 	var count = 0
-	err := pd.ms.GetContext(ctx, &count, "select exists(select 1 from sys_permission where parent_id = ?)", permissionId)
+	err := pd.ms.GetContext(ctx, &count, "select exists(select * from sys_permission where parent_id = ?)", permissionId)
 	if err != nil && !errors.Is(sql.ErrNoRows, err) {
 		panic(err)
 	}
 	return count
 }
 
-func (pd *SysPermissionDao) SelectPermissionByUserId(ctx context.Context, userId int64) []string {
+func (pd *SysPermissionDao) SelectPermissionByUserId(ctx context.Context, userId string) []string {
 	selectSql := `select distinct p.permission 
 				from sys_permission p
 				left join sys_role_permission rp on p.permission_id = rp.permission_id

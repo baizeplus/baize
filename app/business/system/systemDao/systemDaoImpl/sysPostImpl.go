@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -30,7 +31,7 @@ func (postDao *sysPostDao) SelectPostAll(ctx context.Context) (sysPost []*system
 	return
 }
 
-func (postDao *sysPostDao) SelectPostListByUserId(ctx context.Context, userId int64) (list []int64) {
+func (postDao *sysPostDao) SelectPostListByUserId(ctx context.Context, userId string) (list []int64) {
 	sqlStr := `select p.post_id
 		from sys_post p
 		left join sys_user_post up on up.post_id = p.post_id
@@ -91,7 +92,7 @@ func (postDao *sysPostDao) SelectPostListAll(ctx context.Context, post *systemMo
 	return
 }
 
-func (postDao *sysPostDao) SelectPostById(ctx context.Context, postId int64) (dictData *systemModels.SysPostVo) {
+func (postDao *sysPostDao) SelectPostById(ctx context.Context, postId string) (dictData *systemModels.SysPostVo) {
 
 	dictData = new(systemModels.SysPostVo)
 	err := postDao.ms.GetContext(ctx, dictData, postDao.postSql+" where post_id = ?", postId)
@@ -140,8 +141,8 @@ func (postDao *sysPostDao) UpdatePost(ctx context.Context, post *systemModels.Sy
 	return
 }
 
-func (postDao *sysPostDao) DeletePostByIds(ctx context.Context, dictCodes []int64) {
-	query, i, err := sqly.In("delete from sys_post where post_id in (?)", dictCodes)
+func (postDao *sysPostDao) DeletePostByIds(ctx context.Context, postId []string) {
+	query, i, err := sqly.In("delete from sys_post where post_id in (?)", postId)
 	if err != nil {
 		panic(err)
 	}
@@ -151,7 +152,7 @@ func (postDao *sysPostDao) DeletePostByIds(ctx context.Context, dictCodes []int6
 	}
 	return
 }
-func (postDao *sysPostDao) SelectPostNameListByUserId(ctx context.Context, userId int64) (list []string) {
+func (postDao *sysPostDao) SelectPostNameListByUserId(ctx context.Context, userId string) (list []string) {
 	sqlStr := `select p.post_name
 		from sys_post p
 		left join sys_user_post up on up.post_id = p.post_id

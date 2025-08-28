@@ -8,8 +8,8 @@ type LoginBody struct {
 }
 
 type User struct {
-	UserId    int64  `json:"userId,string" db:"user_id"`
-	DeptId    int64  `json:"-" db:"dept_id"`
+	UserId    string `json:"userId" db:"user_id"`
+	DeptId    string `json:"-" db:"dept_id"`
 	UserName  string `json:"userName" db:"user_name"`
 	Avatar    string `json:"avatar" db:"avatar" `
 	DataScope string `json:"dataScope" db:"data_scope"`

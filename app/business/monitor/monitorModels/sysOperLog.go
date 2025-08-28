@@ -6,7 +6,7 @@ import (
 )
 
 type SysOperLog struct {
-	OperId        int64     `json:"operId,string" db:"oper_id"`
+	OperId        string    `json:"operId,string" db:"oper_id"`
 	Title         string    `json:"title" db:"title"`
 	BusinessType  int8      `json:"businessType" db:"business_type"`
 	Method        string    `json:"method" db:"method"`

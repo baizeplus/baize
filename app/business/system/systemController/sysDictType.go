@@ -5,6 +5,8 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -74,8 +76,8 @@ func (dtc *DictType) DictTypeExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysDictDataVo}  "成功"
 // @Router /system/dict/type/{dictCode}  [get]
 func (dtc *DictType) DictTypeGetInfo(c *gin.Context) {
-	dictId := baizeContext.ParamInt64(c, "dictId")
-	if dictId == 0 {
+	dictId := c.Param("dictId")
+	if dictId == "" {
 		zap.L().Error("参数错误")
 		baizeContext.ParameterError(c)
 		return
@@ -137,7 +139,7 @@ func (dtc *DictType) DictTypeEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{}  "成功"
 // @Router /system/dict/type  [delete]
 func (dtc *DictType) DictTypeRemove(c *gin.Context) {
-	dictIds := baizeContext.ParamInt64Array(c, "dictIds")
+	dictIds := strings.Split(c.Param("dictIds"), ",")
 	dictTypes := dtc.dts.SelectDictTypeByIds(c, dictIds)
 	if dtc.dds.CheckDictDataByTypes(c, dictTypes) {
 		baizeContext.Waring(c, "有已分配的字典,不能删除")

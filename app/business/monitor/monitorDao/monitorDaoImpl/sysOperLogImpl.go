@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -89,7 +90,7 @@ func (operLogDao *OperLogDao) SelectOperLogListAll(ctx context.Context, openLog 
 	return
 }
 
-func (operLogDao *OperLogDao) DeleteOperLogByIds(ctx context.Context, operIds []int64) {
+func (operLogDao *OperLogDao) DeleteOperLogByIds(ctx context.Context, operIds []string) {
 	query, i, err := sqly.In("delete from sys_oper_log where oper_id in (?)", operIds)
 	if err != nil {
 		panic(err)
@@ -100,7 +101,7 @@ func (operLogDao *OperLogDao) DeleteOperLogByIds(ctx context.Context, operIds []
 	}
 }
 
-func (operLogDao *OperLogDao) SelectOperLogById(ctx context.Context, operId int64) (operLog *monitorModels.SysOperLog) {
+func (operLogDao *OperLogDao) SelectOperLogById(ctx context.Context, operId string) (operLog *monitorModels.SysOperLog) {
 	whereSql := `  where oper_id = ?`
 	operLog = new(monitorModels.SysOperLog)
 	err := operLogDao.ms.GetContext(ctx, operLog, operLogDao.selectSql+whereSql, operId)

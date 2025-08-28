@@ -5,6 +5,7 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -54,8 +55,8 @@ func (dc *Dept) DeptList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysDeptVo}  "成功"
 // @Router /system/dept/{deptId}  [get]
 func (dc *Dept) DeptGetInfo(c *gin.Context) {
-	deptId := baizeContext.ParamInt64(c, "deptId")
-	if deptId == 0 {
+	deptId := c.Param("deptId")
+	if deptId == "" {
 		zap.L().Debug("参数错误")
 		baizeContext.ParameterError(c)
 		return
@@ -97,7 +98,7 @@ func (dc *Dept) RoleDeptTreeSelect(c *gin.Context) {
 func (dc *Dept) DeptAdd(c *gin.Context) {
 	sysDept := new(systemModels.SysDeptVo)
 	_ = c.ShouldBindJSON(sysDept)
-	if dc.ds.CheckDeptNameUnique(c, 0, sysDept.ParentId, sysDept.DeptName) {
+	if dc.ds.CheckDeptNameUnique(c, "", sysDept.ParentId, sysDept.DeptName) {
 		baizeContext.Waring(c, "新增部门'"+sysDept.DeptName+"'失败，部门名称已存在")
 		return
 	}
@@ -137,8 +138,8 @@ func (dc *Dept) DeptEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/dept/{deptId}  [delete]
 func (dc *Dept) DeptRemove(c *gin.Context) {
-	deptId := baizeContext.ParamInt64(c, "deptId")
-	if deptId == 0 {
+	deptId := c.Param("deptId")
+	if deptId == "" {
 		zap.L().Debug("参数错误")
 		baizeContext.ParameterError(c)
 		return

@@ -11,7 +11,7 @@ type JobIdAndName struct {
 }
 
 type JobVo struct {
-	JobId          int64       `json:"jobId,string" db:"job_id"`
+	JobId          string      `json:"jobId,string" db:"job_id"`
 	JobName        string      `json:"jobName" db:"job_name"`
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
@@ -27,7 +27,7 @@ type JobDQL struct {
 	baize.BaseEntityDQL
 }
 type JobRun struct {
-	JobId          int64       `json:"jobId,string" db:"job_id"`
+	JobId          string      `json:"jobId" db:"job_id"`
 	JobName        string      `json:"jobName" db:"job_name"`
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
@@ -35,7 +35,7 @@ type JobRun struct {
 }
 
 type JobDML struct {
-	JobId          int64       `json:"jobId,string" db:"job_id"`
+	JobId          string      `json:"jobId,string" db:"job_id"`
 	JobName        *string     `json:"jobName" db:"job_name"`
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
@@ -45,8 +45,8 @@ type JobDML struct {
 }
 
 type JobLog struct {
-	JobLogId      int64       `json:"jobLogId,string" db:"job_log_id"`
-	JobId         int64       `json:"jobId,string" db:"job_id"`
+	JobLogId      string      `json:"jobLogId,string" db:"job_log_id"`
+	JobId         string      `json:"jobId,string" db:"job_id"`
 	JobName       string      `json:"jobName" db:"job_name"`
 	JobParams     *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget  string      `json:"invokeTarget" db:"invoke_target"`
@@ -62,11 +62,11 @@ type JobLogDql struct {
 }
 
 type JobStatus struct {
-	JobId  int64  `json:"jobId,string" db:"job_id" binding:"required"`
+	JobId  string `json:"jobId,string" db:"job_id" binding:"required"`
 	Status string `json:"status" db:"status"`
 }
 type JobRedis struct {
-	Id           int64
+	Id           string
 	RedisPublish bool
 	Type         int8
 }

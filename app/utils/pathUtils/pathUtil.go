@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-//CreateMutiDir 调用os.MkdirAll递归创建文件夹
+// CreateMutiDir 调用os.MkdirAll递归创建文件夹
 func CreateMutiDir(filePath string) error {
 	if !isExist(filePath) {
 		err := os.MkdirAll(filePath, os.ModePerm)

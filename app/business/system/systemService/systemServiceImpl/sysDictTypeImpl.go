@@ -7,6 +7,7 @@ import (
 	"baize/app/datasource/cache"
 	"baize/app/utils/excel"
 	"baize/app/utils/snowflake"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,11 +43,11 @@ func (dictTypeService *DictTypeService) ExportDictType(c *gin.Context, dictType 
 	return buffer.Bytes()
 }
 
-func (dictTypeService *DictTypeService) SelectDictTypeById(c *gin.Context, dictId int64) (dictType *systemModels.SysDictTypeVo) {
+func (dictTypeService *DictTypeService) SelectDictTypeById(c *gin.Context, dictId string) (dictType *systemModels.SysDictTypeVo) {
 	return dictTypeService.dictTypeDao.SelectDictTypeById(c, dictId)
 
 }
-func (dictTypeService *DictTypeService) SelectDictTypeByIds(c *gin.Context, dictId []int64) (dictTypes []string) {
+func (dictTypeService *DictTypeService) SelectDictTypeByIds(c *gin.Context, dictId []string) (dictTypes []string) {
 	return dictTypeService.dictTypeDao.SelectDictTypeByIds(c, dictId)
 }
 
@@ -58,13 +59,13 @@ func (dictTypeService *DictTypeService) InsertDictType(c *gin.Context, dictType 
 func (dictTypeService *DictTypeService) UpdateDictType(c *gin.Context, dictType *systemModels.SysDictTypeVo) {
 	dictTypeService.dictTypeDao.UpdateDictType(c, dictType)
 }
-func (dictTypeService *DictTypeService) DeleteDictTypeByIds(c *gin.Context, dictIds []int64) {
+func (dictTypeService *DictTypeService) DeleteDictTypeByIds(c *gin.Context, dictIds []string) {
 	dictTypeService.dictTypeDao.DeleteDictTypeByIds(c, dictIds)
 }
 
-func (dictTypeService *DictTypeService) CheckDictTypeUnique(c *gin.Context, id int64, dictType string) bool {
+func (dictTypeService *DictTypeService) CheckDictTypeUnique(c *gin.Context, id string, dictType string) bool {
 	dictId := dictTypeService.dictTypeDao.CheckDictTypeUnique(c, dictType)
-	if dictId == id || dictId == 0 {
+	if dictId == id || dictId == "" {
 		return false
 	}
 	return true

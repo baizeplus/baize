@@ -5,6 +5,7 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,12 +68,12 @@ func (cc *Config) ConfigExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysConfigVo}  "成功"
 // @Router /system/config/{configId}  [get]
 func (cc *Config) ConfigGetInfo(c *gin.Context) {
-	ConfigId := baizeContext.ParamInt64(c, "configId")
-	if ConfigId == 0 {
+	configId := c.Param("configId")
+	if configId == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
-	baizeContext.SuccessData(c, cc.cs.SelectConfigById(c, ConfigId))
+	baizeContext.SuccessData(c, cc.cs.SelectConfigById(c, configId))
 }
 
 // ConfigAdd 添加配置
@@ -90,7 +91,7 @@ func (cc *Config) ConfigAdd(c *gin.Context) {
 		baizeContext.ParameterError(c)
 		return
 	}
-	if cc.cs.CheckConfigKeyUnique(c, 0, sysConfig.ConfigKey) {
+	if cc.cs.CheckConfigKeyUnique(c, "", sysConfig.ConfigKey) {
 		baizeContext.Waring(c, "添加配置'"+sysConfig.ConfigKey+"'失败，Key已存在")
 		return
 	}
@@ -134,6 +135,6 @@ func (cc *Config) ConfigEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/Config/{configId} [delete]
 func (cc *Config) ConfigRemove(c *gin.Context) {
-	cc.cs.DeleteConfigById(c, baizeContext.ParamInt64(c, "configId"))
+	cc.cs.DeleteConfigById(c, c.Param("configId"))
 	baizeContext.Success(c)
 }

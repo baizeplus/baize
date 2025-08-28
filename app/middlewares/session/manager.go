@@ -35,7 +35,7 @@ func (m *Manager) GetSession(ctx *gin.Context) (Session, error) {
 	ctx.Set(sessionStatus.SessionKey, sess)
 	return sess, nil
 }
-func (m *Manager) InitSession(ctx *gin.Context, userId int64) (Session, error) {
+func (m *Manager) InitSession(ctx *gin.Context, userId string) (Session, error) {
 	sess, err := m.Generate(ctx, userId)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (m *Manager) InitSession(ctx *gin.Context, userId int64) (Session, error) {
 	ctx.Set(sessionStatus.SessionKey, sess)
 	return sess, err
 }
-func (m *Manager) InitAppSession(ctx *gin.Context, userId int64) (Session, error) {
+func (m *Manager) InitAppSession(ctx *gin.Context, userId string) (Session, error) {
 	sess, err := m.Generate(ctx, userId)
 	if err != nil {
 		return nil, err

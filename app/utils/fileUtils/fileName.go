@@ -2,15 +2,12 @@ package fileUtils
 
 import (
 	"baize/app/utils/stringUtils"
-	"strconv"
 	"time"
 )
 
-func GetRandomName(userId int64, extensionName string) string {
-	nameKey := strconv.FormatInt(userId, 10) + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + extensionName
-	return nameKey
+func GetRandomName(userId string, extensionName string) string {
+	return userId + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + extensionName
 }
-func GetRandomPath(userId int64, name string) string {
-	nameKey := strconv.FormatInt(userId, 10) + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + "/" + name
-	return nameKey
+func GetRandomPath(userId string, name string) string {
+	return userId + "/" + time.Now().Format(time.DateOnly) + "/" + stringUtils.GetUUID() + "/" + name
 }

@@ -5,6 +5,8 @@ import (
 	"baize/app/business/system/systemService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -69,8 +71,8 @@ func (rc *Role) RoleExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysRoleVo}  "成功"
 // @Router /system/role/{roleId}  [get]
 func (rc *Role) RoleGetInfo(c *gin.Context) {
-	roleId := baizeContext.ParamInt64(c, "roleId")
-	if roleId == 0 {
+	roleId := c.Param("roleId")
+	if roleId == "" {
 		baizeContext.ParameterError(c)
 		return
 	}
@@ -90,7 +92,7 @@ func (rc *Role) RoleGetInfo(c *gin.Context) {
 func (rc *Role) RoleAdd(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
-	if rc.rs.CheckRoleNameUnique(c, 0, sysRole.RoleName) {
+	if rc.rs.CheckRoleNameUnique(c, "", sysRole.RoleName) {
 		baizeContext.Waring(c, "新增角色'"+sysRole.RoleName+"'失败，角色名称已存在")
 		return
 	}
@@ -112,7 +114,7 @@ func (rc *Role) RoleAdd(c *gin.Context) {
 func (rc *Role) RoleEdit(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
-	if sysRole.RoleId == 1 {
+	if sysRole.RoleId == "1" {
 		baizeContext.Waring(c, "admin角色不能修改")
 		return
 	}
@@ -152,7 +154,7 @@ func (rc *Role) RoleChangeStatus(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/role/{rolesIds}  [delete]
 func (rc *Role) RoleRemove(c *gin.Context) {
-	ids := baizeContext.ParamInt64Array(c, "rolesIds")
+	ids := strings.Split(c.Param("rolesIds"), ",")
 	if rc.rs.CountUserRoleByRoleId(c, ids) {
 		baizeContext.Waring(c, "角色已分配，不能删除")
 		return
@@ -213,7 +215,7 @@ func (rc *Role) UnallocatedList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/role/authUser/selectAll  [put]
 func (rc *Role) InsertAuthUser(c *gin.Context) {
-	rc.rs.InsertAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
+	rc.rs.InsertAuthUsers(c, c.Query("roleId"), strings.Split(c.Query("userIds"), ","))
 	baizeContext.Success(c)
 }
 
@@ -247,6 +249,6 @@ func (rc *Role) CancelAuthUser(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/role/authUser/cancelAll  [put]
 func (rc *Role) CancelAuthUserAll(c *gin.Context) {
-	rc.rs.DeleteAuthUsers(c, baizeContext.QueryInt64(c, "roleId"), baizeContext.QueryInt64Array(c, "userIds"))
+	rc.rs.DeleteAuthUsers(c, c.Query("roleId"), strings.Split(c.Query("userIds"), ","))
 	baizeContext.Success(c)
 }

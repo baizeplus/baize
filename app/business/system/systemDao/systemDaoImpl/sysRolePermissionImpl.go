@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -17,8 +18,8 @@ func NewSysRolePermissionDao(ms sqly.SqlyContext) systemDao.IRolePermissionDao {
 	return &sysRolePermissionDao{ms: ms}
 }
 
-func (sysRolePermissionDao *sysRolePermissionDao) SelectPermissionIdsByRoleId(ctx context.Context, roleId int64) []int64 {
-	ids := make([]int64, 0)
+func (sysRolePermissionDao *sysRolePermissionDao) SelectPermissionIdsByRoleId(ctx context.Context, roleId string) []string {
+	ids := make([]string, 0)
 	err := sysRolePermissionDao.ms.SelectContext(ctx, &ids, "select permission_id from sys_role_permission where role_id = ?", roleId)
 	if err != nil {
 		panic(err)
@@ -33,7 +34,7 @@ func (sysRolePermissionDao *sysRolePermissionDao) BatchRolePermission(ctx contex
 	}
 }
 
-func (sysRolePermissionDao *sysRolePermissionDao) DeleteRolePermission(ctx context.Context, ids []int64) {
+func (sysRolePermissionDao *sysRolePermissionDao) DeleteRolePermission(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("delete from sys_role_permission where role_id in (?)", ids)
 	if err != nil {
 		panic(err)
@@ -44,14 +45,14 @@ func (sysRolePermissionDao *sysRolePermissionDao) DeleteRolePermission(ctx conte
 	}
 }
 
-func (sysRolePermissionDao *sysRolePermissionDao) DeleteRolePermissionByRoleId(ctx context.Context, roleId int64) {
+func (sysRolePermissionDao *sysRolePermissionDao) DeleteRolePermissionByRoleId(ctx context.Context, roleId string) {
 	_, err := sysRolePermissionDao.ms.ExecContext(ctx, "delete from sys_role_permission where role_id=?", roleId)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (sysRolePermissionDao *sysRolePermissionDao) CheckPermissionExistRole(ctx context.Context, permissionId int64) int {
+func (sysRolePermissionDao *sysRolePermissionDao) CheckPermissionExistRole(ctx context.Context, permissionId string) int {
 	var count = 0
 	err := sysRolePermissionDao.ms.GetContext(ctx, &count, "select count(1) from sys_role_permission where permission_id = ?", permissionId)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
