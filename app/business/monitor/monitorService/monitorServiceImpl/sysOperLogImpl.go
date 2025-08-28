@@ -5,10 +5,7 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
 	"baize/app/utils/excel"
-	"baize/app/utils/snowflake"
-	"context"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 type OperLogService struct {
@@ -19,11 +16,6 @@ func NewOperLog(old monitorDao.IOperLog) monitorService.ISysOperLogService {
 	return &OperLogService{old: old}
 }
 
-func (ols *OperLogService) InsertOperLog(c context.Context, operLog *monitorModels.SysOperLog) {
-	operLog.OperId = snowflake.GenID()
-	operLog.OperTime = time.Now()
-	ols.old.InsertOperLog(c, operLog)
-}
 func (ols *OperLogService) SelectOperLogList(c *gin.Context, openLog *monitorModels.SysOperLogDQL) (list []*monitorModels.SysOperLog, total int64) {
 	list, total = ols.old.SelectOperLogList(c, openLog)
 	return

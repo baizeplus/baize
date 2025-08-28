@@ -22,6 +22,5 @@ type User struct {
 
 type GetInfo struct {
 	User        *User    `json:"user"`
-	Roles       []string `json:"roles"`
 	Permissions []string `json:"permissions"`
 }

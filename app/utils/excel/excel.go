@@ -2,16 +2,16 @@ package excel
 
 import (
 	"errors"
-	"fmt"
-	"github.com/xuri/excelize/v2"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/xuri/excelize/v2"
 )
 
 func init() {
 	mf = make(map[string]func(value reflect.Value) string)
-	mf["abc"] = func(value reflect.Value) string {
+	mf["demo"] = func(value reflect.Value) string {
 		if value.Kind() == reflect.String {
 			i := value.Interface().(string)
 			return i + " f"
@@ -118,22 +118,25 @@ func createExcel(position []int, width []float64, title, format []string, vl int
 	return f, err
 }
 
-func setExcelContent(item reflect.Value, position []int, lt int, format []string) []string {
+func setExcelContent(item reflect.Value, position []int, lt int, format []string) []any {
 
 	// 如果元素类型为指针，使用Elem()获取指针指向的值
 	for item.Kind() == reflect.Ptr {
 		item = item.Elem()
 	}
-	s2 := make([]string, lt)
+	r := make([]any, lt)
 	for i2, i3 := range position {
-		index := item.Field(i3)
+		val := item.Field(i3)
+		if val.IsNil() {
+			continue
+		}
 		if format[i2] != "" {
-			s2[i2] = mf[format[i2]](index)
+			r[i2] = mf[format[i2]](val)
 		} else {
-			s2[i2] = fmt.Sprint(index)
+			r[i2] = val
 		}
 	}
-	return s2
+	return r
 }
 
 var mf map[string]func(value reflect.Value) string
@@ -146,4 +149,5 @@ func toExcelColumn(num int) string {
 		num /= 26
 	}
 	return column
+
 }

@@ -16,7 +16,7 @@ mysql:
   host: localhost
   user: root
   password: 123456
-  dbname: baize
+  dbname: eortest
   port: 3306
   max_open_conns: 20
   max_idle_conns: 5
