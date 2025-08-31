@@ -78,7 +78,7 @@ func (genTableDao *GenTableDao) SelectDbTableListByNames(ctx context.Context, ta
 	return
 }
 
-func (genTableDao *GenTableDao) SelectGenTableById(ctx context.Context, id int64) (genTable *toolModels.GenTableVo) {
+func (genTableDao *GenTableDao) SelectGenTableById(ctx context.Context, id string) (genTable *toolModels.GenTableVo) {
 	genTable = new(toolModels.GenTableVo)
 	err := genTableDao.ms.GetContext(ctx, genTable, `SELECT
        table_id, table_name, table_comment, sub_table_name,sub_table_fk_name, struct_name, parent_menu_id,
@@ -186,7 +186,7 @@ func (genTableDao *GenTableDao) UpdateGenTable(ctx context.Context, genTable *to
 	return
 }
 
-func (genTableDao *GenTableDao) DeleteGenTableByIds(ctx context.Context, ids []int64) {
+func (genTableDao *GenTableDao) DeleteGenTableByIds(ctx context.Context, ids []string) {
 	query, i, err := sqly.In(" delete from gen_table where table_id in(?)", ids)
 	if err != nil {
 		panic(err)

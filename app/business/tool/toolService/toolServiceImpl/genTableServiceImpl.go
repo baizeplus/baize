@@ -42,7 +42,7 @@ func (genTabletService *GenTabletService) SelectDbTableList(c *gin.Context, getT
 func (genTabletService *GenTabletService) SelectGenTableAll(c *gin.Context) (list []*toolModels.GenTableVo) {
 	return genTabletService.genTabletDao.SelectGenTableAll(c)
 }
-func (genTabletService *GenTabletService) SelectGenTableById(c *gin.Context, id int64) (genTable *toolModels.GenTableVo) {
+func (genTabletService *GenTabletService) SelectGenTableById(c *gin.Context, id string) (genTable *toolModels.GenTableVo) {
 	return genTabletService.genTabletDao.SelectGenTableById(c, id)
 }
 func (genTabletService *GenTabletService) ImportTableSave(c *gin.Context, table []string, userName string) {
@@ -69,12 +69,12 @@ func (genTabletService *GenTabletService) UpdateGenTable(c *gin.Context, genTabl
 	return
 }
 
-func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, ids []int64) {
+func (genTabletService *GenTabletService) DeleteGenTableByIds(c *gin.Context, ids []string) {
 	genTabletService.genTabletDao.DeleteGenTableByIds(c, ids)
 	genTabletService.genTabletColumnDao.DeleteGenTableColumnByIds(c, ids)
 	return
 }
-func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId int64) (m map[string]string) {
+func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId string) (m map[string]string) {
 	data := make(map[string]any)
 	data["Table"] = genTabletService.genTabletDao.SelectGenTableById(c, tableId)
 	data["Columns"] = genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, tableId)
@@ -110,7 +110,7 @@ func (genTabletService *GenTabletService) PreviewCode(c *gin.Context, tableId in
 
 	return m
 }
-func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId int64) []byte {
+func (genTabletService *GenTabletService) GenCode(c *gin.Context, tableId string) []byte {
 	// 创建一个内存缓冲区
 	buffer := new(bytes.Buffer)
 	// 创建一个新的 zip Writer
@@ -168,7 +168,7 @@ func visit(files *[]string) filepath.WalkFunc {
 	}
 }
 
-func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *gin.Context, tableId int64) (list []*toolModels.GenTableColumnVo) {
+func (genTabletService *GenTabletService) SelectGenTableColumnListByTableId(c *gin.Context, tableId string) (list []*toolModels.GenTableColumnVo) {
 	return genTabletService.genTabletColumnDao.SelectGenTableColumnListByTableId(c, tableId)
 }
 

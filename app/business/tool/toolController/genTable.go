@@ -5,8 +5,9 @@ import (
 	"baize/app/business/tool/toolService"
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type GenTable struct {
@@ -38,7 +39,7 @@ func (gc *GenTable) GenTableList(c *gin.Context) {
 }
 
 func (gc *GenTable) GenTableGetInfo(c *gin.Context) {
-	tableId := baizeContext.ParamInt64(c, "tableId")
+	tableId := c.Param("tableId")
 	genTable := gc.gt.SelectGenTableById(c, tableId)
 	tables := gc.gt.SelectGenTableAll(c)
 	list := gc.gt.SelectGenTableColumnListByTableId(c, tableId)
@@ -57,7 +58,7 @@ func (gc *GenTable) DataList(c *gin.Context) {
 
 }
 func (gc *GenTable) ColumnList(c *gin.Context) {
-	tableId := baizeContext.ParamInt64(c, "tableId")
+	tableId := c.Param("tableId")
 	list := gc.gt.SelectGenTableColumnListByTableId(c, tableId)
 	total := int64(len(list))
 	baizeContext.SuccessListData(c, list, total)
@@ -74,16 +75,16 @@ func (gc *GenTable) EditSave(c *gin.Context) {
 	baizeContext.Success(c)
 }
 func (gc *GenTable) GenTableRemove(c *gin.Context) {
-	gc.gt.DeleteGenTableByIds(c, baizeContext.ParamInt64Array(c, "tableIds"))
+	gc.gt.DeleteGenTableByIds(c, strings.Split(c.Param("tableIds"), ","))
 	baizeContext.Success(c)
 }
 func (gc *GenTable) Preview(c *gin.Context) {
-	s := gc.gt.PreviewCode(c, baizeContext.ParamInt64(c, "tableId"))
+	s := gc.gt.PreviewCode(c, c.Param("tableId"))
 	baizeContext.SuccessData(c, s)
 }
 
 func (gc *GenTable) GenCode(c *gin.Context) {
-	s := gc.gt.GenCode(c, baizeContext.ParamInt64(c, "tableId"))
+	s := gc.gt.GenCode(c, c.Param("tableId"))
 	baizeContext.DataPackageZip(c, s)
 
 }

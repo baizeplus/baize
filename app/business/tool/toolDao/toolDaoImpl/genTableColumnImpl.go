@@ -4,6 +4,7 @@ import (
 	"baize/app/business/tool/toolDao"
 	"baize/app/business/tool/toolModels"
 	"context"
+
 	"github.com/baizeplus/sqly"
 )
 
@@ -26,7 +27,7 @@ func (genTableColumnDao *GenTableColumnDao) SelectDbTableColumnsByName(ctx conte
 	return
 }
 
-func (genTableColumnDao *GenTableColumnDao) SelectGenTableColumnListByTableId(ctx context.Context, tableId int64) (list []*toolModels.GenTableColumnVo) {
+func (genTableColumnDao *GenTableColumnDao) SelectGenTableColumnListByTableId(ctx context.Context, tableId string) (list []*toolModels.GenTableColumnVo) {
 	list = make([]*toolModels.GenTableColumnVo, 0)
 	err := genTableColumnDao.ms.SelectContext(ctx, &list, `select column_id, table_id, column_name, column_comment, column_type, go_type, go_field,html_field, is_pk,  is_required, is_insert, is_edit, is_list, is_query, query_type, html_type, dict_type, sort, create_by, create_time, update_by, update_time 
 	from gen_table_column where table_id = ? order by sort`, tableId)
@@ -52,7 +53,7 @@ func (genTableColumnDao *GenTableColumnDao) UpdateGenTableColumn(ctx context.Con
 	}
 }
 
-func (genTableColumnDao *GenTableColumnDao) DeleteGenTableColumnByIds(ctx context.Context, ids []int64) {
+func (genTableColumnDao *GenTableColumnDao) DeleteGenTableColumnByIds(ctx context.Context, ids []string) {
 	query, i, err := sqly.In("  delete from gen_table_column where table_id in (?)", ids)
 	if err != nil {
 		panic(err)
