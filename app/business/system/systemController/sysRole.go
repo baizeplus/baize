@@ -114,7 +114,7 @@ func (rc *Role) RoleAdd(c *gin.Context) {
 func (rc *Role) RoleEdit(c *gin.Context) {
 	sysRole := new(systemModels.SysRoleDML)
 	_ = c.ShouldBindJSON(sysRole)
-	if sysRole.RoleId == "1" {
+	if sysRole.RoleId == "0000000000000001" {
 		baizeContext.Waring(c, "admin角色不能修改")
 		return
 	}
