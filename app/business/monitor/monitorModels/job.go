@@ -6,12 +6,12 @@ import (
 )
 
 type JobIdAndName struct {
-	JobId   int64  `json:"jobId,string" db:"job_id"`
+	JobId   string `json:"jobId" db:"job_id"`
 	JobName string `json:"jobName" db:"job_name"`
 }
 
 type JobVo struct {
-	JobId          string      `json:"jobId,string" db:"job_id"`
+	JobId          string      `json:"jobId" db:"job_id"`
 	JobName        string      `json:"jobName" db:"job_name"`
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
@@ -35,7 +35,7 @@ type JobRun struct {
 }
 
 type JobDML struct {
-	JobId          string      `json:"jobId,string" db:"job_id"`
+	JobId          string      `json:"jobId" db:"job_id"`
 	JobName        *string     `json:"jobName" db:"job_name"`
 	JobParams      *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget   string      `json:"invokeTarget" db:"invoke_target"`
@@ -45,8 +45,8 @@ type JobDML struct {
 }
 
 type JobLog struct {
-	JobLogId      string      `json:"jobLogId,string" db:"job_log_id"`
-	JobId         string      `json:"jobId,string" db:"job_id"`
+	JobLogId      string      `json:"jobLogId" db:"job_log_id"`
+	JobId         string      `json:"jobId" db:"job_id"`
 	JobName       string      `json:"jobName" db:"job_name"`
 	JobParams     *baize.List `json:"jobParams" db:"job_params"`
 	InvokeTarget  string      `json:"invokeTarget" db:"invoke_target"`
@@ -56,13 +56,13 @@ type JobLog struct {
 	CostTime      int64       `json:"costTime" db:"cost_time"`
 }
 type JobLogDql struct {
-	JobId  int64  `form:"jobId,string" db:"job_id"`
+	JobId  string `form:"jobId" db:"job_id"`
 	Status string `form:"status" db:"status"`
 	baize.BaseEntityDQL
 }
 
 type JobStatus struct {
-	JobId  string `json:"jobId,string" db:"job_id" binding:"required"`
+	JobId  string `json:"jobId" db:"job_id" binding:"required"`
 	Status string `json:"status" db:"status"`
 }
 type JobRedis struct {

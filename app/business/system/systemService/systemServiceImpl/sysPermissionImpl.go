@@ -4,7 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"context"
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +31,7 @@ func (ps *PermissionService) SelectPermissionListByRoleIds(ctx context.Context, 
 }
 
 func (ps *PermissionService) InsertPermission(ctx context.Context, permission *systemModels.SysPermissionAdd) {
-	permission.PermissionId = snowflake.GenID()
+	permission.PermissionId = baizeId.GetId()
 	permission.Status = "0"
 	ps.pd.InsertPermission(ctx, permission)
 }

@@ -147,7 +147,7 @@ func (jd *JobDao) InsertJobLog(ctx context.Context, job *monitorModels.JobLog) {
 }
 func (jd *JobDao) SelectJobLogList(ctx context.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64) {
 	whereSql := ``
-	if job.JobId != 0 {
+	if job.JobId != "" {
 		whereSql += " AND job_id = :job_id"
 	}
 	if job.Status != "" {

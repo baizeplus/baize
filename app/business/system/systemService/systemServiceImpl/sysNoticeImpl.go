@@ -5,8 +5,7 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/snowflake"
-
+	"baize/app/utils/baizeId"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,7 +30,7 @@ func (n *NoticeService) SelectNoticeById(c *gin.Context, id string) *systemModel
 }
 
 func (n *NoticeService) InsertNotice(c *gin.Context, notice *systemModels.SysNoticeVo) {
-	noticeId := snowflake.GenID()
+	noticeId := baizeId.GetId()
 	notice.Id = noticeId
 	ids := notice.DeptIds
 	notice.SetCreateBy(baizeContext.GetUserId(c))

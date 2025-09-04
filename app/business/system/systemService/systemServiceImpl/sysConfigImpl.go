@@ -5,9 +5,8 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/datasource/cache"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
-	"baize/app/utils/snowflake"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +41,7 @@ func (cs *ConfigService) SelectConfigById(c *gin.Context, configId string) (Conf
 }
 
 func (cs *ConfigService) InsertConfig(c *gin.Context, config *systemModels.SysConfigVo) {
-	config.ConfigId = snowflake.GenID()
+	config.ConfigId = baizeId.GetId()
 	cs.cd.InsertConfig(c, config)
 }
 

@@ -8,7 +8,7 @@ import (
 	"baize/app/datasource/cache"
 	"baize/app/setting"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -87,7 +87,7 @@ func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
 	go js.runFunction(jr)()
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
-	job.JobId = snowflake.GenID()
+	job.JobId = baizeId.GetId()
 	js.jd.InsertJob(c, job)
 	if job.Status == js.normal {
 		m := new(monitorModels.JobRedis)
@@ -159,7 +159,7 @@ func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
 			}
 		}
 		m := new(monitorModels.JobLog)
-		m.JobLogId = snowflake.GenID()
+		m.JobLogId = baizeId.GetId()
 		m.JobId = job.JobId
 		m.InvokeTarget = job.InvokeTarget
 		m.JobName = job.JobName

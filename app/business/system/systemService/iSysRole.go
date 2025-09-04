@@ -16,8 +16,6 @@ type IRoleService interface {
 	DeleteRoleByIds(c *gin.Context, ids []string)
 	CountUserRoleByRoleId(c *gin.Context, ids []string) bool
 	SelectBasicRolesByUserId(c *gin.Context, userId string) (roles []*systemModels.SysRole)
-	RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (loginRoles []int64)
-
 	CheckRoleNameUnique(c *gin.Context, id string, roleName string) bool
 	SelectAllocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)
 	SelectUnallocatedList(c *gin.Context, user *systemModels.SysRoleAndUserDQL) (list []*systemModels.SysUserVo, total int64)

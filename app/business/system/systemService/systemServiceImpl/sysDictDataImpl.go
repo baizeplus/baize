@@ -5,9 +5,9 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/datasource/cache"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
 	"baize/app/utils/response"
-	"baize/app/utils/snowflake"
 	"bytes"
 	"compress/gzip"
 	"context"
@@ -79,13 +79,13 @@ func (dictDataService *DictDataService) ExportDictData(c *gin.Context, dictData 
 	return buffer.Bytes()
 
 }
-func (dictDataService *DictDataService) SelectDictDataById(c *gin.Context, dictCode int64) (dictData *systemModels.SysDictDataVo) {
+func (dictDataService *DictDataService) SelectDictDataById(c *gin.Context, dictCode string) (dictData *systemModels.SysDictDataVo) {
 	return dictDataService.dictDataDao.SelectDictDataById(c, dictCode)
 
 }
 
 func (dictDataService *DictDataService) InsertDictData(c *gin.Context, dictData *systemModels.SysDictDataVo) {
-	dictData.DictCode = snowflake.GenID()
+	dictData.DictCode = baizeId.GetId()
 	dictDataService.dictDataDao.InsertDictData(c, dictData)
 	dictDataService.deleteDictCache(dictData.DictType)
 
@@ -95,7 +95,7 @@ func (dictDataService *DictDataService) UpdateDictData(c *gin.Context, dictData 
 	dictDataService.dictDataDao.UpdateDictData(c, dictData)
 	dictDataService.deleteDictCache(dictData.DictType)
 }
-func (dictDataService *DictDataService) DeleteDictDataByIds(c *gin.Context, dictCodes []int64) {
+func (dictDataService *DictDataService) DeleteDictDataByIds(c *gin.Context, dictCodes []string) {
 
 	codes := dictDataService.dictDataDao.SelectDictTypesByDictCodes(c, dictCodes)
 	dictDataService.dictDataDao.DeleteDictDataByIds(c, dictCodes)

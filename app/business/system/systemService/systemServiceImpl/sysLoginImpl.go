@@ -12,13 +12,12 @@ import (
 	"baize/app/middlewares/session"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
-	"time"
-
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
 	"image/color"
+	"time"
 )
 
 type LoginService struct {
@@ -53,7 +52,7 @@ func (loginService *LoginService) Register(c *gin.Context, user *systemModels.Lo
 	u := new(systemModels.SysUserDML)
 	u.Password = bCryptPasswordEncoder.HashPassword(user.Password)
 	u.DataScope = dataScopeAspect.NoDataScope
-	u.UserId = snowflake.GenID()
+	u.UserId = baizeId.GetId()
 	u.NickName = user.Username
 	u.UserName = user.Username
 	u.Status = "0"
@@ -69,7 +68,7 @@ func (loginService *LoginService) RecordLoginInfo(c *gin.Context, loginUser *mon
 				zap.L().Error("登录日志记录错误", zap.Any("error", err))
 			}
 		}()
-		loginUser.InfoId = snowflake.GenID()
+		loginUser.InfoId = baizeId.GetId()
 		loginUser.LoginTime = time.Now()
 		loginService.loginforDao.InserLogininfor(c, loginUser)
 	}()
@@ -114,8 +113,8 @@ func (loginService *LoginService) ForceLogout(c *gin.Context, token string) {
 	panic("等待补充")
 }
 
-func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (loginRoles []int64) {
-	loginRoles = make([]int64, 0, len(roles))
+func (loginService *LoginService) RolePermissionByRoles(roles []*systemModels.SysRole) (loginRoles []string) {
+	loginRoles = make([]string, 0, len(roles))
 	for _, role := range roles {
 		loginRoles = append(loginRoles, role.RoleId)
 	}

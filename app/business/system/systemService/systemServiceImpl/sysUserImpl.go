@@ -11,18 +11,17 @@ import (
 	"baize/app/datasource/objectFile"
 	"baize/app/utils/bCryptPasswordEncoder"
 	"baize/app/utils/baizeContext"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
 	"baize/app/utils/fileUtils"
 	"baize/app/utils/sliceUtils"
-	"baize/app/utils/snowflake"
+	"github.com/baizeplus/sqly"
+	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"mime/multipart"
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/baizeplus/sqly"
-	"github.com/gin-gonic/gin"
-	"github.com/xuri/excelize/v2"
 )
 
 type UserService struct {
@@ -131,11 +130,7 @@ func (userService *UserService) SelectUserAndAccreditById(c *gin.Context, userId
 	uaa.User = userService.userDao.SelectUserById(c, userId)
 	uaa.Posts = userService.postDao.SelectPostAll(c)
 	uaa.RoleIds = userService.roleDao.SelectRoleListByUserId(c, userId)
-	pIds := userService.postDao.SelectPostListByUserId(c, userId)
-	uaa.PostIds = make([]string, 0, len(pIds))
-	for _, id := range pIds {
-		uaa.PostIds = append(uaa.PostIds, strconv.FormatInt(id, 10))
-	}
+	uaa.PostIds = userService.postDao.SelectPostListByUserId(c, userId)
 	if baizeContext.IsAdmin(c) {
 		uaa.Roles = userService.roleDao.SelectRoleIdAndNameAll(c)
 	} else {
@@ -155,7 +150,7 @@ func (userService *UserService) SelectAccredit(c *gin.Context) (sysUser *systemM
 }
 
 func (userService *UserService) InsertUser(c *gin.Context, sysUser *systemModels.SysUserDML) {
-	sysUser.UserId = snowflake.GenID()
+	sysUser.UserId = baizeId.GetId()
 	sysUser.Password = bCryptPasswordEncoder.HashPassword(sysUser.Password)
 	tx := userService.ms.MustBeginTx(c, nil)
 	defer func() {

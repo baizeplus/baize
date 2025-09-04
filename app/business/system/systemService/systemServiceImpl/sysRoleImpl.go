@@ -5,12 +5,9 @@ import (
 	"baize/app/business/system/systemDao/systemDaoImpl"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
-
 	"github.com/baizeplus/sqly"
-
-	"baize/app/utils/snowflake"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,7 +54,7 @@ func (roleService *RoleService) SelectRoleById(c *gin.Context, roleId string) (r
 }
 
 func (roleService *RoleService) InsertRole(c *gin.Context, sysRole *systemModels.SysRoleDML) {
-	sysRole.RoleId = snowflake.GenID()
+	sysRole.RoleId = baizeId.GetId()
 	sysRole.DelFlag = "0"
 	tx := roleService.ms.MustBeginTx(c, nil)
 
@@ -145,8 +142,8 @@ func (roleService *RoleService) SelectBasicRolesByUserId(c *gin.Context, userId 
 
 }
 
-func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (loginRoles []int64) {
-	loginRoles = make([]int64, 0, len(roles))
+func (roleService *RoleService) RolePermissionByRoles(c *gin.Context, roles []*systemModels.SysRole) (loginRoles []string) {
+	loginRoles = make([]string, 0, len(roles))
 	for _, role := range roles {
 		loginRoles = append(loginRoles, role.RoleId)
 	}

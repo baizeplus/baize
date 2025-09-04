@@ -11,7 +11,7 @@ type SysPostDQL struct {
 
 type SysPostVo struct {
 	PostId   string `json:"postId" db:"post_id"`
-	PostSort int64  `json:"postSort" db:"post_sort"`
+	PostSort int32  `json:"postSort" db:"post_sort"`
 	PostCode string `json:"postCode" db:"post_code"`
 	PostName string `json:"postName" db:"post_name"`
 	Status   string `json:"status" db:"status"`

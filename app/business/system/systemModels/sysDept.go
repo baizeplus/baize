@@ -6,23 +6,23 @@ import (
 )
 
 type SysDeptDQL struct {
-	ParentId string `form:"parentId,string" db:"parent_id"` //上级id
-	DeptName string `form:"deptName" db:"dept_name"`        //部门名称
-	Status   string `form:"status" db:"status"`             //状态
+	ParentId string `form:"parentId" db:"parent_id"` //上级id
+	DeptName string `form:"deptName" db:"dept_name"` //部门名称
+	Status   string `form:"status" db:"status"`      //状态
 	baize.BaseEntityDQL
 }
 
 type SysDeptVo struct {
-	DeptId    string `json:"deptId,string" db:"dept_id"`     //id
-	ParentId  string `json:"parentId,string" db:"parent_id"` //上级id
-	Ancestors string `json:"ancestors" db:"ancestors"`       //祖级列表
-	DeptName  string `json:"deptName" db:"dept_name"`        //部门名称
-	OrderNum  int64  `json:"orderNum" db:"order_num"`        //排序
-	Leader    string `json:"leader" db:"leader"`             //负责人
-	Phone     string `json:"phone" db:"phone"`               //电话
-	Email     string `json:"email" db:"email"`               //邮箱
-	Status    string `json:"status" db:"status"`             //状态
-	DelFlag   string `json:"delFag" db:"del_flag"`           //删除标志
+	DeptId    string `json:"deptId" db:"dept_id"`      //id
+	ParentId  string `json:"parentId" db:"parent_id"`  //上级id
+	Ancestors string `json:"ancestors" db:"ancestors"` //祖级列表
+	DeptName  string `json:"deptName" db:"dept_name"`  //部门名称
+	OrderNum  int32  `json:"orderNum" db:"order_num"`  //排序
+	Leader    string `json:"leader" db:"leader"`       //负责人
+	Phone     string `json:"phone" db:"phone"`         //电话
+	Email     string `json:"email" db:"email"`         //邮箱
+	Status    string `json:"status" db:"status"`       //状态
+	DelFlag   string `json:"delFag" db:"del_flag"`     //删除标志
 	baize.BaseEntity
 }
 

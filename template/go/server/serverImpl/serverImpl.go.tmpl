@@ -51,7 +51,7 @@ func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Export{{.Tabl
 }
 
 func ({{.Table.BusinessName}}Service *{{.Table.StructName}}Service)Insert{{.Table.StructName}}(c *gin.Context, {{.Table.BusinessName}} *{{.Table.ModuleName}}Models.{{.Table.StructName}}Vo){
-    {{.Table.BusinessName}}.{{.IdGoField}} = snowflake.GenID()
+    {{.Table.BusinessName}}.{{.IdGoField}} = baizeId.GetId()
     {{.Table.BusinessName}}Service.{{.Table.BusinessName}}Dao.Insert{{.Table.StructName}}(c, {{.Table.BusinessName}}Service.data, {{.Table.BusinessName}})
 }
 

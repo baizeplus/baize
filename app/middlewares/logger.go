@@ -6,7 +6,7 @@ import (
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/constant/sessionStatus"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -95,7 +95,7 @@ func SetLog(title string, businessTy BusinessType) func(c *gin.Context) {
 			val, exists := c.Get("ol")
 			if exists {
 				iol := val.(monitorDao.IOperLog)
-				ol.OperId = snowflake.GenID()
+				ol.OperId = baizeId.GetId()
 				ol.OperTime = time.Now()
 				iol.InsertOperLog(context.Background(), ol)
 			} else {

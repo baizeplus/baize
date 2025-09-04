@@ -188,7 +188,7 @@ func (userDao *sysUserDao) SelectUserList(ctx context.Context, user *systemModel
 	if user.EndTime != "" {
 		sql += " AND date_format(u.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	if user.DeptId != 0 {
+	if user.DeptId != "" {
 		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
 	}
 	if user.DataScope != "" {
@@ -220,7 +220,7 @@ func (userDao *sysUserDao) SelectUserListAll(ctx context.Context, user *systemMo
 	if user.EndTime != "" {
 		sql += " AND date_format(u.create_time,'%y%m%d') <= date_format(:end_time,'%y%m%d')"
 	}
-	if user.DeptId != 0 {
+	if user.DeptId != "" {
 		sql += " AND (u.dept_id = :dept_id OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(:dept_id, ancestors) ))"
 	}
 

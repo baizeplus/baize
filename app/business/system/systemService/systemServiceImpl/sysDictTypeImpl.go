@@ -5,9 +5,8 @@ import (
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
 	"baize/app/datasource/cache"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
-	"baize/app/utils/snowflake"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +51,7 @@ func (dictTypeService *DictTypeService) SelectDictTypeByIds(c *gin.Context, dict
 }
 
 func (dictTypeService *DictTypeService) InsertDictType(c *gin.Context, dictType *systemModels.SysDictTypeVo) {
-	dictType.DictId = snowflake.GenID()
+	dictType.DictId = baizeId.GetId()
 	dictTypeService.dictTypeDao.InsertDictType(c, dictType)
 }
 

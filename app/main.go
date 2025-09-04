@@ -2,6 +2,7 @@ package main
 
 import (
 	"baize/app/setting"
+	"baize/app/utils/baizeId"
 	"fmt"
 	"time"
 )
@@ -28,8 +29,11 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
-	//redisListener.StartRedisListener()
-	//monitorServiceImpl.GetJobService().InitJobRun()
+
+	err = baizeId.NewNode(1)
+	if err != nil {
+		panic(err)
+	}
 	app.Run(fmt.Sprintf(":%d", setting.Conf.Port))
 
 }

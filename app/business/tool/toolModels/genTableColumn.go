@@ -3,7 +3,7 @@ package toolModels
 import (
 	"baize/app/baize"
 	genUtils "baize/app/business/tool/utils"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/stringUtils"
 	"strconv"
 	"strings"
@@ -32,8 +32,8 @@ type GenTableColumnDML struct {
 }
 
 type GenTableColumnVo struct {
-	ColumnId      int64  `json:"columnId,string" db:"column_id"`
-	TableId       int64  `json:"tableId,string" db:"table_id"`
+	ColumnId      string `json:"columnId" db:"column_id"`
+	TableId       string `json:"tableId" db:"table_id"`
 	ColumnName    string `json:"columnName" db:"column_name"`
 	ColumnComment string `json:"columnComment" db:"column_comment"`
 	ColumnType    string `json:"columnType" db:"column_type"`
@@ -67,7 +67,7 @@ func GetGenTableColumnDML(column *InformationSchemaColumn, tableId string, userI
 	genTableColumn := new(GenTableColumnDML)
 	dataType := column.ColumnType
 	columnName := column.ColumnName
-	genTableColumn.ColumnId = snowflake.GenID()
+	genTableColumn.ColumnId = baizeId.GetId()
 	genTableColumn.ColumnName = column.ColumnName
 	genTableColumn.IsPk = column.IsPk
 	genTableColumn.Sort = column.Sort

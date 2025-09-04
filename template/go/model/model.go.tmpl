@@ -12,7 +12,7 @@ import (
 // ==========================================================================
 
 type {{.Table.StructName}}Vo struct {
-{{range $index, $column := .Columns -}}{{if eq $column.IsRequired "1"}}   {{$column.GoField}}     {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}     `json:"{{$column.HtmlField}}{{if and (eq $column.GoType "int64") (eq $column.IsPk "1")}},string{{end}}" db:"{{$column.ColumnName}}"`      // {{$column.ColumnComment}}
+{{range $index, $column := .Columns -}}{{if eq $column.IsRequired "1"}}   {{$column.GoField}}     {{if eq $column.GoType "Time"}}*baize.Time{{else}}{{$column.GoType}}{{end}}     `json:"{{$column.HtmlField}}" db:"{{$column.ColumnName}}"`      // {{$column.ColumnComment}}
 {{end}}
 {{- end}}   baize.BaseEntity
 }

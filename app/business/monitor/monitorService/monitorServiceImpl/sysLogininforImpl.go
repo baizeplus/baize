@@ -4,8 +4,8 @@ import (
 	"baize/app/business/monitor/monitorDao"
 	"baize/app/business/monitor/monitorModels"
 	"baize/app/business/monitor/monitorService"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
-	"baize/app/utils/snowflake"
 	"context"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +37,7 @@ func (ls *LogininforService) ExportLogininfor(c *gin.Context, logininfor *monito
 }
 
 func (ls *LogininforService) InsertLogininfor(c context.Context, loginUser *monitorModels.Logininfor) {
-	loginUser.InfoId = snowflake.GenID()
+	loginUser.InfoId = baizeId.GetId()
 	ls.ld.InserLogininfor(c, loginUser)
 }
 

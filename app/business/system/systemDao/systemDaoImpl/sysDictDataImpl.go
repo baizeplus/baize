@@ -55,7 +55,7 @@ func (sysDictDataDao *sysDictDataDao) SelectDictDataList(ctx context.Context, di
 	return
 }
 
-func (sysDictDataDao *sysDictDataDao) SelectDictDataById(ctx context.Context, dictCode int64) (dictData *systemModels.SysDictDataVo) {
+func (sysDictDataDao *sysDictDataDao) SelectDictDataById(ctx context.Context, dictCode string) (dictData *systemModels.SysDictDataVo) {
 
 	dictData = new(systemModels.SysDictDataVo)
 	err := sysDictDataDao.ms.GetContext(ctx, dictData, sysDictDataDao.dictDataSql+" where dict_code = ?", dictCode)
@@ -115,7 +115,7 @@ func (sysDictDataDao *sysDictDataDao) UpdateDictData(ctx context.Context, dictDa
 	}
 	return
 }
-func (sysDictDataDao *sysDictDataDao) SelectDictTypesByDictCodes(ctx context.Context, dictCodes []int64) []string {
+func (sysDictDataDao *sysDictDataDao) SelectDictTypesByDictCodes(ctx context.Context, dictCodes []string) []string {
 	query, i, err := sqly.In("select dict_type from sys_dict_data where dict_code in(?)", dictCodes)
 	if err != nil {
 		panic(err)
@@ -128,7 +128,7 @@ func (sysDictDataDao *sysDictDataDao) SelectDictTypesByDictCodes(ctx context.Con
 	return list
 }
 
-func (sysDictDataDao *sysDictDataDao) DeleteDictDataByIds(ctx context.Context, dictCodes []int64) {
+func (sysDictDataDao *sysDictDataDao) DeleteDictDataByIds(ctx context.Context, dictCodes []string) {
 	query, i, err := sqly.In("delete from sys_dict_data where dict_code in (?)", dictCodes)
 	if err != nil {
 		panic(err)

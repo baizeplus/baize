@@ -9,18 +9,6 @@ import (
 	"time"
 )
 
-//type Sql interface {
-//	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
-//	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
-//	NamedQueryContext(ctx context.Context, query string, arg interface{}) (*sqly.Rows, error)
-//	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-//	NamedSelectContext(ctx context.Context, dest interface{}, query string, arg interface{}) error
-//	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-//	NamedGetContext(ctx context.Context, dest interface{}, query string, args interface{}) error
-//	NamedSelectPageContext(ctx context.Context, dest interface{}, total *int64, query string, page sqly.Page) error
-//	MustBegin() *sqly.Tx
-//}
-
 // NewData .
 func NewData() (sqly.SqlyContext, func(), error) {
 	type Mysql struct {

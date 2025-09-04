@@ -4,7 +4,7 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +32,7 @@ func (ds *DeptService) InsertDept(c *gin.Context, dept *systemModels.SysDeptVo) 
 	parentDept := ds.SelectDeptById(c, dept.ParentId)
 	dept.Ancestors = parentDept.Ancestors + "," + dept.ParentId
 	//执行添加
-	dept.DeptId = snowflake.GenID()
+	dept.DeptId = baizeId.GetId()
 	ds.deptDao.InsertDept(c, dept)
 	return
 }

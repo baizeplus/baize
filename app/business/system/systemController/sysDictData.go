@@ -6,6 +6,7 @@ import (
 	"baize/app/middlewares"
 	"baize/app/utils/baizeContext"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type DictData struct {
@@ -71,11 +72,7 @@ func (ddc *DictData) DictDataExport(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysDictDataVo}  "成功"
 // @Router /system/dict/data/{dictCode}  [get]
 func (ddc *DictData) DictDataGetInfo(c *gin.Context) {
-	dictCode := baizeContext.ParamInt64(c, "dictCode")
-	if dictCode == 0 {
-		baizeContext.ParameterError(c)
-		return
-	}
+	dictCode := c.Param("dictCode")
 	dictData := ddc.dds.SelectDictDataById(c, dictCode)
 	baizeContext.SuccessData(c, dictData)
 }
@@ -138,6 +135,6 @@ func (ddc *DictData) DictDataEdit(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData{data=systemModels.SysDictDataVo}  "成功"
 // @Router /system/dict/data/{dictCodes}  [delete]
 func (ddc *DictData) DictDataRemove(c *gin.Context) {
-	ddc.dds.DeleteDictDataByIds(c, baizeContext.ParamInt64Array(c, "dictCodes"))
+	ddc.dds.DeleteDictDataByIds(c, strings.Split(c.Param("dictCodes"), ","))
 	baizeContext.Success(c)
 }

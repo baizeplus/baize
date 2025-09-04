@@ -3,7 +3,7 @@ package systemModels
 import "baize/app/baize"
 
 type SysRole struct {
-	RoleId   int64  `db:"role_id"`
+	RoleId   string `db:"role_id"`
 	RoleName string `db:"role_name"`
 }
 

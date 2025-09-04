@@ -31,13 +31,13 @@ func (postDao *sysPostDao) SelectPostAll(ctx context.Context) (sysPost []*system
 	return
 }
 
-func (postDao *sysPostDao) SelectPostListByUserId(ctx context.Context, userId string) (list []int64) {
+func (postDao *sysPostDao) SelectPostListByUserId(ctx context.Context, userId string) (list []string) {
 	sqlStr := `select p.post_id
 		from sys_post p
 		left join sys_user_post up on up.post_id = p.post_id
 		left join sys_user u on u.user_id = up.user_id
 		where u.user_id = ?`
-	list = make([]int64, 0, 1)
+	list = make([]string, 0)
 	err := postDao.ms.SelectContext(ctx, &list, sqlStr, userId)
 	if err != nil {
 		panic(err)

@@ -4,9 +4,8 @@ import (
 	"baize/app/business/system/systemDao"
 	"baize/app/business/system/systemModels"
 	"baize/app/business/system/systemService"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/excel"
-	"baize/app/utils/snowflake"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,7 +42,7 @@ func (postService *PostService) SelectPostById(c *gin.Context, postId string) (P
 }
 
 func (postService *PostService) InsertPost(c *gin.Context, post *systemModels.SysPostVo) {
-	post.PostId = snowflake.GenID()
+	post.PostId = baizeId.GetId()
 	postService.postDao.InsertPost(c, post)
 }
 

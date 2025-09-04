@@ -7,7 +7,7 @@ import (
 	"baize/app/business/tool/toolService"
 	genUtils "baize/app/business/tool/utils"
 	"baize/app/utils/baizeContext"
-	"baize/app/utils/snowflake"
+	"baize/app/utils/baizeId"
 	"baize/app/utils/zipUtils"
 	"bytes"
 	"fmt"
@@ -50,7 +50,7 @@ func (genTabletService *GenTabletService) ImportTableSave(c *gin.Context, table 
 	genTableList := make([]*toolModels.GenTableDML, 0, len(tableList))
 	genTableColumnList := make([]*toolModels.GenTableColumnDML, 0, len(tableList)*2)
 	for _, genTable := range tableList {
-		tableId := snowflake.GenID()
+		tableId := baizeId.GetId()
 		genTableList = append(genTableList, toolModels.GetGenTableDML(genTable, tableId, baizeContext.GetUserId(c)))
 		list := genTabletService.genTabletColumnDao.SelectDbTableColumnsByName(c, genTable.TableName)
 		for _, column := range list {
