@@ -208,7 +208,7 @@ func (uc *User) UserAdd(c *gin.Context) {
 // @Security BearerAuth
 // @Produce application/json
 // @Success 200 {object}  response.ResponseData{data=response.ListData{Rows=[]systemModels.SysUserVo}}  "成功"
-// @Router /system/user  [get]
+// @Router /system/user/list  [get]
 func (uc *User) UserList(c *gin.Context) {
 	user := new(systemModels.SysUserDQL)
 	_ = c.ShouldBind(user)

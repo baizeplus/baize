@@ -12,7 +12,7 @@ import (
 
 func IsAdmin(c *gin.Context) bool {
 	for _, id := range GetRoles(c) {
-		if id == "1" {
+		if id == "0000000000000001" {
 			return true
 		}
 	}
