@@ -12,9 +12,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/robfig/cron/v3"
-	"time"
 )
 
 type JobService struct {
@@ -77,14 +78,8 @@ func (js *JobService) ChangeStatus(c *gin.Context, job *monitorModels.JobStatus)
 
 }
 func (js *JobService) Run(c *gin.Context, job *monitorModels.JobStatus) {
-	vo := js.jd.SelectJobById(c, job.JobId)
-	jr := new(monitorModels.JobRun)
-	jr.JobId = vo.JobId
-	jr.JobName = vo.JobName
-	jr.JobParams = vo.JobParams
-	jr.InvokeTarget = vo.InvokeTarget
-	jr.CronExpression = vo.CronExpression
-	go js.runFunction(jr)()
+
+	go js.runFunction(job.JobId)()
 }
 func (js *JobService) InsertJob(c *gin.Context, job *monitorModels.JobDML) {
 	job.JobId = baizeId.GetId()
@@ -125,14 +120,8 @@ func (js *JobService) InitJobRun() {
 			panic("目标方法未找到")
 		}
 		if vo.Status == js.normal {
-			jr := new(monitorModels.JobRun)
-			jr.JobId = vo.JobId
-			jr.JobName = vo.JobName
-			jr.JobParams = vo.JobParams
-			jr.InvokeTarget = vo.InvokeTarget
-			jr.CronExpression = vo.CronExpression
 			cr := cron.New()
-			_, err := cr.AddFunc(vo.CronExpression, js.runFunction(jr))
+			_, err := cr.AddFunc(vo.CronExpression, js.runFunction(vo.JobId))
 			if err != nil {
 				panic(err)
 			}
@@ -142,30 +131,30 @@ func (js *JobService) InitJobRun() {
 	}
 }
 
-func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
+func (js *JobService) runFunction(jobId string) func() {
 	return func() {
 		ctx := context.Background()
-
+		vo := js.jd.SelectJobById(ctx, jobId)
 		if setting.Conf.Cluster {
-			schedule, err := cron.ParseStandard(job.CronExpression)
+			schedule, err := cron.ParseStandard(vo.CronExpression)
 			if err != nil {
 				panic(err)
 			}
 			now := time.Now()
-			nextTime := schedule.Next(now).Unix()
-			success := js.cache.SetNX(ctx, fmt.Sprintf("scheduled_task_lock:%s:%d", job.JobName, nextTime), "locked", time.Minute)
+			nextTime := schedule.Next(now).Unix() / 60
+			success := js.cache.SetNX(ctx, fmt.Sprintf("scheduled_task_lock:%s:%d", vo.JobName, nextTime), "locked", time.Minute)
 			if !success {
 				return
 			}
 		}
 		m := new(monitorModels.JobLog)
 		m.JobLogId = baizeId.GetId()
-		m.JobId = job.JobId
-		m.InvokeTarget = job.InvokeTarget
-		m.JobName = job.JobName
-		m.InvokeTarget = job.InvokeTarget
+		m.JobId = vo.JobId
+		m.InvokeTarget = vo.InvokeTarget
+		m.JobName = vo.JobName
+		m.InvokeTarget = vo.InvokeTarget
 		m.CreateTime = time.Now()
-		m.JobParams = job.JobParams
+		m.JobParams = vo.JobParams
 		defer func() {
 			m.CostTime = int64(time.Since(m.CreateTime))
 			if e := recover(); e != nil {
@@ -176,8 +165,8 @@ func (js *JobService) runFunction(job *monitorModels.JobRun) func() {
 			}
 			js.jd.InsertJobLog(ctx, m)
 		}()
-		f := js.funMap[job.InvokeTarget]
-		f(job.JobParams.Data...)
+		f := js.funMap[vo.InvokeTarget]
+		f(vo.JobParams.Data...)
 	}
 }
 func (js *JobService) StartRunCron(c context.Context, jo *monitorModels.JobRedis) {
@@ -198,13 +187,7 @@ func (js *JobService) StartRunCron(c context.Context, jo *monitorModels.JobRedis
 	}
 	vo := js.jd.SelectJobById(c, jo.Id)
 	cr = cron.New()
-	jr := new(monitorModels.JobRun)
-	jr.JobId = vo.JobId
-	jr.JobName = vo.JobName
-	jr.JobParams = vo.JobParams
-	jr.InvokeTarget = vo.InvokeTarget
-	jr.CronExpression = vo.CronExpression
-	_, err := cr.AddFunc(jr.CronExpression, js.runFunction(jr))
+	_, err := cr.AddFunc(vo.CronExpression, js.runFunction(jo.Id))
 	if err != nil {
 		panic(err)
 	}

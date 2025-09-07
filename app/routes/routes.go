@@ -2,25 +2,28 @@ package routes
 
 import (
 	"baize/app/business/monitor/monitorController"
+	"baize/app/business/monitor/monitorService"
 	"baize/app/business/system/systemController"
 	"baize/app/business/tool/toolController"
 	"baize/app/datasource/cache"
 	"baize/app/datasource/objectFile/localhostObject"
+	"time"
+
 	"github.com/baizeplus/sqly"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	gs "github.com/swaggo/gin-swagger"
-	"time"
 
 	"baize/app/middlewares"
 
 	"baize/app/docs"
 	"baize/app/setting"
 	"baize/app/utils/logger"
-	"github.com/gin-contrib/cors"
-	"github.com/google/wire"
 	"net/http"
 	"strings"
+
+	"github.com/gin-contrib/cors"
+	"github.com/google/wire"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +33,7 @@ var ProviderSet = wire.NewSet(NewGinEngine)
 func NewGinEngine(
 	cache cache.Cache,
 	ms sqly.SqlyContext,
+	ls monitorService.IJobService,
 	sc *systemController.System,
 	mc *monitorController.Monitor,
 	gc *toolController.Tool,
@@ -89,7 +93,8 @@ func NewGinEngine(
 			"msg": "404",
 		})
 	})
-
+	//启动定时任务
+	ls.InitJobRun()
 	return r
 
 }

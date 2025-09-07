@@ -31,6 +31,8 @@ func wireApp() (*gin.Engine, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
+	iJobDao := monitorDaoImpl.NewJobDao(sqlyContext)
+	iJobService := monitorServiceImpl.NewJobService(cacheCache, iJobDao)
 	iUserDao := systemDaoImpl.NewSysUserDao(sqlyContext)
 	iPermissionDao := systemDaoImpl.NewSysPermissionDao(sqlyContext)
 	iRoleDao := systemDaoImpl.NewSysRoleDao(sqlyContext)
@@ -97,8 +99,6 @@ func wireApp() (*gin.Engine, func(), error) {
 	iOperLog := monitorDaoImpl.NewOperLog(sqlyContext)
 	iSysOperLogService := monitorServiceImpl.NewOperLog(iOperLog)
 	operLog := monitorController.NewOperLog(iSysOperLogService)
-	iJobDao := monitorDaoImpl.NewJobDao(sqlyContext)
-	iJobService := monitorServiceImpl.NewJobService(cacheCache, iJobDao)
 	job := monitorController.NewJob(iJobService)
 	monitor := &monitorController.Monitor{
 		Server:     infoServer,
@@ -114,7 +114,7 @@ func wireApp() (*gin.Engine, func(), error) {
 	tool := &toolController.Tool{
 		GenTable: genTable,
 	}
-	engine := routes.NewGinEngine(cacheCache, sqlyContext, system, monitor, tool)
+	engine := routes.NewGinEngine(cacheCache, sqlyContext, iJobService, system, monitor, tool)
 	return engine, func() {
 		cleanup()
 	}, nil

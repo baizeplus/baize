@@ -22,4 +22,5 @@ type IJobService interface {
 	SelectJobLogList(c *gin.Context, job *monitorModels.JobLogDql) (list []*monitorModels.JobLog, total int64)
 	SelectJobLogById(c *gin.Context, id string) (vo *monitorModels.JobLog)
 	SelectJobIdAndNameAll(c *gin.Context) (list []*monitorModels.JobIdAndName)
+	InitJobRun()
 }

@@ -3,9 +3,11 @@ package task
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 func NoParams(p ...string) {
+	time.Sleep(time.Second)
 	fmt.Println("无参测试")
 }
 

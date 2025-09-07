@@ -90,7 +90,11 @@ func (jd *JobDao) DeleteJobById(ctx context.Context, id string) {
 	return
 }
 func (jd *JobDao) UpdateJob(ctx context.Context, job *monitorModels.JobDML) {
-	updateSQL := `update sys_job set invoke_target = :invoke_target,update_time = :update_time , update_by = :update_by`
+	updateSQL := `update sys_job set update_time = :update_time , update_by = :update_by`
+
+	if job.InvokeTarget != "" {
+		updateSQL += ",invoke_target = :invoke_target"
+	}
 
 	if job.CronExpression != "" {
 		updateSQL += ",cron_expression = :cron_expression"
@@ -137,8 +141,8 @@ func (jd *JobDao) DeleteJobByIds(ctx context.Context, ids []string) {
 }
 
 func (jd *JobDao) InsertJobLog(ctx context.Context, job *monitorModels.JobLog) {
-	insertSQL := `insert into sys_job_log(job_log_id,job_id, job_name,job_params, invoke_target,status, create_time ,cost_time)
-					values(:job_log_id,:job_id, :job_name,:job_params, :invoke_target,:status, :create_time ,:cost_time)`
+	insertSQL := `insert into sys_job_log(job_log_id,job_id, job_name,job_params, invoke_target,status,exception_info ,create_time ,cost_time)
+					values(:job_log_id,:job_id, :job_name,:job_params, :invoke_target,:status,:exception_info,:create_time ,:cost_time)`
 	_, err := jd.ms.NamedExecContext(ctx, insertSQL, job)
 	if err != nil {
 		panic(err)
@@ -156,7 +160,9 @@ func (jd *JobDao) SelectJobLogList(ctx context.Context, job *monitorModels.JobLo
 	if whereSql != "" {
 		whereSql = " where " + whereSql[4:]
 	}
-
+	if job.OrderBy == "" {
+		job.OrderBy = "job_log_id desc"
+	}
 	err := jd.ms.NamedSelectPageContext(ctx, &list, &total, jd.selectLogSql+whereSql, job)
 	if err != nil {
 		panic(err)
