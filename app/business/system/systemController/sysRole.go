@@ -215,7 +215,17 @@ func (rc *Role) UnallocatedList(c *gin.Context) {
 // @Success 200 {object}  response.ResponseData "成功"
 // @Router /system/role/authUser/selectAll  [put]
 func (rc *Role) InsertAuthUser(c *gin.Context) {
-	rc.rs.InsertAuthUsers(c, c.Query("roleId"), strings.Split(c.Query("userIds"), ","))
+	split := strings.Split(c.Query("userIds"), ",")
+
+	// 检查是否包含"a"
+	for _, v := range split {
+		if v == baizeContext.GetUserId(c) {
+			baizeContext.Waring(c, "不能操作自己")
+			return
+		}
+	}
+
+	rc.rs.InsertAuthUsers(c, c.Query("roleId"), split)
 	baizeContext.Success(c)
 }
 
@@ -232,6 +242,10 @@ func (rc *Role) CancelAuthUser(c *gin.Context) {
 	userRole := new(systemModels.SysUserRole)
 	if err := c.ShouldBindJSON(userRole); err != nil {
 		baizeContext.ParameterError(c)
+		return
+	}
+	if userRole.UserId == baizeContext.GetUserId(c) {
+		baizeContext.Waring(c, "不能删除修改自己")
 		return
 	}
 	rc.rs.DeleteAuthUserRole(c, userRole)
